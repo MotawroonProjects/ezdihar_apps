@@ -1,0 +1,131 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:ezdihar_apps/colors/colors.dart';
+import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/more_widgets/more_widgets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class MorePage extends StatefulWidget {
+  const MorePage({Key? key}) : super(key: key);
+
+  @override
+  State<MorePage> createState() => _MorePageState();
+}
+
+class _MorePageState extends State<MorePage> {
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        SizedBox(
+          height: 173,
+          child: Stack(
+            children: [
+              Positioned(
+                  child: Container(
+                width: width,
+                height: 125.0,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(
+                            '${AppConstant.localImagePath}top_profile.png'),
+                        fit: BoxFit.fill)),
+              )),
+              Positioned(
+                top: 77.0,
+                left: width / 2 - 48,
+                child:
+                    MoreWidgets().buildNotSignAvatar(width: 96.0, height: 96.0),
+              ),
+            ],
+          ),
+        ),
+        MoreWidgets().buildNameSection(userName: "Emad Magdy"),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          child: Card(
+            color: AppColors.white,
+            elevation: 1.0,
+            margin: const EdgeInsets.all(1),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.0)),
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  MoreWidgets().buildCard(
+                      context: context,
+                      svgName: 'profile.svg',
+                      title: 'myProfile'.tr(),
+                      action: 'myProfile',
+                      onTaped: _onTaped),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  MoreWidgets().buildCard(
+                      context: context,
+                      svgName: 'wallet.svg',
+                      title: 'wallet'.tr(),
+                      action: 'wallet',
+                      onTaped: _onTaped),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  MoreWidgets().buildCard(
+                      context: context,
+                      svgName: 'setting.svg',
+                      title: 'setting'.tr(),
+                      action: 'setting',
+                      onTaped: _onTaped)
+                ],
+              ),
+            ),
+          ),
+        ),
+        MoreWidgets()
+            .buildSocialSection(context: context, onTaped: _openSocialUrl)
+      ],
+    );
+  }
+
+  void _openSocialUrl({required String url}) async {
+    Uri uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri,
+          webViewConfiguration: const WebViewConfiguration(
+              enableJavaScript: true, enableDomStorage: true));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'invalidUrl'.tr(),
+          style: const TextStyle(fontSize: 18.0),
+        ),
+        backgroundColor: AppColors.colorPrimary,
+        elevation: 8.0,
+        duration: const Duration(seconds: 3),
+      ));
+    }
+  }
+
+  void _onTaped({required action}) {
+    switch (action) {
+      case 'myProfile':
+        Navigator.of(context).pushNamed(AppConstant.pageLoginRoute);
+
+        break;
+      case 'wallet':
+        Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
+
+        break;
+      case 'setting':
+        Navigator.of(context).pushNamed(AppConstant.pageSettingRoute);
+        break;
+    }
+  }
+}
