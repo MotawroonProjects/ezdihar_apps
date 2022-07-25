@@ -13,8 +13,10 @@ import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_u
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/user_sign_up_screen.dart';
 import 'package:ezdihar_apps/screens/consultant_details_screen/consultant_details.dart';
 import 'package:ezdihar_apps/screens/contact_us_screen/contact_us_screen.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/cubit/consulting_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/home_screen/HomePage.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/service_screen/cubit/services_cubit.dart';
 import 'package:ezdihar_apps/screens/investment_details_screen/investment_details_screen.dart';
 import 'package:ezdihar_apps/screens/offer_screen/offer_screen.dart';
 import 'package:ezdihar_apps/screens/request_consultation_screen/request_consultation_screen.dart';
@@ -51,7 +53,11 @@ class AppRoutes {
               homePageCubit = HomePageCubit();
               return homePageCubit;
             }),
-            BlocProvider<MainPageCubit>(create: (context) => MainPageCubit())
+            BlocProvider<MainPageCubit>(create: (context) => MainPageCubit()),
+            BlocProvider<ConsultingCubit>(create: (context) => ConsultingCubit()),
+            BlocProvider<ServicesCubit>(create: (context) => ServicesCubit())
+
+
           ], child: const HomePage());
         });
       case AppConstant.pageSettingRoute:

@@ -38,7 +38,7 @@ class AppWidget {
       decoration: const BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-              image: AssetImage('${AppConstant.localImagePath}test.png'),
+              image: AssetImage('${AppConstant.localImagePath}avatar.png'),
               fit: BoxFit.cover)),
     );
   }

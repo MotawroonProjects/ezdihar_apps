@@ -1,13 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/project_model.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
-import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/models/project_model.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/widgets/main_page_widgets.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dropdown_alert/alert_controller.dart';
+import 'package:flutter_dropdown_alert/model/data_alert.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class MainPage extends StatefulWidget {
@@ -45,7 +47,17 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(children: [_buildFilterSection(), _buildListView()]));
+        body: BlocListener<MainPageCubit, MainPageState>(
+      listener: (context, state) {
+        if(state is OnLoginFirst){
+          AlertController.show('warning'.tr(), 'signin_signup'.tr(),TypeAlert.warning);
+        }else if(state is OnError){
+          AlertController.show('warning'.tr(),state.error,TypeAlert.warning);
+
+        }
+      },
+      child: Column(children: [_buildFilterSection(), _buildListView()]),
+    ));
   }
 
   Widget _buildFilterSection() {
@@ -73,7 +85,6 @@ class _MainPageState extends State<MainPage>
           Expanded(
             child: BlocBuilder<MainPageCubit, MainPageState>(
               builder: (context, state) {
-                print("btnStatusPop${state.toString()}");
                 if (state is IsLoadingData) {
                   filterType = state.type;
                 }
@@ -102,7 +113,6 @@ class _MainPageState extends State<MainPage>
           Expanded(
             child: BlocBuilder<MainPageCubit, MainPageState>(
               builder: (context, state) {
-                print("btnStatusFollow${state.toString()}");
                 if (state is IsLoadingData) {
                   filterType = state.type;
                 }
@@ -129,31 +139,67 @@ class _MainPageState extends State<MainPage>
   }
 
   Widget _buildListView() {
-    return Expanded(
-        child: RefreshIndicator(
-      color: AppColors.colorPrimary,
-      onRefresh: refreshData,
-      child: ListView.builder(
-          itemCount: 3,
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            ProjectModel model = ProjectModel();
-            return MainPageWidgets().buildProjectRow(
-                context,
-                model,
-                index,
-                addRemoveFavorite,
-                navigateToProjectDetails,
-                showSheet,
-                _colorAnimation,
-                _scaleAnimation,
-                _controller);
-          }),
-    ));
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+
+    return BlocProvider.value(
+      value: cubit,
+      child: BlocBuilder<MainPageCubit, MainPageState>(
+        builder: (context, state) {
+          if (state is IsLoadingData) {
+            return Expanded(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.colorPrimary,
+                ),
+              ),
+            );
+          }else if(state is OnError){
+            return Container();
+          } else {
+            List<ProjectModel> list = cubit.projects;
+
+            if (list.length > 0) {
+              return Expanded(
+                  child: RefreshIndicator(
+                color: AppColors.colorPrimary,
+                onRefresh: refreshData,
+                child: ListView.builder(
+                    itemCount: list.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      ProjectModel model = list[index];
+                      return MainPageWidgets().buildProjectRow(
+                          context,
+                          model,
+                          index,
+                          addRemoveFavorite,
+                          navigateToProjectDetails,
+                          showSheet,
+                          _colorAnimation,
+                          _scaleAnimation,
+                          _controller);
+                    }),
+              ));
+            } else {
+              return Expanded(
+                  child: Center(
+                child: Text(
+                  'no_projects'.tr(),
+                  style: TextStyle(color: AppColors.black, fontSize: 15.0),
+                ),
+              ));
+            }
+          }
+        },
+      ),
+    );
   }
 
-  Future<void> refreshData() async {}
+  Future<void> refreshData() async {
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+    cubit.getData();
+  }
 
   void addRemoveFavorite(ProjectModel model, int index) {
     _controller.forward();
@@ -162,6 +208,7 @@ class _MainPageState extends State<MainPage>
   void navigateToProjectDetails(ProjectModel model, int index) {}
 
   void showSheet(BuildContext context, ProjectModel model, int index) {
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
     showModalBottomSheet(
         enableDrag: true,
         isScrollControlled: true,
@@ -177,6 +224,7 @@ class _MainPageState extends State<MainPage>
               context: context,
               index: index,
               model: model,
+              cubit: cubit,
               onTaped: _onBottomSheetTaped);
         });
   }
@@ -195,12 +243,12 @@ class _MainPageState extends State<MainPage>
         builder: (_) {
           return MainPageWidgets().buildFilterSheet(
               context: context,
-              cubit: BlocProvider.of<MainPageCubit>(context),onTapped: showDialogCalender);
+              cubit: BlocProvider.of<MainPageCubit>(context),
+              onTapped: showDialogCalender);
         });
   }
 
   void showDialogCalender() {
-
     showDialog(
         context: context,
         builder: (_) {
@@ -218,7 +266,7 @@ class _MainPageState extends State<MainPage>
     Locale locale = EasyLocalization.of(context)!.locale;
     return Container(
         width: width,
-        height: height * .55,
+        height: height * .65,
         child: BlocProvider.value(
           value: cubit,
           child: BlocBuilder<MainPageCubit, MainPageState>(
@@ -228,7 +276,7 @@ class _MainPageState extends State<MainPage>
 
               if (state is CalenderFormatChanged) {
                 format = state.format;
-              }else if(state is CalenderFocusedDateChanged){
+              } else if (state is CalenderFocusedDateChanged) {
                 focusedDate = state.focusedDate;
                 selectedDate = state.selectedDate;
               }
@@ -245,40 +293,47 @@ class _MainPageState extends State<MainPage>
                       calendarStyle: CalendarStyle(
                         isTodayHighlighted: true,
                         todayDecoration: BoxDecoration(
-                          color: AppColors.colorPrimary.withOpacity(.2),
-                          shape: BoxShape.circle
-                        ),
+                            color: AppColors.colorPrimary.withOpacity(.2),
+                            shape: BoxShape.circle),
                         selectedDecoration: BoxDecoration(
                             color: AppColors.colorPrimary,
-                            shape: BoxShape.circle
-                        ),
+                            shape: BoxShape.circle),
                       ),
                       onFormatChanged: (format) {
                         cubit.updateCalenderFormat(format);
                       },
                       daysOfWeekHeight: 48.0,
-                      onDaySelected: (selectedDate,focusedDate){
-                        cubit.updateCalenderFocusedDate(focusedDate,selectedDate);
+                      onDaySelected: (selectedDate, focusedDate) {
+                        cubit.updateCalenderFocusedDate(
+                            focusedDate, selectedDate);
                       },
-                      selectedDayPredicate: (date){
-                        return isSameDay(selectedDate,date);
+                      selectedDayPredicate: (date) {
+                        return isSameDay(selectedDate, date);
                       },
-
                     ),
                   ),
                   Row(
                     children: [
                       InkWell(
-                          onTap: (){
+                          onTap: () {
                             cubit.OnDateSelected(cubit.selectedDate);
                             Navigator.pop(context);
                           },
-                          child: Text('select'.tr(),style: TextStyle(fontSize: 18.0,color: AppColors.colorPrimary),)),
-                      const SizedBox(width: 24.0,),
+                          child: Text(
+                            'select'.tr(),
+                            style: TextStyle(
+                                fontSize: 18.0, color: AppColors.colorPrimary),
+                          )),
+                      const SizedBox(
+                        width: 24.0,
+                      ),
                       InkWell(
-                          onTap: ()=>Navigator.pop(context),
-                          child: Text('cancel'.tr(),style: TextStyle(fontSize: 18.0,color: AppColors.grey6),)),
-
+                          onTap: () => Navigator.pop(context),
+                          child: Text(
+                            'cancel'.tr(),
+                            style: TextStyle(
+                                fontSize: 18.0, color: AppColors.grey6),
+                          )),
                     ],
                   )
                 ],
@@ -287,7 +342,6 @@ class _MainPageState extends State<MainPage>
           ),
         ));
   }
-
 
   void _onBottomSheetTaped(
       {required ProjectModel model,

@@ -116,6 +116,12 @@
   "chooseFile": "السيرة الذاتية",
   "provider": "مقدم الخدمة",
   "services": "الخدمات",
-  "conversation": "المحادثات"
+  "conversation": "المحادثات",
+  "all": "الكل",
+  "no_projects": "لا توجد مشاريع لعرضها",
+  "signin_signup": "مفضلك قم بتسجيل الدخول او إنشاء حساب جديد.",
+  "no_consultants": "لا توجد استشارات لعرضها",
+  "no_services": "لا توجد خدمات لعرضها",
+  "warning": "تحزير"
 
 }

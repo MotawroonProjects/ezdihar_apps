@@ -28,7 +28,7 @@ class _ConsultantsPageState extends State<ConsultantsPage>
   void initState() {
     super.initState();
     _screens = [
-      const GeneralConsultationPage(),
+      const ServicesPage(),
       const ConsultingPage()
     ];
     _tabs = [

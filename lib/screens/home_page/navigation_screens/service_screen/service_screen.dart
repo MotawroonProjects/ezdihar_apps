@@ -1,36 +1,83 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/category_model.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/service_screen/cubit/services_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/service_screen/widgets/service_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dropdown_alert/alert_controller.dart';
+import 'package:flutter_dropdown_alert/model/data_alert.dart';
 
-class GeneralConsultationPage extends StatefulWidget {
-  const GeneralConsultationPage({Key? key}) : super(key: key);
+class ServicesPage extends StatefulWidget {
+  const ServicesPage({Key? key}) : super(key: key);
 
   @override
-  State<GeneralConsultationPage> createState() =>
-      _GeneralConsultationPageState();
+  State<ServicesPage> createState() => _ServicesPageState();
 }
 
-class _GeneralConsultationPageState extends State<GeneralConsultationPage> {
+class _ServicesPageState extends State<ServicesPage> {
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: 8,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5.0,
-            childAspectRatio: 1 / 1.27),
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap:()=>_onTaped(object: Object(),index: index),
-            child: ServiceWidgets()
-                .buildListItem(context: context, object: Object(), index: index),
-          );
-        });
+    ServicesCubit cubit = BlocProvider.of<ServicesCubit>(context);
+
+    return BlocProvider.value(
+      value: cubit,
+      child: BlocBuilder<ServicesCubit, ServicesState>(
+        builder: (context, state) {
+          if (state is IsLoading) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: AppColors.colorPrimary,
+              ),
+            );
+          } else if (state is OnError) {
+            AlertController.show(
+                'warning'.tr(), state.error, TypeAlert.warning);
+            return Container();
+          } else {
+            List<CategoryModel> list = cubit.list;
+            return list.length > 0
+                ? RefreshIndicator(
+                    color: AppColors.colorPrimary,
+                    onRefresh: onRefresh,
+                    child: GridView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: list.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 5.0,
+                                childAspectRatio: 1 / 1.27),
+                        itemBuilder: (context, index) {
+                          CategoryModel model = list[index];
+                          return InkWell(
+                              onTap: () => _onTaped(model: model, index: index),
+                              child: ServiceWidgets().buildListItem(
+                                  context: context,
+                                  model: model,
+                                  index: index));
+                        }),
+                  )
+                : Center(
+                    child: Text(
+                      'no_services'.tr(),
+                      style: TextStyle(color: AppColors.black, fontSize: 15.0),
+                    ),
+                  );
+          }
+        },
+      ),
+    );
   }
 
-  void _onTaped({required Object object, required int index}) {
-     Navigator.pushNamed(context, AppConstant.pageAccountingConsultantsRoute);
+  void _onTaped({required CategoryModel model, required int index}) {
+    Navigator.pushNamed(context, AppConstant.pageAccountingConsultantsRoute);
+  }
+
+  Future<void> onRefresh() async {
+    ServicesCubit cubit = BlocProvider.of<ServicesCubit>(context);
+    cubit.getData();
   }
 }

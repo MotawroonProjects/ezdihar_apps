@@ -1,6 +1,6 @@
 class AppConstant {
   ///////////////////////routes//////////////////////////
-  static const baseUrl = '';
+  static const baseUrl = 'https://ezdehar.obibusiness.com/';
   static const localImagePath = 'assets/images/';
   static const pageSplashRoute = '/';
   static const pageHomeRoute = '/homePage';
@@ -21,8 +21,8 @@ class AppConstant {
   static const pageConsultantSignUpRoleRoute = '/consultantSignUp';
 
   //////////////////////////////////////////////
-  static const following = 'follow';
-  static const mostPopular = 'mostPopular';
+  static const following = 'following';
+  static const mostPopular = 'popular';
 
 ////////////////////////////////////////////////
   static const actionFollow = 'follow';

@@ -5,6 +5,7 @@ import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dropdown_alert/dropdown_alert.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,14 @@ class MyApp extends StatelessWidget {
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         initialRoute: "/",
+        builder: (context,child){
+          return Stack(
+            children: [
+              child!,
+              DropdownAlert(warningBackground: AppColors.colorPrimary,)
+            ],
+          );
+        },
         debugShowCheckedModeBanner: false,
         theme:  ThemeData(
           fontFamily: 'normal',

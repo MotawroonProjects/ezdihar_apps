@@ -116,7 +116,13 @@
   "chooseFile": "Choose PDF",
   "provider": "Provider",
   "services": "Services",
-  "conversation": "Conversation"
+  "conversation": "Conversation",
+  "all": "All",
+  "no_projects": "No Projects To Show",
+  "signin_signup": "Please Sign in Or Sign Up.",
+  "no_consultants": "No Consulting To Show",
+  "no_services": "No Services To Show",
+  "warning": "Warning"
 
 
 
