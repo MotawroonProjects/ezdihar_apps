@@ -9,6 +9,11 @@ class CityModel {
     cityNameEn = json['city_name_en'] as String;
   }
 
+  CityModel.initValues(){
+    id = 0;
+    cityNameAr ='إختر المدينة';
+    cityNameEn = 'Choose city';
+  }
   static Map<String, dynamic> toJson(CityModel cityModel) {
    return {
      'id':cityModel.id,

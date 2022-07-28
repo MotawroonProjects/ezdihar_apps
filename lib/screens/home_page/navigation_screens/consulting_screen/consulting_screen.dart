@@ -4,6 +4,7 @@ import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/cubit/consulting_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/widgets/consulting_widgets.dart';
+import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +34,22 @@ class _ConsultingPageState extends State<ConsultingPage> {
               ),
             );
           }else if(state is OnError){
-            return Container();
+            return Center(child:
+            InkWell(
+              onTap: onRefresh,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppWidget.svg(
+                      'reload.svg', AppColors.colorPrimary, 24.0, 24.0),
+                  SizedBox(height: 8.0,),
+                  Text('reload'.tr(), style: TextStyle(
+                      color: AppColors.colorPrimary, fontSize: 15.0),)
+                ],
+              ),
+            )
+            );
 
           } else {
             List<ConsultantTypeModel> list = cubit.list;
@@ -72,7 +88,7 @@ class _ConsultingPageState extends State<ConsultingPage> {
   }
 
   void _onTaped({required ConsultantTypeModel model, required int index}) {
-    Navigator.pushNamed(context, AppConstant.pageAccountingConsultantsRoute);
+    Navigator.pushNamed(context, AppConstant.pageAccountingConsultantsRoute,arguments: model);
   }
 
   Future<void> onRefresh() async {

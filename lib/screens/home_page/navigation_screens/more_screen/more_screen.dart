@@ -1,9 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
+import 'package:ezdihar_apps/preferences/preferences.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/more_widgets/more_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MorePage extends StatefulWidget {
@@ -14,11 +18,14 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
-    return ListView(
+    return BlocProvider(
+  create: (context) => MoreCubit(),
+  child: ListView(
       shrinkWrap: true,
       children: [
         SizedBox(
@@ -39,12 +46,12 @@ class _MorePageState extends State<MorePage> {
                 top: 77.0,
                 left: width / 2 - 48,
                 child:
-                    MoreWidgets().buildNotSignAvatar(width: 96.0, height: 96.0),
+                    MoreWidgets().buildAvatar(context),
               ),
             ],
           ),
         ),
-        MoreWidgets().buildNameSection(userName: "Emad Magdy"),
+        MoreWidgets().buildNameSection(navigateToLoginActivity,context),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: Card(
@@ -90,7 +97,8 @@ class _MorePageState extends State<MorePage> {
         MoreWidgets()
             .buildSocialSection(context: context, onTaped: _openSocialUrl)
       ],
-    );
+    ),
+);
   }
 
   void _openSocialUrl({required String url}) async {
@@ -116,16 +124,36 @@ class _MorePageState extends State<MorePage> {
   void _onTaped({required action}) {
     switch (action) {
       case 'myProfile':
-        Navigator.of(context).pushNamed(AppConstant.pageLoginRoute);
+        Preferences.instance.getUserModel().then((value){
+          if(!value.user.isLoggedIn){
+            navigateToLoginActivity();
+          }else{
+
+          }
+        });
 
         break;
       case 'wallet':
-        Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
+        Preferences.instance.getUserModel().then((value){
+          if(!value.user.isLoggedIn){
+            navigateToLoginActivity();
+          }else{
+            Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
+
+          }
+        });
 
         break;
       case 'setting':
         Navigator.of(context).pushNamed(AppConstant.pageSettingRoute);
         break;
+    }
+  }
+  void navigateToLoginActivity() async {
+    var result = await Navigator.of(context).pushNamed(AppConstant.pageLoginRoute);
+    if(result!=null){
+      MoreCubit cubit = BlocProvider.of<MoreCubit>(context);
+      cubit.getUserModel();
     }
   }
 }

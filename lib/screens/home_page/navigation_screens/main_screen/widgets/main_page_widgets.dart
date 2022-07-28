@@ -48,6 +48,8 @@ class MainPageWidgets {
                 dense: true,
                 contentPadding: EdgeInsets.zero,
                 leading: CachedNetworkImage(
+                  width: 60,
+                    height: 60,
                     imageUrl: model.user.image,
                     placeholder: (context, url) =>
                         AppWidget.circleAvatar(60, 60),
@@ -58,7 +60,7 @@ class MainPageWidgets {
                     },
                     imageBuilder: (context, imageProvider) => CircleAvatar(
                           backgroundImage: imageProvider,
-                          radius: 30,
+                          radius: 60,
                         )),
                 title: Text(
                   model.user.firstName + " " + model.user.lastName,
@@ -427,9 +429,10 @@ class MainPageWidgets {
                             child: BlocBuilder<MainPageCubit, MainPageState>(
                               builder: (context, state) {
                                 String date = cubit.filterDate;
+                                category_id = cubit.category_id;
 
                                 return MaterialButton(
-                                  onPressed: date != 'all'.tr() &&
+                                  onPressed: date != 'all'.tr() ||
                                           category_id != 'all'.tr()
                                       ? () {
                                           Navigator.pop(context);

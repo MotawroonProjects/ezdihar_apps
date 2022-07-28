@@ -3,7 +3,7 @@ import 'package:ezdihar_apps/models/category_model.dart';
 class ConsultantTypeModel {
   late int id;
   late String title_ar;
-  late String title_en;
+  late String title_en='';
   late int category_id;
   late String image;
   late CategoryModel category;
@@ -12,11 +12,13 @@ class ConsultantTypeModel {
   ConsultantTypeModel();
 
   ConsultantTypeModel.fromJson(Map<String, dynamic> json) {
+    print('json${json.toString()}');
+
     id = json['id'] as int;
-    title_ar = json['title_ar'] as String;
-    title_en = json['title_en'] as String;
+    title_ar = json['title_ar']!=null? json['title_ar'] as String:"";
+    title_en =  json['title_en'] as String;
     category_id = json['category_id'] as int;
-    image = json['image'] as String;
+    image = json['image']!=null?json['image'] as String:"";
     category = CategoryModel.fromJson(json['category']);
   }
   static Map<String,dynamic> toJson(ConsultantTypeModel model){

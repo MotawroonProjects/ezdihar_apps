@@ -216,14 +216,22 @@ class _UserRolePageState extends State<UserRolePage> {
     );
   }
 
-  navigateToSignUp({required String role}) {
+  navigateToSignUp({required String role}) async {
     if (role == AppConstant.role_user) {
-      Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
+      var result = await Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
+      if(result!=null){
+        Navigator.pop(context,true);
+      }
     } else if (role == AppConstant.role_investor) {
-      Navigator.pushNamed(context, AppConstant.pageInvestorSignUpRoleRoute);
+      var result = await Navigator.pushNamed(context, AppConstant.pageInvestorSignUpRoleRoute);
+      if(result!=null){
+        Navigator.pop(context,true);
+      }
     } else if (role == AppConstant.role_consultant) {
-      Navigator.pushNamed(context, AppConstant.pageConsultantSignUpRoleRoute);
-
+      var result = await Navigator.pushNamed(context, AppConstant.pageConsultantSignUpRoleRoute);
+      if(result!=null){
+        Navigator.pop(context,true);
+      }
     }
   }
 }

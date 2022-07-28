@@ -1,37 +1,64 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
+import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
+import 'package:ezdihar_apps/preferences/preferences.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../constants/app_constant.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MoreWidgets {
-  Widget buildNotSignAvatar({required double width, required double height}) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(width),
-        child: Image.asset(
-          "${AppConstant.localImagePath}avatar.png",
-          fit: BoxFit.cover,
-        ),
+  Widget buildAvatar(BuildContext context) {
+    MoreCubit cubit = BlocProvider.of(context);
+
+    return BlocProvider.value(
+      value: cubit,
+      child: BlocBuilder<MoreCubit, MoreState>(
+        builder: (context, state) {
+          if (state is OnUserModelGet) {
+            print('data2=>${state.toString()}');
+
+            UserModel userModel = state.userModel;
+            return SizedBox(
+              width: 96.0,
+              height: 96.0,
+              child: userModel.user.isLoggedIn
+                  ? CachedNetworkImage(
+                      imageUrl: userModel.user.image,
+                      placeholder: (context, url) =>
+                          AppWidget.circleAvatar(96.0, 96.0),
+                      errorWidget: (context, url, error) =>
+                          AppWidget.circleAvatar(96.0, 96.0),
+                      imageBuilder: (context, imageProvider) => CircleAvatar(
+                        backgroundImage: imageProvider,
+                      ),
+                    )
+                  : AppWidget.circleAvatar(96.0, 96.0),
+            );
+          } else {
+            return SizedBox(
+                width: 96.0,
+                height: 96.0,
+                child: AppWidget.circleAvatar(96.0, 96.0));
+          }
+        },
       ),
     );
   }
 
-  Widget buildCard({
-    required BuildContext context,
-    required String svgName,
-    required String title,
-    required String action,
-    required Function onTaped
-  }) {
+  Widget buildCard(
+      {required BuildContext context,
+      required String svgName,
+      required String title,
+      required String action,
+      required Function onTaped}) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return SizedBox(
       height: 72.0,
       child: InkWell(
-        onTap: ()=>onTaped(action:action),
+        onTap: () => onTaped(action: action),
         child: Card(
           elevation: 1.0,
           color: AppColors.grey3,
@@ -81,32 +108,63 @@ class MoreWidgets {
     );
   }
 
-  Widget buildNameSection({required String userName}) {
+  Widget buildNameSection(Function onTapped,BuildContext context) {
+    MoreCubit cubit = BlocProvider.of(context);
+
     return Container(
       alignment: Alignment.center,
       margin: const EdgeInsets.only(top: 16.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            userName,
-            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            width: 8.0,
-          ),
-          Container(
-            width: 28.0,
-            height: 28.0,
-            padding: const EdgeInsets.all(5.0),
-            decoration: BoxDecoration(
-              color: AppColors.color1,
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: AppWidget.svg('edit.svg', AppColors.white, 20.0, 20.0),
-          )
-        ],
+      child: BlocProvider.value(
+        value: cubit,
+        child: BlocBuilder<MoreCubit, MoreState>(
+          builder: (context, state) {
+            print('moreUserData=>${state.toString()}');
+            if (state is OnUserModelGet) {
+              UserModel userModel = state.userModel;
+              print(
+                  'moreUserData=>${state.userModel.user.firstName != null ? state.userModel.user.firstName : ""}');
+
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: !userModel.user.isLoggedIn
+                        ? () {
+                            onTapped();
+                          }
+                        : null,
+                    child: Text(
+                      userModel.user.isLoggedIn
+                          ? '${userModel.user.firstName + " " + userModel.user.lastName}'
+                          : 'login'.tr(),
+                      style: const TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8.0,
+                  ),
+                  userModel.user.isLoggedIn
+                      ? Container(
+                          width: 28.0,
+                          height: 28.0,
+                          padding: const EdgeInsets.all(5.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.color1,
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: AppWidget.svg(
+                              'edit.svg', AppColors.white, 20.0, 20.0),
+                        )
+                      : SizedBox()
+                ],
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
       ),
     );
   }

@@ -3,14 +3,23 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/models/country_login.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/user_data_model.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
+import 'package:ezdihar_apps/preferences/preferences.dart';
+import 'package:ezdihar_apps/remote/service.dart';
+import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:meta/meta.dart';
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
+  late ServiceApi api;
   late Country selectedCountry;
   List<Country> countries = [
     Country('+966', 'saudi_arabia'.tr(), 'saudi_arabia.png'),
@@ -35,6 +44,7 @@ class LoginCubit extends Cubit<LoginState> {
     time = '00:${seconds}';
     selectedCountry = countries[0];
     loginModel.phone_code = selectedCountry.phone_code;
+    api = ServiceApi();
   }
 
   updateCountryValue(Country country) {
@@ -61,7 +71,8 @@ class LoginCubit extends Cubit<LoginState> {
     loginModel.phone = phone;
     _checkValidLoginData();
   }
-  updateCanVerifySmsCode(String smsCode){
+
+  updateCanVerifySmsCode(String smsCode) {
     mySmsCode = smsCode;
     emit(OnCanVerifySmsCode());
   }
@@ -76,31 +87,26 @@ class LoginCubit extends Cubit<LoginState> {
         verificationCompleted: (PhoneAuthCredential credential) {
           smsCode = credential.smsCode!;
 
-
-
           emit(OnSmsCodeSent(smsCode));
           verifySmsCode(smsCode);
-
         },
-        verificationFailed: (FirebaseAuthException e) {
-        },
+        verificationFailed: (FirebaseAuthException e) {},
         codeSent: (String verificationId, int? resendToken) {
           this.resendToken = resendToken;
           this.verificationId = verificationId;
           print("verificationId=>${verificationId}");
-
         },
         codeAutoRetrievalTimeout: (String verificationId) {});
   }
 
-  verifySmsCode(String smsCode) async{
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId!, smsCode: smsCode);
-    await _mAuth.signInWithCredential(credential).then((value){
+  verifySmsCode(String smsCode) async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId!, smsCode: smsCode);
+    await _mAuth.signInWithCredential(credential).then((value) {
       print('LoginSuccess');
       stopTimer();
-    }).catchError((error){
+    }).catchError((error) {
       print('phone auth =>${error.toString()}');
-
     });
   }
 
@@ -121,5 +127,30 @@ class LoginCubit extends Cubit<LoginState> {
 
   stopTimer() {
     timer!.cancel();
+  }
+
+  void login(BuildContext context) async {
+    AppWidget.createProgressDialog(context, 'wait'.tr());
+
+    try {
+      UserDataModel response = await api.login(loginModel);
+      Navigator.pop(context);
+
+      if (response.status.code == 200) {
+        response.userModel.user.isLoggedIn = true;
+        Preferences.instance.setUser(response.userModel).then((value) {
+          emit(OnLoginSuccess(response.userModel));
+        });
+
+      } else if (response.status.code == 406) {
+        emit(OnSignUp(loginModel));
+      } else {
+        print("errorCode=>${response.status.code}");
+      }
+    } catch (e) {
+      print("error${e.toString()}");
+      Navigator.pop(context);
+      emit(OnError(e.toString()));
+    }
   }
 }

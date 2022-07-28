@@ -3,21 +3,30 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/city_model.dart';
+import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_state.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserSignUpPage extends StatefulWidget {
-  const UserSignUpPage({Key? key}) : super(key: key);
+  LoginModel loginModel;
+
+  UserSignUpPage({Key? key, required this.loginModel}) : super(key: key);
 
   @override
-  State<UserSignUpPage> createState() => _UserSignUpPageState();
+  State<UserSignUpPage> createState() => _UserSignUpPageState(loginModel);
 }
 
 class _UserSignUpPageState extends State<UserSignUpPage> {
+  LoginModel loginModel;
+
+  _UserSignUpPageState(this.loginModel);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,74 +48,89 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
   }
 
   buildBodySection() {
-    return ListView(
-      children: [
-        SizedBox(
-          height: 36.0,
-        ),
-        buildAvatarSection('avatar2.png'),
-        SizedBox(
-          height: 36.0,
-        ),
-        buildForm(),
-        SizedBox(
-          height: 56.0,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              buildButtonBack(),
-              SizedBox(
-                width: 8.0,
-              ),
-              buildButtonStart()
-            ],
+    UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
+    cubit.updatePhoneCode_Phone(loginModel.phone_code, loginModel.phone);
+    return BlocListener<UserSignUpCubit, UserSignUpState>(
+      listener: (context, state) {
+        if(state is OnError){
+
+        }else if(state is OnSignUpSuccess){
+          Navigator.pop(context,true);
+        }
+      },
+      child: ListView(
+        children: [
+          SizedBox(
+            height: 36.0,
           ),
-        ),
-        SizedBox(
-          height: 56.0,
-        ),
-      ],
+          buildAvatarSection('avatar2.png'),
+          SizedBox(
+            height: 36.0,
+          ),
+          buildForm(),
+          SizedBox(
+            height: 56.0,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                buildButtonBack(),
+                SizedBox(
+                  width: 8.0,
+                ),
+                buildButtonStart()
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 56.0,
+          ),
+        ],
+      ),
     );
   }
 
   buildAvatarSection(String image) {
     return BlocProvider.value(
       value: BlocProvider.of<UserSignUpCubit>(context),
-      child: InkWell(
-        onTap: () => buildAlertDialog(),
-        child: BlocBuilder<UserSignUpCubit, UserSignUpState>(
-          builder: (context, state) {
-            XFile? file = BlocProvider.of<UserSignUpCubit>(context).imageFile;
-            if (state is UserPhotoPicked) {
-              file = state.file;
-            }
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(147.0),
-                  child: BlocProvider.of<UserSignUpCubit>(context)
-                          .imageType
-                          .isEmpty
-                      ? Image.asset(
-                          AppConstant.localImagePath + image,
-                          width: 147.0,
-                          height: 147.0,
-                        )
-                      : Image.file(
-                          File(file!.path),
-                          width: 147.0,
-                          height: 147.0,
-                          fit: BoxFit.cover,
-                        ),
+      child: BlocBuilder<UserSignUpCubit, UserSignUpState>(
+        builder: (context, state) {
+          XFile? file = BlocProvider.of<UserSignUpCubit>(context).imageFile;
+          if (state is UserPhotoPicked) {
+            file = state.file;
+          }
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () => buildAlertDialog(),
+                child: Container(
+                  width: 147.0,
+                  height: 147.0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(147.0),
+                    child: BlocProvider.of<UserSignUpCubit>(context)
+                            .imageType
+                            .isEmpty
+                        ? Image.asset(
+                            AppConstant.localImagePath + image,
+                            width: 147.0,
+                            height: 147.0,
+                          )
+                        : Image.file(
+                            File(file!.path),
+                            width: 147.0,
+                            height: 147.0,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -239,7 +263,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
             SizedBox(
               height: 8.0,
             ),
-            buildTextTown(hint: 'town'.tr()),
+            buildCityField(),
             SizedBox(
               height: 24.0,
             ),
@@ -302,18 +326,25 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
     );
   }
 
-  buildTextTown({required String hint}) {
+  buildCityField() {
     double width = MediaQuery.of(context).size.width;
-    return Container(
-      width: width,
-      height: 54.0,
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      decoration: BoxDecoration(
-          color: AppColors.white, borderRadius: BorderRadius.circular(8)),
-      child: Text(
-        hint,
-        style: TextStyle(fontSize: 16.0, color: AppColors.grey6),
+    UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
+    String lang = EasyLocalization.of(context)!.locale.languageCode;
+    return InkWell(
+      onTap: () => navigateToCitiesPage(),
+      child: BlocBuilder<UserSignUpCubit, UserSignUpState>(
+        builder: (context, state) {
+          return Container(
+            width: width,
+            height: 54.0,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+                color: AppColors.white, borderRadius: BorderRadius.circular(8)),
+            child: Text(
+                '${lang == 'ar' ? cubit.selectedCityModel.cityNameAr : cubit.selectedCityModel.cityNameEn}'),
+          );
+        },
       ),
     );
   }
@@ -342,7 +373,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
               style: TextStyle(
                   fontSize: 16.0,
                   color:
-                      date == 'DD/MM/YYYY' ? AppColors.grey6 : AppColors.black),
+                      date == 'YYYY-MM-DD' ? AppColors.grey6 : AppColors.black),
             );
           },
         ),
@@ -360,7 +391,9 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
         }
         return Expanded(
             child: MaterialButton(
-          onPressed: isValid ? () {} : null,
+          onPressed: isValid ? () {
+            cubit.signUp(context);
+          } : null,
           height: 56.0,
           color: AppColors.colorPrimary,
           disabledColor: AppColors.grey4,
@@ -410,7 +443,17 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
 
     if (date != null) {
       BlocProvider.of<UserSignUpCubit>(context)
-          .updateBirthDate(date: DateFormat('dd-MM-yyyy').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd').format(date));
+    }
+  }
+
+  void navigateToCitiesPage() async {
+    var result =
+        await Navigator.pushNamed(context, AppConstant.pageCitiesRoute);
+    if (result != null) {
+      CityModel model = result as CityModel;
+      UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
+      cubit.updateSelectedCity(model);
     }
   }
 }

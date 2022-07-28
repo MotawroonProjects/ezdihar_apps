@@ -76,8 +76,15 @@ class MainPageCubit extends Cubit<MainPageState> {
       if (model.user.isLoggedIn) {
         user_token = model.access_token;
       }
+      print('filter=>${filterType+"__"+filterDate+""+selectedCategoryModel.id.toString()}');
+      String date = 'All';
+      if(filterDate=='الكل'){
+        date = "All";
+      }else{
+        date = filterDate;
+      }
       HomeModel home = await api.getHomeData(
-          user_token, filterType, filterDate, selectedCategoryModel.id);
+          user_token, filterType, date, selectedCategoryModel.id);
       if (home.status.code == 200) {
         projects = home.data;
         emit(OnDataSuccess(projects));
@@ -100,6 +107,8 @@ class MainPageCubit extends Cubit<MainPageState> {
 
   void updateSelectedCategory(CategoryModel categoryModel) {
     this.selectedCategoryModel = categoryModel;
+    this.category_id = categoryModel.title_en;
+    emit(OnCategorySelectedState(categoryModel));
   }
 
   void clearFilter() {

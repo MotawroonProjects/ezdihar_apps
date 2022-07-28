@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/country_login.dart';
+import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/login_screen/cubit/login_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
@@ -43,73 +45,76 @@ class _LoginPageState extends State<LoginPage> {
     double height = MediaQuery.of(context).size.height;
     double spaceHeight = 0.0;
 
-    return BlocListener<LoginCubit, LoginState>(
-      listener: (context, state) {
-       print("Status=>${state}");
+
+    return BlocListener<LoginCubit, LoginState>(listener: (context, state) {
+      print("Status=>${state}");
+      if(state is OnSignUp){
+        navigateToUserScreen(state.loginModel);
+      }else if(state is OnLoginSuccess){
+        Navigator.pop(context,true);
+      }
+    }, child: LayoutBuilder(
+      builder: (context, constraints) {
+        spaceHeight = height - constraints.maxHeight - 36;
+        return ListView(
+          children: [
+            Column(
+              children: [
+                SizedBox(
+                  height: 56.0,
+                ),
+                _buildLogoSection(),
+                _buildLoginSection(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: BlocBuilder<LoginCubit, LoginState>(
+                    builder: (context, state) {
+                      bool isValid = cubit.isLoginValid;
+                      if (state is OnLoginVaildFaild) {
+                        isValid = false;
+                      } else if (state is OnLoginVaild) {
+                        isValid = true;
+                      }else if (state is OnError){
+
+                      }
+                      return MaterialButton(
+                        onPressed: isValid
+                            ? () {
+                                cubit.login(context);
+                                /*showConfirmCodeDialog();*/
+                                //Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
+                              }
+                            : null,
+                        height: 56.0,
+                        disabledColor: AppColors.grey4,
+                        minWidth: width,
+                        child: Text(
+                          'login'.tr(),
+                          style:
+                              TextStyle(color: AppColors.white, fontSize: 16.0),
+                        ),
+                        color:
+                            isValid ? AppColors.colorPrimary : AppColors.grey4,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: spaceHeight,
+            ),
+            AspectRatio(
+              aspectRatio: 1 / .46,
+              child:
+                  Image.asset('${AppConstant.localImagePath}login_bottom.png'),
+            ),
+          ],
+        );
       },
-      child: LayoutBuilder(
-        builder:(context, constraints) {
-          spaceHeight = height-constraints.maxHeight-36;
-          return ListView(
-            children: [
-              Column(
-
-                children: [
-                  SizedBox(
-                    height: 56.0,
-                  ),
-                  _buildLogoSection(),
-                  _buildLoginSection(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: BlocBuilder<LoginCubit, LoginState>(
-                      builder: (context, state) {
-                        bool isValid = cubit.isLoginValid;
-                        if (state is OnLoginVaildFaild) {
-                          isValid = false;
-                        } else if (state is OnLoginVaild) {
-                          isValid = true;
-                        }
-                        return MaterialButton(
-                          onPressed: isValid
-                              ? () {
-                            /*showConfirmCodeDialog();*/
-                            Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
-                          }
-                              : null,
-                          height: 56.0,
-                          disabledColor: AppColors.grey4,
-                          minWidth: width,
-                          child: Text(
-                            'login'.tr(),
-                            style: TextStyle(
-                                color: AppColors.white, fontSize: 16.0),
-                          ),
-                          color: isValid
-                              ? AppColors.colorPrimary
-                              : AppColors.grey4,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)),
-                        );
-                      },
-                    ),
-                  ),
-
-
-                ],
-              ),
-              SizedBox(height: spaceHeight,),
-              AspectRatio(
-                aspectRatio: 1 / .46,
-                child:
-                Image.asset('${AppConstant.localImagePath}login_bottom.png'),
-              ),
-            ],
-          );
-        },
-
-      )
-    );
+    ));
   }
 
   _buildLogoSection() {
@@ -396,5 +401,12 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         });
+  }
+
+  void navigateToUserScreen(LoginModel loginModel) async {
+    var result = await Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute,arguments: loginModel);
+    if(result!=null){
+      Navigator.pop(context,true);
+    }
   }
 }

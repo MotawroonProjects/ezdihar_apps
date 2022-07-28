@@ -1,5 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/category_model.dart';
+import 'package:ezdihar_apps/models/consultant_type_model.dart';
+import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/screens/accounting_consultants_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/add_screen/add_screen.dart';
 import 'package:ezdihar_apps/screens/auth_screens/consultant_sign_up/consultant_sign_up.dart';
@@ -11,11 +14,14 @@ import 'package:ezdihar_apps/screens/auth_screens/login_screen/login_screen.dart
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/user_role_screen.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/user_sign_up_screen.dart';
+import 'package:ezdihar_apps/screens/cities_screen/cities_page.dart';
+import 'package:ezdihar_apps/screens/cities_screen/cubit/cities_cubit.dart';
 import 'package:ezdihar_apps/screens/consultant_details_screen/consultant_details.dart';
 import 'package:ezdihar_apps/screens/contact_us_screen/contact_us_screen.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/cubit/consulting_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/home_screen/HomePage.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
+import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/service_screen/cubit/services_cubit.dart';
 import 'package:ezdihar_apps/screens/investment_details_screen/investment_details_screen.dart';
 import 'package:ezdihar_apps/screens/offer_screen/offer_screen.dart';
@@ -55,7 +61,8 @@ class AppRoutes {
             }),
             BlocProvider<MainPageCubit>(create: (context) => MainPageCubit()),
             BlocProvider<ConsultingCubit>(create: (context) => ConsultingCubit()),
-            BlocProvider<ServicesCubit>(create: (context) => ServicesCubit())
+            BlocProvider<ServicesCubit>(create: (context) => ServicesCubit()),
+            BlocProvider<MoreCubit>(create: (context) => MoreCubit())
 
 
           ], child: const HomePage());
@@ -70,8 +77,9 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (context) => const InvestmentDetailsPage());
       case AppConstant.pageAccountingConsultantsRoute:
+        ConsultantTypeModel consultantTypeModel = settings.arguments as ConsultantTypeModel;
         return MaterialPageRoute(
-            builder: (context) => const AccountingConsultantsPage());
+            builder: (context) =>  AccountingConsultantsPage(consultantTypeModel: consultantTypeModel,));
 
       case AppConstant.pageOfferRoute:
         return MaterialPageRoute(builder: (context) => const OfferPage());
@@ -82,8 +90,10 @@ class AppRoutes {
       case AppConstant.pageContactUsRoute:
         return MaterialPageRoute(builder: (context) => const ContactUsPage());
       case AppConstant.pageConsultantDetailsRoute:
+        int consultant_id = settings.arguments as int;
+
         return MaterialPageRoute(
-            builder: (context) => const ConsultantDetailsPage());
+            builder: (context) => ConsultantDetailsPage(consultant_id: consultant_id,));
       case AppConstant.pageRequestConsultationRoute:
         return MaterialPageRoute(
             builder: (context) => const RequestConsultationPage());
@@ -103,10 +113,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (context) => const UserRolePage());
 
       case AppConstant.pageUserSignUpRoleRoute:
+        LoginModel loginModel=  settings.arguments as LoginModel;
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<UserSignUpCubit>(
             create: (context) => UserSignUpCubit(),
-            child: UserSignUpPage(),
+            child: UserSignUpPage(loginModel: loginModel,),
           );
         });
 
@@ -122,6 +133,14 @@ class AppRoutes {
           return BlocProvider<ConsultantSignUpCubit>(
             create: (context) => ConsultantSignUpCubit(),
             child: ConsultantSignUpPage(),
+          );
+        });
+
+      case AppConstant.pageCitiesRoute:
+        return MaterialPageRoute(builder: (context) {
+          return BlocProvider<CitiesCubit>(
+            create: (context) => CitiesCubit(),
+            child: CitiesPage(),
           );
         });
     }

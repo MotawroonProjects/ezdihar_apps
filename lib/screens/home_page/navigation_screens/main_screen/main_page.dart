@@ -140,7 +140,7 @@ class _MainPageState extends State<MainPage>
 
   Widget _buildListView() {
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
-
+    double height = MediaQuery.of(context).size.height;
     return BlocProvider.value(
       value: cubit,
       child: BlocBuilder<MainPageCubit, MainPageState>(
@@ -154,7 +154,22 @@ class _MainPageState extends State<MainPage>
               ),
             );
           }else if(state is OnError){
-            return Container();
+            return Expanded(
+              child: Center(child:
+                InkWell(
+                  onTap: refreshData,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppWidget.svg('reload.svg', AppColors.colorPrimary, 24.0,24.0),
+                      SizedBox(height:8.0,),
+                      Text('reload'.tr(),style: TextStyle(color: AppColors.colorPrimary,fontSize: 15.0),)
+                    ],
+                  ),
+                )
+                ,),
+            );
           } else {
             List<ProjectModel> list = cubit.projects;
 

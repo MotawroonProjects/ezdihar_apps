@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -22,7 +24,7 @@ class AccountingConsultantsWidgets {
 
   Widget buildListItem(
       {required BuildContext context,
-      required Object object,
+      required UserModel model,
       required int index}) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return Card(
@@ -39,9 +41,18 @@ class AccountingConsultantsWidgets {
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              leading: _buildAvatar(width: 48.0, height: 48.0),
+              leading: model.user.image.isNotEmpty?CachedNetworkImage(
+                imageUrl: model.user.image,
+                placeholder: (context,url)=>_buildAvatar(width: 48.0, height: 48.0),
+                errorWidget: (context,url,error)=>_buildAvatar(width: 48.0, height: 48.0),
+                width: 48,
+                height: 48,
+                imageBuilder: (context,imageProvider){
+                  return CircleAvatar(backgroundImage:imageProvider,radius: 48.0,);
+                },
+              ):_buildAvatar(width: 48.0, height: 48.0),
               title: Text(
-                'khaled hossam',
+                '${model.user.firstName+" "+model.user.lastName}',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.0,
@@ -49,7 +60,7 @@ class AccountingConsultantsWidgets {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              subtitle: _buildRateBar(rate: 4),
+              subtitle: _buildRateBar(rate: model.adviser_data!.rate),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -95,7 +106,7 @@ class AccountingConsultantsWidgets {
                             const SizedBox(width: 8,),
                             RichText(
                               text: TextSpan(
-                                  text: '170',
+                                  text: '${model.adviser_data!.consultant_price}',
                                   style: const TextStyle(
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,
@@ -136,7 +147,7 @@ class AccountingConsultantsWidgets {
                         const SizedBox(width: 8,),
                         RichText(
                           text: TextSpan(
-                              text: '34',
+                              text: '${model.adviser_data!.count_people}',
                               style: const TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold,
