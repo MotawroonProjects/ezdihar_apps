@@ -18,8 +18,6 @@ class MoreWidgets {
       child: BlocBuilder<MoreCubit, MoreState>(
         builder: (context, state) {
           if (state is OnUserModelGet) {
-            print('data2=>${state.toString()}');
-
             UserModel userModel = state.userModel;
             return SizedBox(
               width: 96.0,
@@ -118,11 +116,8 @@ class MoreWidgets {
         value: cubit,
         child: BlocBuilder<MoreCubit, MoreState>(
           builder: (context, state) {
-            print('moreUserData=>${state.toString()}');
             if (state is OnUserModelGet) {
               UserModel userModel = state.userModel;
-              print(
-                  'moreUserData=>${state.userModel.user.firstName != null ? state.userModel.user.firstName : ""}');
 
               return Row(
                 mainAxisSize: MainAxisSize.min,

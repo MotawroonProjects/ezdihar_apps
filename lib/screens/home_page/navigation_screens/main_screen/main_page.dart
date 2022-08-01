@@ -22,24 +22,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation _colorAnimation;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
-    _colorAnimation =
-        ColorTween(begin: AppColors.grey1, end: AppColors.colorPrimary)
-            .animate(_controller);
-
-    _scaleAnimation = TweenSequence<double>(<TweenSequenceItem<double>>[
-      TweenSequenceItem(
-          tween: Tween<double>(begin: 24.0, end: 30.0), weight: 30.0),
-      TweenSequenceItem(
-          tween: Tween<double>(begin: 30.0, end: 24.0), weight: 24.0)
-    ]).animate(_controller);
 
     _controller.addListener(() {});
   }
@@ -49,11 +37,11 @@ class _MainPageState extends State<MainPage>
     return Scaffold(
         body: BlocListener<MainPageCubit, MainPageState>(
       listener: (context, state) {
-        if(state is OnLoginFirst){
-          AlertController.show('warning'.tr(), 'signin_signup'.tr(),TypeAlert.warning);
-        }else if(state is OnError){
-          AlertController.show('warning'.tr(),state.error,TypeAlert.warning);
-
+        if (state is OnLoginFirst) {
+          AlertController.show(
+              'warning'.tr(), 'signin_signup'.tr(), TypeAlert.warning);
+        } else if (state is OnError) {
+          AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
         }
       },
       child: Column(children: [_buildFilterSection(), _buildListView()]),
@@ -153,22 +141,29 @@ class _MainPageState extends State<MainPage>
                 ),
               ),
             );
-          }else if(state is OnError){
+          } else if (state is OnError) {
             return Expanded(
-              child: Center(child:
-                InkWell(
+              child: Center(
+                child: InkWell(
                   onTap: refreshData,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      AppWidget.svg('reload.svg', AppColors.colorPrimary, 24.0,24.0),
-                      SizedBox(height:8.0,),
-                      Text('reload'.tr(),style: TextStyle(color: AppColors.colorPrimary,fontSize: 15.0),)
+                      AppWidget.svg(
+                          'reload.svg', AppColors.colorPrimary, 24.0, 24.0),
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Text(
+                        'reload'.tr(),
+                        style: TextStyle(
+                            color: AppColors.colorPrimary, fontSize: 15.0),
+                      )
                     ],
                   ),
-                )
-                ,),
+                ),
+              ),
             );
           } else {
             List<ProjectModel> list = cubit.projects;
@@ -191,8 +186,6 @@ class _MainPageState extends State<MainPage>
                           addRemoveFavorite,
                           navigateToProjectDetails,
                           showSheet,
-                          _colorAnimation,
-                          _scaleAnimation,
                           _controller);
                     }),
               ));
@@ -216,8 +209,10 @@ class _MainPageState extends State<MainPage>
     cubit.getData();
   }
 
-  void addRemoveFavorite(ProjectModel model, int index) {
-    _controller.forward();
+  void addRemoveFavorite(int index, ProjectModel model) {
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+    cubit.updateProject(index, model);
+    cubit.love_report_follow(index, model, AppConstant.actionLove);
   }
 
   void navigateToProjectDetails(ProjectModel model, int index) {}
@@ -362,6 +357,10 @@ class _MainPageState extends State<MainPage>
       {required ProjectModel model,
       required int index,
       required String action}) {
+    print("dat=>${model.isFollowed}");
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+    cubit.updateProject(index, model);
+    cubit.love_report_follow(index, model, 'follow');
     Navigator.of(context).pop();
   }
 

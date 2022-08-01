@@ -3,6 +3,7 @@ import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
+import 'package:ezdihar_apps/routes/app_routes.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/more_widgets/more_widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,87 +19,98 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
     return BlocProvider(
-  create: (context) => MoreCubit(),
-  child: ListView(
-      shrinkWrap: true,
-      children: [
-        SizedBox(
-          height: 173,
-          child: Stack(
-            children: [
-              Positioned(
-                  child: Container(
-                width: width,
-                height: 125.0,
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(
-                            '${AppConstant.localImagePath}top_profile.png'),
-                        fit: BoxFit.fill)),
-              )),
-              Positioned(
-                top: 77.0,
-                left: width / 2 - 48,
-                child:
-                    MoreWidgets().buildAvatar(context),
-              ),
-            ],
+      create: (context) => MoreCubit(),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          SizedBox(
+            height: 173,
+            child: Stack(
+              children: [
+                Positioned(
+                    child: Container(
+                  width: width,
+                  height: 125.0,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(
+                              '${AppConstant.localImagePath}top_profile.png'),
+                          fit: BoxFit.fill)),
+                )),
+                Positioned(
+                  top: 77.0,
+                  left: width / 2 - 48,
+                  child: MoreWidgets().buildAvatar(context),
+                ),
+              ],
+            ),
           ),
-        ),
-        MoreWidgets().buildNameSection(navigateToLoginActivity,context),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          child: Card(
-            color: AppColors.white,
-            elevation: 1.0,
-            margin: const EdgeInsets.all(1),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24.0)),
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  MoreWidgets().buildCard(
-                      context: context,
-                      svgName: 'profile.svg',
-                      title: 'myProfile'.tr(),
-                      action: 'myProfile',
-                      onTaped: _onTaped),
-                  const SizedBox(
-                    height: 8.0,
-                  ),
-                  MoreWidgets().buildCard(
-                      context: context,
-                      svgName: 'wallet.svg',
-                      title: 'wallet'.tr(),
-                      action: 'wallet',
-                      onTaped: _onTaped),
-                  const SizedBox(
-                    height: 8.0,
-                  ),
-                  MoreWidgets().buildCard(
-                      context: context,
-                      svgName: 'setting.svg',
-                      title: 'setting'.tr(),
-                      action: 'setting',
-                      onTaped: _onTaped)
-                ],
+          MoreWidgets().buildNameSection(navigateToLoginActivity, context),
+          Container(
+            margin:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            child: Card(
+              color: AppColors.white,
+              elevation: 1.0,
+              margin: const EdgeInsets.all(1),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24.0)),
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    MoreWidgets().buildCard(
+                        context: context,
+                        svgName: 'profile.svg',
+                        title: 'myProfile'.tr(),
+                        action: 'myProfile',
+                        onTaped: _onTaped),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    MoreWidgets().buildCard(
+                        context: context,
+                        svgName: 'love.svg',
+                        title: 'love'.tr(),
+                        action: 'love',
+                        onTaped: _onTaped),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    MoreWidgets().buildCard(
+                        context: context,
+                        svgName: 'wallet.svg',
+                        title: 'wallet'.tr(),
+                        action: 'wallet',
+                        onTaped: _onTaped),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    MoreWidgets().buildCard(
+                        context: context,
+                        svgName: 'setting.svg',
+                        title: 'setting'.tr(),
+                        action: 'setting',
+                        onTaped: _onTaped)
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        MoreWidgets()
-            .buildSocialSection(context: context, onTaped: _openSocialUrl)
-      ],
-    ),
-);
+          MoreWidgets()
+              .buildSocialSection(context: context, onTaped: _openSocialUrl),
+          SizedBox(
+            height: 56,
+          )
+        ],
+      ),
+    );
   }
 
   void _openSocialUrl({required String url}) async {
@@ -124,36 +136,58 @@ class _MorePageState extends State<MorePage> {
   void _onTaped({required action}) {
     switch (action) {
       case 'myProfile':
-        Preferences.instance.getUserModel().then((value){
-          if(!value.user.isLoggedIn){
+        Preferences.instance.getUserModel().then((value) {
+          if (!value.user.isLoggedIn) {
             navigateToLoginActivity();
-          }else{
-
-          }
+          } else {}
         });
 
         break;
       case 'wallet':
-        Preferences.instance.getUserModel().then((value){
-          if(!value.user.isLoggedIn){
+        Preferences.instance.getUserModel().then((value) {
+          if (!value.user.isLoggedIn) {
             navigateToLoginActivity();
-          }else{
+          } else {
             Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
-
           }
         });
 
         break;
       case 'setting':
-        Navigator.of(context).pushNamed(AppConstant.pageSettingRoute);
+        navigateToSettingActivity();
         break;
+
+      case 'love':
+        Preferences.instance.getUserModel().then((value) {
+          if (!value.user.isLoggedIn) {
+            navigateToLoginActivity();
+          } else {
+            Navigator.of(context).pushNamed(AppConstant.pageFavoritesRoute);
+          }
+        });
     }
   }
+
   void navigateToLoginActivity() async {
-    var result = await Navigator.of(context).pushNamed(AppConstant.pageLoginRoute);
-    if(result!=null){
+    var result =
+        await Navigator.of(context).pushNamed(AppConstant.pageLoginRoute);
+    if (result != null) {
       MoreCubit cubit = BlocProvider.of<MoreCubit>(context);
       cubit.getUserModel();
+      AppRoutes.mainPageCubit.getData();
+      AppRoutes.homePageCubit.updateFirebaseToken();
+    }
+  }
+
+  void navigateToSettingActivity() async {
+    var result =
+        await Navigator.of(context).pushNamed(AppConstant.pageSettingRoute);
+    if (result != null) {
+      await Preferences.instance.clearUserData();
+      AppRoutes.mainPageCubit.getData();
+      MoreCubit cubit = BlocProvider.of<MoreCubit>(context);
+      cubit.getUserModel();
+
     }
   }
 }

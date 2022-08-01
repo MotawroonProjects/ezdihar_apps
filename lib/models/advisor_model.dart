@@ -40,6 +40,8 @@ class AdvisorModel {
         'bio': advisorModel.bio,
         'consultant_type': AdvisorModel.toJson(advisorModel)
       };
+
+
     }
     return {};
   }

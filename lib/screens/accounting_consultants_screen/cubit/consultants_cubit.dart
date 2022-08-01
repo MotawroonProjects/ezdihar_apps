@@ -17,7 +17,6 @@ class ConsultantsCubit extends Cubit<ConsultantsState> {
 
   void getData(int consultant_type_id) async{
     try{
-      print("IDDD${consultant_type_id}");
       emit(IsLoading());
 
       ConsultantsDataModel response = await api.getConsultants(consultant_type_id);

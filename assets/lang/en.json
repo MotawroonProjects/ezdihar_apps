@@ -13,6 +13,7 @@
   "save": "Save",
   "saveToItems": "Add to your saved items",
   "report": "Report",
+  "cancel_report" : "إلغاء الإبلاغ",
   "reportWithWrong": "Report if something is wrong",
   "generalConsultation": "General Consultation",
   "consulting": "Consulting",
@@ -129,6 +130,8 @@
   "user_not_found": "User not found",
   "wait": "Wait...",
   "cities": "Cities",
-  "search_city": "Search for cities..."
+  "search_city": "Search for cities...",
+  "un_follow": "UnFollow",
+  "love": "Favorite"
 
 }

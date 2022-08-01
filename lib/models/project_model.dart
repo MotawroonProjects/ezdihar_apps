@@ -12,6 +12,7 @@ class ProjectModel {
   late int likesCount=0;
   late bool isLicked;
   late bool isFollowed;
+  late bool is_reported;
   late String categoryId;
   late int userId;
   late CategoryModel category;
@@ -28,6 +29,7 @@ class ProjectModel {
     time = json['time'] as String;
     likesCount = json['likes_count'] as int;
     isLicked = json['is_licked'] as bool;
+    is_reported = json['is_reported'] as bool;
     isFollowed = json['is_followed'] as bool;
     categoryId = json['category_id']!=null?json['category_id'].toString():"";
     userId = json['user_id'] as int;

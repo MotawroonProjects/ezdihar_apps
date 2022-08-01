@@ -23,7 +23,7 @@ class UserModel{
   static Map<String,dynamic> toJson(UserModel user){
     return {
       'user'           :User.toJson(user.user),
-      'adviser_data'   :AdvisorModel.toJson(user.adviser_data),
+      'adviser_data'   :user.adviser_data!=null?AdvisorModel.toJson(user.adviser_data):null,
       'access_token'   :user.access_token,
       'firebase_token' :user.firebase_token,
     };

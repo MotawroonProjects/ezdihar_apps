@@ -53,4 +53,9 @@ class Preferences {
 
     return userModel;
   }
+
+  clearUserData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.clear();
+  }
 }

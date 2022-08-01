@@ -12,7 +12,6 @@ class ConsultantTypeModel {
   ConsultantTypeModel();
 
   ConsultantTypeModel.fromJson(Map<String, dynamic> json) {
-    print('json${json.toString()}');
 
     id = json['id'] as int;
     title_ar = json['title_ar']!=null? json['title_ar'] as String:"";

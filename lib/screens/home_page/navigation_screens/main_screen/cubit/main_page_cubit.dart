@@ -4,6 +4,7 @@ import 'package:ezdihar_apps/models/category_data_model.dart';
 import 'package:ezdihar_apps/models/category_model.dart';
 import 'package:ezdihar_apps/models/home_model.dart';
 import 'package:ezdihar_apps/models/project_model.dart';
+import 'package:ezdihar_apps/models/status_resspons.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/remote/service.dart';
@@ -22,10 +23,11 @@ class MainPageCubit extends Cubit<MainPageState> {
   DateTime selectedDate = DateTime.now();
   String filterDate = 'all'.tr();
   String category_id = 'all'.tr();
-  late ServiceApi api;
+
   List<CategoryModel> categories = [];
   List<ProjectModel> projects = [];
   late CategoryModel selectedCategoryModel;
+  late ServiceApi api;
   UserModel? userModel;
 
   MainPageCubit() : super(IsLoadingData(type: AppConstant.mostPopular)) {
@@ -36,8 +38,9 @@ class MainPageCubit extends Cubit<MainPageState> {
     getCategories();
   }
 
-  getUserData() async {
+  Future<UserModel?> getUserData() async {
     userModel = await Preferences.instance.getUserModel();
+    return userModel;
   }
 
   void updateFilterType(String filterType) {
@@ -69,23 +72,26 @@ class MainPageCubit extends Cubit<MainPageState> {
 
   void getData() async {
     try {
+      projects.clear();
       emit(IsLoadingData(type: this.filterType));
-      print("Getting data....");
       UserModel model = await Preferences.instance.getUserModel();
       String user_token = '';
       if (model.user.isLoggedIn) {
+
         user_token = model.access_token;
       }
-      print('filter=>${filterType+"__"+filterDate+""+selectedCategoryModel.id.toString()}');
       String date = 'All';
       if(filterDate=='الكل'){
         date = "All";
       }else{
         date = filterDate;
       }
-      HomeModel home = await api.getHomeData(
+      ProjectsDataModel home = await api.getHomeData(
           user_token, filterType, date, selectedCategoryModel.id);
       if (home.status.code == 200) {
+        for(ProjectModel model in home.data){
+          print('like=>${model.isLicked}');
+        }
         projects = home.data;
         emit(OnDataSuccess(projects));
       } else {}
@@ -111,6 +117,22 @@ class MainPageCubit extends Cubit<MainPageState> {
     emit(OnCategorySelectedState(categoryModel));
   }
 
+  void love_report_follow(int post_index,ProjectModel model,String type) async{
+    try{
+      getUserData().then((value) async{
+        StatusResponse response =  await api.love_follow_report(value!.access_token, model.id, type);
+        if(response.code==200){
+          updateProject(post_index, model);
+        }else{
+
+        }
+      });
+
+    }catch (e){
+      emit(OnError(e.toString()));
+    }
+  }
+
   void clearFilter() {
     selectedCategoryModel = categories[0];
     filterDate = 'all'.tr();
@@ -126,5 +148,11 @@ class MainPageCubit extends Cubit<MainPageState> {
 
   void onErrorData(String error) {
     emit(OnError(error));
+  }
+
+  void updateProject(int index,ProjectModel model){
+    print('data=>${model.isFollowed}');
+    projects[index] = model;
+    emit(OnDataSuccess(projects));
   }
 }

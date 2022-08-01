@@ -21,11 +21,16 @@ class MainPageWidgets {
       Function favourite,
       Function navigateToDetails,
       Function showSheet,
-      Animation colorAnimation,
-      Animation scaleAnimation,
       AnimationController animationController) {
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
-
+    /*Animation<double> scaleAnimation =
+        TweenSequence<double>(<TweenSequenceItem<double>>[
+      TweenSequenceItem(
+          tween: Tween<double>(begin: 24.0, end: 30.0), weight: 30.0),
+      TweenSequenceItem(
+          tween: Tween<double>(begin: 30.0, end: 24.0), weight: 24.0)
+    ]).animate(animationController);
+*/
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     String approved = "";
     if (model.approvedFrom.length > 0) {
@@ -48,7 +53,7 @@ class MainPageWidgets {
                 dense: true,
                 contentPadding: EdgeInsets.zero,
                 leading: CachedNetworkImage(
-                  width: 60,
+                    width: 60,
                     height: 60,
                     imageUrl: model.user.image,
                     placeholder: (context, url) =>
@@ -114,12 +119,23 @@ class MainPageWidgets {
                     children: [
                       InkWell(
                         onTap: () {
-                          if (cubit.userModel != null &&
-                              cubit.userModel!.user.isLoggedIn) {
-                            favourite(model, index);
-                          } else {
-                            cubit.loginFirst();
-                          }
+                          cubit.getUserData().then((value) {
+                            if (value!.user.isLoggedIn) {
+                              model.isLicked = !model.isLicked;
+                              if (model.isLicked) {
+                                model.likesCount = model.likesCount + 1;
+                                animationController.forward();
+                              } else {
+                                model.likesCount = model.likesCount - 1;
+
+                                animationController.reverse();
+                              }
+
+                              favourite(index, model);
+                            } else {
+                              cubit.loginFirst();
+                            }
+                          });
                         },
                         child: SizedBox(
                           child: AnimatedBuilder(
@@ -127,9 +143,11 @@ class MainPageWidgets {
                             builder: (BuildContext context, _) {
                               return AppWidget.svg(
                                   'love.svg',
-                                  colorAnimation.value,
-                                  scaleAnimation.value,
-                                  scaleAnimation.value);
+                                  model.isLicked
+                                      ? AppColors.colorPrimary
+                                      : AppColors.grey1,
+                                  24.0,
+                                  24.0);
                             },
                           ),
                         ),
@@ -168,6 +186,9 @@ class MainPageWidgets {
                     ),
                   )
                 ],
+              ),
+              const SizedBox(
+                height: 8.0,
               ),
               Align(
                 alignment: Alignment.centerLeft,
@@ -224,7 +245,7 @@ class MainPageWidgets {
               leading:
                   AppWidget.svg('follow.svg', AppColors.color1, 24.0, 24.0),
               title: Text(
-                '${'follow'.tr()} ${model.user.firstName + " " + model.user.lastName}',
+                '${model.isFollowed ? 'un_follow'.tr() : 'follow'.tr()} ${model.user.firstName + " " + model.user.lastName}',
                 style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 14.0,
@@ -235,60 +256,60 @@ class MainPageWidgets {
                 style: const TextStyle(color: AppColors.grey1, fontSize: 12.0),
               ),
               onTap: () {
-                if(cubit.userModel!.user.isLoggedIn){
-                  onTaped(model: model, index: index, action: AppConstant.actionFollow);
-
-                }else{
-                  cubit.loginFirst();
-
-                }
-
+                cubit.getUserData().then((value) {
+                  if (value != null) {
+                    model.isFollowed = !model.isFollowed;
+                    onTaped(
+                        model: model,
+                        index: index,
+                        action: AppConstant.actionFollow);
+                  } else {
+                    cubit.loginFirst();
+                  }
+                });
               }),
-          ListTile(
-            leading: AppWidget.svg('save.svg', AppColors.color1, 24.0, 24.0),
-            title: Text(
-              'save'.tr(),
-              style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              'saveToItems'.tr(),
-              style: const TextStyle(color: AppColors.grey1, fontSize: 12.0),
-            ),
+          /*  ListTile(
+              leading: AppWidget.svg('save.svg', AppColors.color1, 24.0, 24.0),
+              title: Text(
+                'save'.tr(),
+                style: const TextStyle(
+                    color: AppColors.black,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                'saveToItems'.tr(),
+                style: const TextStyle(color: AppColors.grey1, fontSize: 12.0),
+              ),
               onTap: () {
-                if(cubit.userModel!.user.isLoggedIn){
-                  onTaped(model: model, index: index, action: AppConstant.actionSave);
 
-                }else{
-                  cubit.loginFirst();
-
-                }
-
-              }),
+              }),*/
           ListTile(
-            leading: AppWidget.svg('report.svg', AppColors.color1, 24.0, 24.0),
-            title: Text(
-              'report'.tr(),
-              style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              'reportWithWrong'.tr(),
-              style: const TextStyle(color: AppColors.grey1, fontSize: 12.0),
-            ),
+              leading:
+                  AppWidget.svg('report.svg', AppColors.color1, 24.0, 24.0),
+              title: Text(
+                model.is_reported ? 'cancel_report'.tr() : 'report'.tr(),
+                style: const TextStyle(
+                    color: AppColors.black,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                'reportWithWrong'.tr(),
+                style: const TextStyle(color: AppColors.grey1, fontSize: 12.0),
+              ),
               onTap: () {
-                if(cubit.userModel!.user.isLoggedIn){
-                  onTaped(model: model, index: index, action: AppConstant.actionReport);
-
-                }else{
-                  cubit.loginFirst();
-
-                }
-
+                cubit.getUserData().then((value) {
+                  if (value != null) {
+                    model.is_reported = !model.is_reported;
+                    onTaped(
+                        model: model,
+                        index: index,
+                        action: AppConstant.actionReport);
+                  } else {
+                    cubit.loginFirst();
+                  }
+                });
               }),
         ],
       ),

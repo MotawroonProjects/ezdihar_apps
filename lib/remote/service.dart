@@ -7,10 +7,13 @@ import 'package:ezdihar_apps/models/consultant_data_model.dart';
 import 'package:ezdihar_apps/models/consultants_data_model.dart';
 import 'package:ezdihar_apps/models/home_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/status_resspons.dart';
 import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/remote/handle_exeption.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
+import 'package:ezdihar_apps/widgets/app_widgets.dart';
+import 'package:flutter/material.dart';
 
 class ServiceApi {
   late Dio dio;
@@ -26,7 +29,7 @@ class ServiceApi {
     dio = Dio(baseOptions);
   }
 
-  Future<HomeModel> getHomeData(
+  Future<ProjectsDataModel> getHomeData(
       String user_token, String type, String? date, int category_id) async {
     try {
       Response response;
@@ -34,6 +37,9 @@ class ServiceApi {
       CancelToken cancelToken = CancelToken();
       if (user_token.isNotEmpty) {
         baseOptions.headers = {'Authorization': user_token};
+        dio.options = baseOptions;
+      } else {
+        baseOptions.headers = {'Content-Type': 'application/json'};
         dio.options = baseOptions;
       }
 
@@ -45,11 +51,9 @@ class ServiceApi {
         cancelToken.cancel();
       }
 
-      return HomeModel.fromJson(response.data);
+      return ProjectsDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
-      print("object${errorMessage}");
-
       throw errorMessage;
     }
   }
@@ -80,7 +84,6 @@ class ServiceApi {
     try {
       Response response = await dio.get('api/home/advisorsByType',
           queryParameters: {'type_id': consultant_type_id});
-      print("response:${response.data.toString()}");
       return ConsultantsDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -111,13 +114,10 @@ class ServiceApi {
 
   Future<UserDataModel> login(LoginModel loginModel) async {
     try {
-      var fields = FormData.fromMap({
-        'phone_code':loginModel.phone_code,
-        'phone':loginModel.phone
-      });
+      var fields = FormData.fromMap(
+          {'phone_code': loginModel.phone_code, 'phone': loginModel.phone});
 
-      Response response = await dio.post('api/auth/login',data: fields);
-      print("response=>${response.data.toString()}");
+      Response response = await dio.post('api/auth/login', data: fields);
 
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
@@ -129,35 +129,30 @@ class ServiceApi {
   Future<UserDataModel> signUp(UserSignUpModel model) async {
     var fields = FormData.fromMap({});
     try {
-      if(model.imagePath.isNotEmpty){
-        print('imagePath=>${model.imagePath}');
-
+      if (model.imagePath.isNotEmpty) {
         fields = FormData.fromMap({
-          'first_name':model.firstName,
-          'last_name':model.lastName,
-          'email':model.email,
-          'phone_code':model.phone_code,
-          'phone':model.phone,
-          'city_id':model.cityId,
-          'birthdate':model.dateOfBirth,
-          'image':await MultipartFile.fromFile(model.imagePath)
-
+          'first_name': model.firstName,
+          'last_name': model.lastName,
+          'email': model.email,
+          'phone_code': model.phone_code,
+          'phone': model.phone,
+          'city_id': model.cityId,
+          'birthdate': model.dateOfBirth,
+          'image': await MultipartFile.fromFile(model.imagePath)
         });
-      }else{
-        print('data=>');
-
+      } else {
         fields = FormData.fromMap({
-          'first_name':model.firstName,
-          'last_name':model.lastName,
-          'email':model.email,
-          'phone_code':model.phone_code,
-          'phone':model.phone,
-          'city_id':model.cityId,
-          'birthdate':model.dateOfBirth,
+          'first_name': model.firstName,
+          'last_name': model.lastName,
+          'email': model.email,
+          'phone_code': model.phone_code,
+          'phone': model.phone,
+          'city_id': model.cityId,
+          'birthdate': model.dateOfBirth,
         });
       }
 
-      Response response = await dio.post('api/auth/register',data: fields);
+      Response response = await dio.post('api/auth/register', data: fields);
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -167,5 +162,68 @@ class ServiceApi {
     }
   }
 
+  Future<StatusResponse> love_follow_report(
+      String user_token, int post_id, String type) async {
+    var fields = FormData.fromMap({'post_id': post_id, 'type': type});
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      Response response =
+          await dio.post('api/profile/love-report-follow-post', data: fields);
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
 
+      throw errorMessage;
+    }
+  }
+
+  Future<ProjectsDataModel> getMyFavorites(String user_token) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+
+      Response response = await dio.get('api/profile/likedPost');
+      return ProjectsDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+
+  Future<StatusResponse> updateFireBaseToken(
+      String user_token, firebaseToken, String type) async {
+    var fields = FormData.fromMap({'token': firebaseToken, 'type': type});
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      Response response = await dio.post('api/auth/insertToken', data: fields);
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
+
+  Future<StatusResponse> logout(String user_token, firebaseToken) async {
+    var fields = FormData.fromMap({'token': firebaseToken});
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      Response response = await dio.post('api/auth/logout', data: fields);
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
 }

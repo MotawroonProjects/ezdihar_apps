@@ -18,6 +18,8 @@ import 'package:ezdihar_apps/screens/cities_screen/cities_page.dart';
 import 'package:ezdihar_apps/screens/cities_screen/cubit/cities_cubit.dart';
 import 'package:ezdihar_apps/screens/consultant_details_screen/consultant_details.dart';
 import 'package:ezdihar_apps/screens/contact_us_screen/contact_us_screen.dart';
+import 'package:ezdihar_apps/screens/favorite_screen/cubit/favorite_cubit.dart';
+import 'package:ezdihar_apps/screens/favorite_screen/favorite_screen.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/cubit/consulting_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/home_screen/HomePage.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
@@ -27,6 +29,7 @@ import 'package:ezdihar_apps/screens/investment_details_screen/investment_detail
 import 'package:ezdihar_apps/screens/offer_screen/offer_screen.dart';
 import 'package:ezdihar_apps/screens/request_consultation_screen/request_consultation_screen.dart';
 import 'package:ezdihar_apps/screens/send_general_study_screen/send_general_study_screen.dart';
+import 'package:ezdihar_apps/screens/settings_screen/cubit/setting_cubit.dart';
 import 'package:ezdihar_apps/screens/settings_screen/setting_screen.dart';
 import 'package:ezdihar_apps/screens/splashPage/splash_page.dart';
 import 'package:ezdihar_apps/screens/wallet_screen/wallet_screen.dart';
@@ -37,6 +40,9 @@ import '../screens/home_page/navigation_screens/home_screen/cubit/home_page_cubi
 
 class AppRoutes {
   static late HomePageCubit homePageCubit;
+  static late MainPageCubit mainPageCubit;
+  static late ConsultingCubit consultingCubit;
+  static late ServicesCubit servicesCubit;
 
   static Route<dynamic>? getRoutes(RouteSettings settings) {
     print('ROUTENAME${settings.name}');
@@ -44,9 +50,8 @@ class AppRoutes {
       case AppConstant.pageSplashRoute:
         return MaterialPageRoute(builder: (context) => const SplashPage());
 
-
       case AppConstant.pageHomeRoute:
-      /*BlocProvider<HomePageCubit>(
+        /*BlocProvider<HomePageCubit>(
           create: (context) {
             homePageCubit = HomePageCubit();
             return homePageCubit;
@@ -59,16 +64,27 @@ class AppRoutes {
               homePageCubit = HomePageCubit();
               return homePageCubit;
             }),
-            BlocProvider<MainPageCubit>(create: (context) => MainPageCubit()),
-            BlocProvider<ConsultingCubit>(create: (context) => ConsultingCubit()),
-            BlocProvider<ServicesCubit>(create: (context) => ServicesCubit()),
+            BlocProvider<MainPageCubit>(create: (context) {
+              mainPageCubit = MainPageCubit();
+              return mainPageCubit;
+            }),
+            BlocProvider<ConsultingCubit>(create: (context) {
+              consultingCubit = ConsultingCubit();
+              return consultingCubit;
+            }),
+            BlocProvider<ServicesCubit>(create: (context) {
+              servicesCubit = ServicesCubit();
+              return servicesCubit;
+            }),
             BlocProvider<MoreCubit>(create: (context) => MoreCubit())
-
-
           ], child: const HomePage());
         });
       case AppConstant.pageSettingRoute:
-        return MaterialPageRoute(builder: (context) => const SettingPage());
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => SettingCubit(),
+                  child: SettingPage(),
+                ));
 
       case AppConstant.pageAddRoute:
         return MaterialPageRoute(builder: (context) => const AddPage());
@@ -77,9 +93,12 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (context) => const InvestmentDetailsPage());
       case AppConstant.pageAccountingConsultantsRoute:
-        ConsultantTypeModel consultantTypeModel = settings.arguments as ConsultantTypeModel;
+        ConsultantTypeModel consultantTypeModel =
+            settings.arguments as ConsultantTypeModel;
         return MaterialPageRoute(
-            builder: (context) =>  AccountingConsultantsPage(consultantTypeModel: consultantTypeModel,));
+            builder: (context) => AccountingConsultantsPage(
+                  consultantTypeModel: consultantTypeModel,
+                ));
 
       case AppConstant.pageOfferRoute:
         return MaterialPageRoute(builder: (context) => const OfferPage());
@@ -93,31 +112,40 @@ class AppRoutes {
         int consultant_id = settings.arguments as int;
 
         return MaterialPageRoute(
-            builder: (context) => ConsultantDetailsPage(consultant_id: consultant_id,));
+            builder: (context) => ConsultantDetailsPage(
+                  consultant_id: consultant_id,
+                ));
       case AppConstant.pageRequestConsultationRoute:
         return MaterialPageRoute(
             builder: (context) => const RequestConsultationPage());
       case AppConstant.pageSendGeneralStudyRoute:
         String title = settings.arguments.toString();
         return MaterialPageRoute(
-            builder: (context) => SendGeneralStudyScreen(title: title,));
+            builder: (context) => SendGeneralStudyScreen(
+                  title: title,
+                ));
       case AppConstant.pageLoginRoute:
         return MaterialPageRoute(builder: (context) {
-          return BlocProvider<LoginCubit>(create: (context) {
-            LoginCubit cubit = LoginCubit();
-            return cubit;
-          }, child: LoginPage(),);
+          return BlocProvider<LoginCubit>(
+            create: (context) {
+              LoginCubit cubit = LoginCubit();
+              return cubit;
+            },
+            child: LoginPage(),
+          );
         });
 
       case AppConstant.pageUserRoleRoute:
         return MaterialPageRoute(builder: (context) => const UserRolePage());
 
       case AppConstant.pageUserSignUpRoleRoute:
-        LoginModel loginModel=  settings.arguments as LoginModel;
+        LoginModel loginModel = settings.arguments as LoginModel;
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<UserSignUpCubit>(
             create: (context) => UserSignUpCubit(),
-            child: UserSignUpPage(loginModel: loginModel,),
+            child: UserSignUpPage(
+              loginModel: loginModel,
+            ),
           );
         });
 
@@ -141,6 +169,13 @@ class AppRoutes {
           return BlocProvider<CitiesCubit>(
             create: (context) => CitiesCubit(),
             child: CitiesPage(),
+          );
+        });
+      case AppConstant.pageFavoritesRoute:
+        return MaterialPageRoute(builder: (context) {
+          return BlocProvider<FavoriteCubit>(
+            create: (context) => FavoriteCubit(),
+            child: FavoritePage(),
           );
         });
     }

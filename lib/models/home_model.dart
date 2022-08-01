@@ -1,15 +1,15 @@
 import 'package:ezdihar_apps/models/project_model.dart';
 import 'package:ezdihar_apps/models/status_resspons.dart';
 
-class HomeModel{
+class ProjectsDataModel{
   late List<ProjectModel> data;
   late StatusResponse status;
 
-  HomeModel(){
+  ProjectsDataModel(){
     status = StatusResponse();
   }
 
-  HomeModel.fromJson(Map<String,dynamic> json){
+  ProjectsDataModel.fromJson(Map<String,dynamic> json){
     data = <ProjectModel>[];
     if(json['data']!=null){
       json['data'].forEach((v)=>{
