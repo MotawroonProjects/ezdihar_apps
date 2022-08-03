@@ -43,6 +43,19 @@ class AppWidget {
               fit: BoxFit.cover)),
     );
   }
+  static Widget circleAvatarWithBorder(double width, double height) {
+    return Container(
+      width: width,
+      height: height,
+      padding: const EdgeInsets.all(8.0),
+      decoration:  BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.colorPrimary,width: 1),
+          image: DecorationImage(
+              image: AssetImage('${AppConstant.localImagePath}avatar.png'),
+              fit: BoxFit.cover)),
+    );
+  }
 
   static Widget buildBackArrow(
       {required BuildContext context,

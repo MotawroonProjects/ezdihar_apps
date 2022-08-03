@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/city_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
+import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_state.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
@@ -52,10 +55,9 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
     cubit.updatePhoneCode_Phone(loginModel.phone_code, loginModel.phone);
     return BlocListener<UserSignUpCubit, UserSignUpState>(
       listener: (context, state) {
-        if(state is OnError){
-
-        }else if(state is OnSignUpSuccess){
-          Navigator.pop(context,true);
+        if (state is OnError) {
+        } else if (state is OnSignUpSuccess) {
+          Navigator.pop(context, true);
         }
       },
       child: ListView(
@@ -93,19 +95,24 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
   }
 
   buildAvatarSection(String image) {
+    UserSignUpCubit cubit = BlocProvider.of(context);
     return BlocProvider.value(
       value: BlocProvider.of<UserSignUpCubit>(context),
       child: BlocBuilder<UserSignUpCubit, UserSignUpState>(
         builder: (context, state) {
-          XFile? file = BlocProvider.of<UserSignUpCubit>(context).imageFile;
+          String imagePath = cubit.model.imagePath;
           if (state is UserPhotoPicked) {
-            file = state.file;
+            imagePath = state.imagePath;
+          }else if(state is OnUserDataGet){
+            imagePath = cubit.imagePath;
           }
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () => buildAlertDialog(),
+                onTap: () {
+                  buildAlertDialog();
+                },
                 child: Container(
                   width: 147.0,
                   height: 147.0,
@@ -114,13 +121,46 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                     child: BlocProvider.of<UserSignUpCubit>(context)
                             .imageType
                             .isEmpty
-                        ? Image.asset(
-                            AppConstant.localImagePath + image,
-                            width: 147.0,
-                            height: 147.0,
-                          )
+                        ? imagePath.startsWith('http')
+                            ? CachedNetworkImage(
+                                imageUrl: imagePath,
+                                imageBuilder: (context,imageProvider){
+                                  return CircleAvatar(
+                                    backgroundImage: imageProvider,
+                                  );
+                                },
+                                width: 147.0,
+                                height: 147.0,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) {
+                                  return CircleAvatar(
+                                    child: Image.asset(
+                                      AppConstant.localImagePath +
+                                          'avatar2.png',
+                                      width: 147.0,
+                                      height: 147.0,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                },errorWidget: (context,url,error){
+                                  return CircleAvatar(
+                                    child: Image.asset(
+                                      AppConstant.localImagePath +
+                                          'avatar2.png',
+                                      width: 147.0,
+                                      height: 147.0,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                    },
+                              )
+                            : Image.asset(
+                                AppConstant.localImagePath + image,
+                                width: 147.0,
+                                height: 147.0,
+                              )
                         : Image.file(
-                            File(file!.path),
+                            File(imagePath),
                             width: 147.0,
                             height: 147.0,
                             fit: BoxFit.cover,
@@ -230,19 +270,11 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
             ),
             Row(
               children: [
-                Flexible(
-                    child: buildTextFormField(
-                        hint: 'first_name'.tr(),
-                        inputType: TextInputType.text,
-                        action: 'firstName')),
+                Flexible(child: buildTextFormFieldFirstName()),
                 SizedBox(
                   width: 8.0,
                 ),
-                Flexible(
-                    child: buildTextFormField(
-                        hint: 'last_name'.tr(),
-                        inputType: TextInputType.text,
-                        action: 'lastName'))
+                Flexible(child: buildTextFormFieldLastName())
               ],
             ),
             SizedBox(
@@ -252,10 +284,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
             SizedBox(
               height: 8.0,
             ),
-            buildTextFormField(
-                hint: 'email'.tr(),
-                inputType: TextInputType.emailAddress,
-                action: 'email'),
+            buildTextFormFieldEmail(),
             SizedBox(
               height: 24.0,
             ),
@@ -293,36 +322,90 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
     );
   }
 
-  buildTextFormField(
-      {required String hint,
-      required TextInputType inputType,
-      required action}) {
+  buildTextFormFieldFirstName() {
+    UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
+    return BlocBuilder<UserSignUpCubit, UserSignUpState>(
+      builder: (context, state) {
+
+        return Container(
+          height: 54.0,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          decoration: BoxDecoration(
+              color: AppColors.white, borderRadius: BorderRadius.circular(8)),
+          child: TextFormField(
+            controller: cubit.controllerFirstName,
+            keyboardType: TextInputType.name,
+            style: TextStyle(color: AppColors.black, fontSize: 14.0),
+            onChanged: (data) {
+              cubit.model.firstName = data;
+              cubit.checkData();
+            },
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'first_name'.tr(),
+              hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  buildTextFormFieldLastName() {
     UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
 
-    return Container(
-      height: 54.0,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      decoration: BoxDecoration(
-          color: AppColors.white, borderRadius: BorderRadius.circular(8)),
-      child: TextFormField(
-        keyboardType: inputType,
-        style: TextStyle(color: AppColors.black, fontSize: 14.0),
-        onChanged: (data) {
-          if (action == 'firstName') {
-            cubit.model.firstName = data;
-          } else if (action == 'lastName') {
-            cubit.model.lastName = data;
-          } else if (action == 'email') {
-            cubit.model.email = data;
-          }
-          cubit.checkData();
-        },
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: hint,
-          hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
-        ),
-      ),
+    return BlocBuilder<UserSignUpCubit, UserSignUpState>(
+      builder: (context, state) {
+        return Container(
+          height: 54.0,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          decoration: BoxDecoration(
+              color: AppColors.white, borderRadius: BorderRadius.circular(8)),
+          child: TextFormField(
+            controller: cubit.controllerLastName,
+            keyboardType: TextInputType.name,
+            style: TextStyle(color: AppColors.black, fontSize: 14.0),
+            onChanged: (data) {
+              cubit.model.lastName = data;
+              cubit.checkData();
+            },
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'last_name'.tr(),
+              hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  buildTextFormFieldEmail() {
+    UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
+
+    return BlocBuilder<UserSignUpCubit, UserSignUpState>(
+      builder: (context, state) {
+        return Container(
+          height: 54.0,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          decoration: BoxDecoration(
+              color: AppColors.white, borderRadius: BorderRadius.circular(8)),
+          child: TextFormField(
+            controller: cubit.controllerEmail,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: AppColors.black, fontSize: 14.0),
+            onChanged: (data) {
+              cubit.model.email = data;
+              cubit.checkData();
+            },
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'email'.tr(),
+              hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -337,7 +420,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           return Container(
             width: width,
             height: 54.0,
-            alignment: Alignment.centerLeft,
+            alignment:
+                lang == 'ar' ? Alignment.centerRight : Alignment.centerLeft,
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             decoration: BoxDecoration(
                 color: AppColors.white, borderRadius: BorderRadius.circular(8)),
@@ -350,6 +434,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
   }
 
   buildTextDate() {
+    String lang = EasyLocalization.of(context)!.locale.languageCode;
     double width = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
@@ -358,7 +443,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
       child: Container(
         width: width,
         height: 54.0,
-        alignment: Alignment.centerLeft,
+        alignment: lang == 'ar' ? Alignment.centerRight : Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         decoration: BoxDecoration(
             color: AppColors.white, borderRadius: BorderRadius.circular(8)),
@@ -390,10 +475,18 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           isValid = state.valid;
         }
         return Expanded(
-            child: MaterialButton(
-          onPressed: isValid ? () {
-            cubit.signUp(context);
-          } : null,
+            child: MaterialButton (
+          onPressed: isValid
+              ? () async {
+            UserModel model = await Preferences.instance.getUserModel();
+            if(model.user.isLoggedIn){
+              cubit.updateProfile(context,model.access_token);
+            }else{
+              cubit.signUp(context);
+            }
+
+                }
+              : null,
           height: 56.0,
           color: AppColors.colorPrimary,
           disabledColor: AppColors.grey4,

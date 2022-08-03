@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/routes/app_routes.dart';
@@ -45,12 +46,12 @@ class _MorePageState extends State<MorePage> {
                 Positioned(
                   top: 77.0,
                   left: width / 2 - 48,
-                  child: MoreWidgets().buildAvatar(context),
+                  child: MoreWidgets().buildAvatar(context,_onTaped),
                 ),
               ],
             ),
           ),
-          MoreWidgets().buildNameSection(navigateToLoginActivity, context),
+          MoreWidgets().buildNameSection(_onTaped, context),
           Container(
             margin:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
@@ -71,15 +72,7 @@ class _MorePageState extends State<MorePage> {
                         title: 'myProfile'.tr(),
                         action: 'myProfile',
                         onTaped: _onTaped),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    MoreWidgets().buildCard(
-                        context: context,
-                        svgName: 'love.svg',
-                        title: 'love'.tr(),
-                        action: 'love',
-                        onTaped: _onTaped),
+
                     const SizedBox(
                       height: 8.0,
                     ),
@@ -135,11 +128,16 @@ class _MorePageState extends State<MorePage> {
 
   void _onTaped({required action}) {
     switch (action) {
+      case 'edit':
+        navigateToUserSignUpActivity();
+        break;
       case 'myProfile':
         Preferences.instance.getUserModel().then((value) {
           if (!value.user.isLoggedIn) {
             navigateToLoginActivity();
-          } else {}
+          } else {
+            navigateToMyProfile();
+          }
         });
 
         break;
@@ -157,14 +155,9 @@ class _MorePageState extends State<MorePage> {
         navigateToSettingActivity();
         break;
 
-      case 'love':
-        Preferences.instance.getUserModel().then((value) {
-          if (!value.user.isLoggedIn) {
-            navigateToLoginActivity();
-          } else {
-            Navigator.of(context).pushNamed(AppConstant.pageFavoritesRoute);
-          }
-        });
+      case 'login':
+        navigateToLoginActivity();
+        break;
     }
   }
 
@@ -187,6 +180,28 @@ class _MorePageState extends State<MorePage> {
       AppRoutes.mainPageCubit.getData();
       MoreCubit cubit = BlocProvider.of<MoreCubit>(context);
       cubit.getUserModel();
+
+    }
+  }
+
+  void navigateToUserSignUpActivity() async {
+    UserModel model = await Preferences.instance.getUserModel();
+    LoginModel loginModel = LoginModel();
+    loginModel.phone_code = model.user.phoneCode;
+    loginModel.phone = model.user.phone;
+
+    var result = await Navigator.of(context).pushNamed(AppConstant.pageUserSignUpRoleRoute,arguments: loginModel);
+    if (result != null) {
+      MoreCubit cubit = BlocProvider.of<MoreCubit>(context);
+      cubit.getUserModel();
+
+    }
+  }
+
+  void navigateToMyProfile() async {
+    var result =
+    await Navigator.of(context).pushNamed(AppConstant.pageUserProfileRoute);
+    if (result != null) {
 
     }
   }

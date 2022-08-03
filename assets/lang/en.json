@@ -132,6 +132,10 @@
   "cities": "Cities",
   "search_city": "Search for cities...",
   "un_follow": "UnFollow",
-  "love": "Favorite"
+  "love": "Favorite",
+  "edit_profile": "Edit Profile",
+  "followers": "Followers",
+  "following_users": "Following",
+  "my_posts":"My Post"
 
 }

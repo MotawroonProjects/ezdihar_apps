@@ -18,8 +18,6 @@ import 'package:ezdihar_apps/screens/cities_screen/cities_page.dart';
 import 'package:ezdihar_apps/screens/cities_screen/cubit/cities_cubit.dart';
 import 'package:ezdihar_apps/screens/consultant_details_screen/consultant_details.dart';
 import 'package:ezdihar_apps/screens/contact_us_screen/contact_us_screen.dart';
-import 'package:ezdihar_apps/screens/favorite_screen/cubit/favorite_cubit.dart';
-import 'package:ezdihar_apps/screens/favorite_screen/favorite_screen.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/cubit/consulting_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/home_screen/HomePage.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
@@ -27,6 +25,8 @@ import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/cu
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/service_screen/cubit/services_cubit.dart';
 import 'package:ezdihar_apps/screens/investment_details_screen/investment_details_screen.dart';
 import 'package:ezdihar_apps/screens/offer_screen/offer_screen.dart';
+import 'package:ezdihar_apps/screens/profile_screens/user_profile_screen/cubit/user_profile_cubit.dart';
+import 'package:ezdihar_apps/screens/profile_screens/user_profile_screen/user_profile_screen.dart';
 import 'package:ezdihar_apps/screens/request_consultation_screen/request_consultation_screen.dart';
 import 'package:ezdihar_apps/screens/send_general_study_screen/send_general_study_screen.dart';
 import 'package:ezdihar_apps/screens/settings_screen/cubit/setting_cubit.dart';
@@ -43,6 +43,7 @@ class AppRoutes {
   static late MainPageCubit mainPageCubit;
   static late ConsultingCubit consultingCubit;
   static late ServicesCubit servicesCubit;
+  static late UserProfileCubit userProfileCubit;
 
   static Route<dynamic>? getRoutes(RouteSettings settings) {
     print('ROUTENAME${settings.name}');
@@ -171,11 +172,16 @@ class AppRoutes {
             child: CitiesPage(),
           );
         });
-      case AppConstant.pageFavoritesRoute:
+
+
+      case AppConstant.pageUserProfileRoute:
         return MaterialPageRoute(builder: (context) {
-          return BlocProvider<FavoriteCubit>(
-            create: (context) => FavoriteCubit(),
-            child: FavoritePage(),
+          return BlocProvider<UserProfileCubit>(
+            create: (context) {
+              userProfileCubit = UserProfileCubit();
+              return userProfileCubit;
+            },
+            child: UserProfilePage(),
           );
         });
     }

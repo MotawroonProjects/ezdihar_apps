@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 class User {
   late int id;
   late String firstName='';
-  late String lastName;
+  late String lastName='';
   late String phoneCode;
-  late String phone;
-  late String email;
-  late String image;
-  late String birthdate;
+  late String phone='';
+  late String email='';
+  late String image='';
+  late String birthdate='';
   late String userType;
   late CityModel city;
   late bool isLoggedIn = false;

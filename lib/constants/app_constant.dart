@@ -20,7 +20,7 @@ class AppConstant {
   static const pageInvestorSignUpRoleRoute = '/investorSignUp';
   static const pageConsultantSignUpRoleRoute = '/consultantSignUp';
   static const pageCitiesRoute = '/cities';
-  static const pageFavoritesRoute = '/favorites';
+  static const pageUserProfileRoute = '/userProfile';
 
   //////////////////////////////////////////////
   static const following = 'following';

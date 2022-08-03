@@ -9,9 +9,9 @@ abstract class UserSignUpState {}
 class UserSignUpInitial extends UserSignUpState {}
 
 class UserPhotoPicked extends UserSignUpState {
-  XFile file;
+  String imagePath;
 
-  UserPhotoPicked(this.file);
+  UserPhotoPicked(this.imagePath);
 }
 
 class UserBirthDateSelected extends UserSignUpState {
@@ -41,5 +41,9 @@ class OnCitySelected extends UserSignUpState {
 class IsLoading extends UserSignUpState {}
 
 class OnSignUpSuccess extends UserSignUpState {
+
+}
+
+class OnUserDataGet extends UserSignUpState {
 
 }

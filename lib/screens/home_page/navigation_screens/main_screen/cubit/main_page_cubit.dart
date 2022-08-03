@@ -77,19 +77,18 @@ class MainPageCubit extends Cubit<MainPageState> {
       UserModel model = await Preferences.instance.getUserModel();
       String user_token = '';
       if (model.user.isLoggedIn) {
-
         user_token = model.access_token;
       }
       String date = 'All';
-      if(filterDate=='الكل'){
+      if (filterDate == 'الكل') {
         date = "All";
-      }else{
+      } else {
         date = filterDate;
       }
       ProjectsDataModel home = await api.getHomeData(
           user_token, filterType, date, selectedCategoryModel.id);
       if (home.status.code == 200) {
-        for(ProjectModel model in home.data){
+        for (ProjectModel model in home.data) {
           print('like=>${model.isLicked}');
         }
         projects = home.data;
@@ -117,18 +116,17 @@ class MainPageCubit extends Cubit<MainPageState> {
     emit(OnCategorySelectedState(categoryModel));
   }
 
-  void love_report_follow(int post_index,ProjectModel model,String type) async{
-    try{
-      getUserData().then((value) async{
-        StatusResponse response =  await api.love_follow_report(value!.access_token, model.id, type);
-        if(response.code==200){
+  void love_report_follow(
+      int post_index, ProjectModel model, String type) async {
+    try {
+      getUserData().then((value) async {
+        StatusResponse response =
+            await api.love_follow_report(value!.access_token, model.id, type);
+        if (response.code == 200) {
           updateProject(post_index, model);
-        }else{
-
-        }
+        } else {}
       });
-
-    }catch (e){
+    } catch (e) {
       emit(OnError(e.toString()));
     }
   }
@@ -150,7 +148,7 @@ class MainPageCubit extends Cubit<MainPageState> {
     emit(OnError(error));
   }
 
-  void updateProject(int index,ProjectModel model){
+  void updateProject(int index, ProjectModel model) {
     print('data=>${model.isFollowed}');
     projects[index] = model;
     emit(OnDataSuccess(projects));

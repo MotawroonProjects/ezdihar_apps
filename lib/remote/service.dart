@@ -194,6 +194,20 @@ class ServiceApi {
     }
   }
 
+  Future<ProjectsDataModel> getMyPosts(String user_token) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+
+      Response response = await dio.get('api/profile/myPosts');
+      return ProjectsDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+
   Future<StatusResponse> updateFireBaseToken(
       String user_token, firebaseToken, String type) async {
     var fields = FormData.fromMap({'token': firebaseToken, 'type': type});
@@ -226,4 +240,45 @@ class ServiceApi {
       throw errorMessage;
     }
   }
+
+  Future<UserDataModel> updateProfile(UserSignUpModel model,String user_token) async {
+    var fields = FormData.fromMap({});
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+
+      if (model.imagePath.isNotEmpty&&!model.imagePath.startsWith('http')) {
+        fields = FormData.fromMap({
+          'first_name': model.firstName,
+          'last_name': model.lastName,
+          'email': model.email,
+          'phone_code': model.phone_code,
+          'phone': model.phone,
+          'city_id': model.cityId,
+          'birthdate': model.dateOfBirth,
+          'image': await MultipartFile.fromFile(model.imagePath)
+        });
+      } else {
+        fields = FormData.fromMap({
+          'first_name': model.firstName,
+          'last_name': model.lastName,
+          'email': model.email,
+          'phone_code': model.phone_code,
+          'phone': model.phone,
+          'city_id': model.cityId,
+          'birthdate': model.dateOfBirth,
+        });
+      }
+
+      Response response = await dio.post('api/auth/updateProfile', data: fields);
+      return UserDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
+
 }

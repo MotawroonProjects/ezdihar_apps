@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/models/city_data_model.dart';
 import 'package:ezdihar_apps/models/city_model.dart';
 import 'package:ezdihar_apps/models/user_data_model.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/remote/service.dart';
@@ -24,11 +25,17 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
   bool isDataValid = false;
   late CityModel selectedCityModel;
   late ServiceApi api;
+  late String imagePath;
+  TextEditingController controllerFirstName = TextEditingController();
+  TextEditingController controllerLastName = TextEditingController();
+  TextEditingController controllerEmail = TextEditingController();
 
   UserSignUpCubit() : super(UserSignUpInitial()) {
     selectedCityModel = CityModel.initValues();
     model.cityId = selectedCityModel.id;
     api = ServiceApi();
+    imagePath = "";
+    updateUserDataUi();
   }
 
   updatePhoneCode_Phone(String phone_code, String phone) {
@@ -40,8 +47,10 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
     imageFile = await ImagePicker().pickImage(
         source: type == 'camera' ? ImageSource.camera : ImageSource.gallery);
     imageType = 'file';
+
     model.imagePath = imageFile!.path;
-    emit(UserPhotoPicked(imageFile!));
+    imagePath = model.imagePath;
+    emit(UserPhotoPicked(model.imagePath));
   }
 
   updateBirthDate({required String date}) {
@@ -73,7 +82,6 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
     try {
       UserDataModel response = await api.signUp(model);
       response.userModel.user.isLoggedIn = true;
-      print('response=>${response.userModel.toString()}');
       if (response.status.code == 200) {
         Preferences.instance.setUser(response.userModel).then((value) {
           Navigator.pop(context);
@@ -85,4 +93,43 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
       OnError(e.toString());
     }
   }
+
+  updateProfile(BuildContext context, String user_token) async {
+    AppWidget.createProgressDialog(context, 'wait'.tr());
+    try {
+      UserDataModel response = await api.updateProfile(model, user_token);
+      response.userModel.user.isLoggedIn = true;
+      if (response.status.code == 200) {
+        Preferences.instance.setUser(response.userModel).then((value) {
+          Navigator.pop(context);
+          emit(OnSignUpSuccess());
+        });
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      OnError(e.toString());
+    }
+  }
+
+  void updateUserDataUi() {
+    Preferences.instance.getUserModel().then((value) {
+      if (value.user.isLoggedIn) {
+        model.firstName = value.user.firstName;
+        model.lastName = value.user.lastName;
+        model.email = value.user.email;
+        model.cityId = value.user.city.id;
+        model.imagePath = value.user.image;
+        updateSelectedCity(value.user.city);
+        updateBirthDate(date: value.user.birthdate);
+        controllerFirstName.text = model.firstName;
+        controllerLastName.text = model.lastName;
+        controllerEmail.text = model.email;
+
+        emit(OnUserDataGet());
+        emit(UserPhotoPicked(model.imagePath));
+      }
+    });
+  }
+
+
 }

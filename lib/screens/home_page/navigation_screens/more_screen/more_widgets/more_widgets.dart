@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MoreWidgets {
-  Widget buildAvatar(BuildContext context) {
+  Widget buildAvatar(BuildContext context,Function onTapped) {
     MoreCubit cubit = BlocProvider.of(context);
 
     return BlocProvider.value(
@@ -126,7 +126,7 @@ class MoreWidgets {
                   InkWell(
                     onTap: !userModel.user.isLoggedIn
                         ? () {
-                            onTapped();
+                            onTapped(action:'login');
                           }
                         : null,
                     child: Text(
@@ -149,8 +149,13 @@ class MoreWidgets {
                             color: AppColors.color1,
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: AppWidget.svg(
-                              'edit.svg', AppColors.white, 20.0, 20.0),
+                          child: InkWell(
+                            onTap:(){
+                              onTapped(action:'edit');
+                            } ,
+                            child: AppWidget.svg(
+                                'edit.svg', AppColors.white, 20.0, 20.0),
+                          ),
                         )
                       : SizedBox()
                 ],
