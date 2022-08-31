@@ -7,6 +7,8 @@ import 'package:ezdihar_apps/models/consultant_data_model.dart';
 import 'package:ezdihar_apps/models/consultants_data_model.dart';
 import 'package:ezdihar_apps/models/home_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/send_general_study_model.dart';
+import 'package:ezdihar_apps/models/slider_model.dart';
 import 'package:ezdihar_apps/models/status_resspons.dart';
 import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_sign_up_model.dart';
@@ -281,4 +283,60 @@ class ServiceApi {
     }
   }
 
+  Future<StatusResponse> addPost(String user_token,SendGeneralStudyModel model) async {
+    BaseOptions baseOptions = dio.options;
+
+    baseOptions.headers = {'Authorization': user_token};
+    dio.options = baseOptions;
+
+    var fields = FormData.fromMap({});
+    try {
+
+      fields = FormData.fromMap({
+        'title': model.projectName,
+        'text': model.details,
+        'category_id': model.category_id,
+        'consultants_ids[]': model.consultantTypes,
+        'is_investment':model.showProjectInvestment?1:0,
+        'image': await MultipartFile.fromFile(model.project_photo_path)
+      });
+
+      Response response = await dio.post('api/post/storePost', data: fields);
+      print("data=>${response.data.toString()}");
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
+
+  Future<SliderModel> getSliders() async {
+    try {
+      print('slider');
+      Response response = await dio.get('api/home/slider');
+      return SliderModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+
+  Future<StatusResponse> deleteProject(String user_token, int post_id) async {
+    var fields = FormData.fromMap({'post_id': post_id});
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      Response response =
+      await dio.post('api/post/deletePost', data: fields);
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
 }

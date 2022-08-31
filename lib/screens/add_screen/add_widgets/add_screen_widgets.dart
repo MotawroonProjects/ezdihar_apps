@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
@@ -5,14 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 class AddScreenWidget {
 
-  Widget buildSliderSection({required BuildContext context, required List<Object> images}) {
-    var items = [
-      AddScreenWidget()._buildSliderImage(context: context, object: Object()),
-      AddScreenWidget()._buildSliderImage(context: context, object: Object()),
-      AddScreenWidget()._buildSliderImage(context: context, object: Object()),
-      AddScreenWidget()._buildSliderImage(context: context, object: Object()),
-      AddScreenWidget()._buildSliderImage(context: context, object: Object())
-    ];
+  Widget buildSliderSection({required BuildContext context, required List<String> images}) {
     return Container(
       margin: const EdgeInsets.only(top: 60.0),
       color: AppColors.grey3,
@@ -24,12 +18,12 @@ class AddScreenWidget {
             color: AppColors.grey3,
             padding: const EdgeInsets.only(top: 8.0),
             child: CarouselSlider(
-                items: items,
+                items: List.generate(images.length, (index) => _buildSliderImage(context: context, imageUrl: images[index])),
                 options: CarouselOptions(
                   height: 180,
                   autoPlay: true,
-                  enableInfiniteScroll: true,
-                  viewportFraction: .69,
+                  enableInfiniteScroll: images.length>1?true:false,
+                  viewportFraction: images.length>1?0.69:1,
                   scrollDirection: Axis.horizontal,
                   autoPlayAnimationDuration: const Duration(milliseconds: 800),
                   initialPage: 0,
@@ -43,7 +37,7 @@ class AddScreenWidget {
     );
   }
 
-  Widget _buildSliderImage({required BuildContext context,required Object object}){
-    return Image.asset('${AppConstant.localImagePath}test.png',fit: BoxFit.cover,);
+  Widget _buildSliderImage({required BuildContext context,required String imageUrl}){
+    return imageUrl.isNotEmpty?ClipRRect(borderRadius: BorderRadius.circular(8.0),child: CachedNetworkImage(imageUrl: imageUrl,height: 180,fit: BoxFit.cover,placeholder:(context,url)=> Container(color: AppColors.grey2,),errorWidget: (context,url,error)=>Container(color: AppColors.grey2,),)):Container(color: AppColors.grey2,);
   }
 }

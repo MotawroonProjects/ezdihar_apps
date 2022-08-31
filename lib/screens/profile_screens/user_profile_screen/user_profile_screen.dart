@@ -264,8 +264,9 @@ class _UserProfilePageState extends State<UserProfilePage>
 
     return BlocBuilder<UserProfileCubit, UserProfileState>(
       builder: (context, state) {
+        List<ProjectModel> list = cubit.my_posts;
+
         if(state is UpdateIndex){
-          List<ProjectModel> list = cubit.posts;
 
           if (list.length > 0) {
             return myPostWidget(list);
@@ -281,13 +282,14 @@ class _UserProfilePageState extends State<UserProfilePage>
 
 
         }
-        else if (state is IsLoadingPosts||state is OnUserDataGet) {
+        if (state is IsLoadingPosts||state is OnUserDataGet) {
           return Center(
             child: CircularProgressIndicator(
               color: AppColors.colorPrimary,
             ),
           );
-        } else if (state is OnErrorPosts) {
+        }
+        if (state is OnErrorPosts) {
           return Center(
             child: InkWell(
               onTap: refreshData,
@@ -309,21 +311,19 @@ class _UserProfilePageState extends State<UserProfilePage>
               ),
             ),
           );
-        } else {
-          List<ProjectModel> list = cubit.posts;
-
-          if (list.length > 0) {
-            return myPostWidget(list);
-          } else {
-            return Center(
-              child: Text(
-                'no_projects'.tr(),
-
-                style: TextStyle(color: AppColors.black, fontSize: 15.0),
-              ),
-            );
-          }
         }
+        if (list.length > 0) {
+          return myPostWidget(list);
+        } else {
+          return Center(
+            child: Text(
+              'no_projects'.tr(),
+
+              style: TextStyle(color: AppColors.black, fontSize: 15.0),
+            ),
+          );
+        }
+
       },
     );
   }
@@ -336,7 +336,7 @@ class _UserProfilePageState extends State<UserProfilePage>
       child: ListView.builder(
           itemCount: list.length,
           scrollDirection: Axis.vertical,
-          shrinkWrap: true,
+          shrinkWrap: false,
           itemBuilder: (context, index) {
             ProjectModel model = list[index];
             String approved = "";
@@ -395,6 +395,13 @@ class _UserProfilePageState extends State<UserProfilePage>
                             fontSize: 14.0,
                           ),
                         ),
+                        trailing: InkWell(
+                          onTap: () {
+                            showSheet(context, model, index);
+                          },
+                          child: AppWidget.svg(
+                              'menu_dots.svg', AppColors.color1, 20.0, 20.0),
+                        ),
                       ),
                       const SizedBox(
                         height: 8.0,
@@ -422,34 +429,6 @@ class _UserProfilePageState extends State<UserProfilePage>
                         MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  addRemoveFavorite(index, model);
-                                },
-                                child: SizedBox(
-                                  child: AppWidget.svg(
-                                      'love.svg',
-                                      AppColors.colorPrimary,
-                                      24.0,
-                                      24.0),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                "${model.likesCount}",
-                                style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: AppColors.color1),
-                              )
-                            ],
-                          ),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 12.0),
@@ -530,8 +509,8 @@ class _UserProfilePageState extends State<UserProfilePage>
     return BlocBuilder<UserProfileCubit, UserProfileState>(
       builder: (context, state) {
         if(state is UpdateIndex){
-          if (cubit.projects.length > 0) {
-            return myFavoriteWidget(cubit.projects);
+          if (cubit.fav_posts.length > 0) {
+            return myFavoriteWidget(cubit.fav_posts);
           } else {
             return Center(
               child: Text(
@@ -572,7 +551,7 @@ class _UserProfilePageState extends State<UserProfilePage>
             ),
           );
         } else {
-          List<ProjectModel> list = cubit.projects;
+          List<ProjectModel> list = cubit.fav_posts;
 
           if (list.length > 0) {
            return myFavoriteWidget(list);
@@ -598,7 +577,7 @@ class _UserProfilePageState extends State<UserProfilePage>
       child: ListView.builder(
           itemCount: list.length,
           scrollDirection: Axis.vertical,
-          shrinkWrap: true,
+          shrinkWrap: false,
           itemBuilder: (context, index) {
             ProjectModel model = list[index];
             String approved = "";
@@ -788,7 +767,7 @@ class _UserProfilePageState extends State<UserProfilePage>
 
   Future<void> refreshData() async {
     UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
-    cubit.getData();
+    cubit.getFavoritePosts();
   }
 
   Future<void> refreshPosts() async {
@@ -844,5 +823,33 @@ class _UserProfilePageState extends State<UserProfilePage>
         );
       },
     );
+  }
+
+  void showSheet(BuildContext c, ProjectModel model, int index) {
+    showModalBottomSheet(
+        isDismissible: true,
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(24.0),topRight: Radius.circular(24.0))),
+        backgroundColor: AppColors.white,
+        context: c, builder: (_){
+      return Container(
+        child:ListTile(
+            leading:
+            AppWidget.svg('delete.svg', AppColors.color1, 24.0, 24.0),
+            title: Text(
+              '${'delete'.tr()} ${model.title} ?',
+              style: const TextStyle(
+                  color: AppColors.black,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              UserProfileCubit cubit = BlocProvider.of(c);
+              cubit.deleteProject(model, index);
+
+            }),
+      );
+    });
   }
 }

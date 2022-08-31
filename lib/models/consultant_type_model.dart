@@ -6,6 +6,7 @@ class ConsultantTypeModel {
   late String title_en='';
   late int category_id;
   late String image;
+  late bool isSelected = false;
   late CategoryModel category;
 
 

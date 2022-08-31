@@ -1,10 +1,13 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/models/home_model.dart';
 import 'package:ezdihar_apps/models/project_model.dart';
 import 'package:ezdihar_apps/models/status_resspons.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/remote/service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 
 part 'user_profile_state.dart';
@@ -13,18 +16,23 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   int index = 0;
   late ServiceApi api;
   UserModel? userModel;
-  late List<ProjectModel> projects;
-  late List<ProjectModel> posts;
+  late List<ProjectModel> fav_posts;
+  late List<ProjectModel> my_posts;
 
   UserProfileCubit() : super(UpdateIndex(0)) {
-    projects =[];
-    posts = [];
+    fav_posts =[];
+    my_posts = [];
     api = ServiceApi();
     getUserData().then((value) {
-      emit(OnUserDataGet(value!));
+      userModel = value;
+      emit(OnUserDataGet(userModel!));
+      getPosts();
+      Future.delayed(Duration(seconds: 1)).then((value){
+        getFavoritePosts();
+      });
+
     });
-    getPosts();
-    getData();
+
 
   }
 
@@ -32,10 +40,10 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     this.index = index;
     emit(UpdateIndex(index));
     if(index==0){
-      emit(OnDataSuccess(projects));
+      emit(OnFavDataSuccess(fav_posts));
 
     }else{
-      emit(OnPostsSuccess(posts));
+      emit(OnMyPostsSuccess(my_posts));
 
     }
   }
@@ -45,17 +53,15 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     return userModel;
   }
 
-  getData() async{
+  getFavoritePosts() async{
     try{
-      getUserData().then((value) async{
-        emit(IsLoadingData());
-        ProjectsDataModel response =  await api.getMyFavorites(value!.access_token);
+      emit(IsLoadingData());
+      ProjectsDataModel response =  await api.getMyFavorites(userModel!.access_token);
 
-        if(response.status.code==200){
-          projects = response.data;
-          emit(OnDataSuccess(projects));
-        }
-      });
+      if(response.status.code==200){
+        fav_posts = response.data;
+        emit(OnFavDataSuccess(fav_posts));
+      }
     }catch (e){
       emit(OnError(e.toString()));
     }
@@ -65,22 +71,36 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   getPosts() async{
 
     try{
-      getUserData().then((value) async{
-        emit(IsLoadingData());
-        ProjectsDataModel response =  await api.getMyPosts(value!.access_token);
+      emit(IsLoadingPosts());
+      ProjectsDataModel response =  await api.getMyPosts(userModel!.access_token);
 
-        if(response.status.code==200){
-          projects = response.data;
-          emit(OnDataSuccess(projects));
-        }
-      });
+      if(response.status.code==200){
+        my_posts = response.data;
+        emit(OnMyPostsSuccess(my_posts));
+      }
     }catch (e){
       emit(OnErrorPosts(e.toString()));
     }
 
 
   }
+  deleteProject(ProjectModel model,int index) async{
+    my_posts.removeAt(index);
+    emit(OnMyPostsSuccess(my_posts));
+    try{
+      StatusResponse response = await api.deleteProject(userModel!.access_token, model.id);
+      if(response.code==200){
+        Fluttertoast.showToast(msg: 'deleted'.tr(),fontSize: 15.0,backgroundColor: AppColors.black,gravity: ToastGravity.SNACKBAR,textColor: AppColors.white);
 
+      }else{
+        my_posts[index] = model;
+        emit(OnMyPostsSuccess(my_posts));
+      }
+    }catch (e){
+
+      Future.delayed(Duration(seconds: 1)).then((value) => emit(OnError(e.toString())));
+    }
+  }
   void onErrorData(String error) {
     emit(OnError(error));
   }
@@ -94,9 +114,8 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       getUserData().then((value) async{
         StatusResponse response =  await api.love_follow_report(value!.access_token, model.id, type);
         if(response.code==200){
-          projects.removeAt(post_index);
-
-          emit(OnDataSuccess(projects));
+          fav_posts.removeAt(post_index);
+          emit(OnFavDataSuccess(fav_posts));
 
           Future.delayed(Duration(seconds: 1))
               .then((value) =>emit(OnRemoveFavorite()));

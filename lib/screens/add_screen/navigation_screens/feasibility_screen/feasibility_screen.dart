@@ -1,9 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/category_model.dart';
+import 'package:ezdihar_apps/screens/add_screen/navigation_screens/feasibility_screen/cubit/feasibility_cubit.dart';
 import 'package:ezdihar_apps/screens/add_screen/navigation_screens/feasibility_screen/widgets/feasibility_screen_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FeasibilityPage extends StatefulWidget {
   const FeasibilityPage({Key? key}) : super(key: key);
@@ -13,37 +16,71 @@ class FeasibilityPage extends StatefulWidget {
 }
 
 class _FeasibilityPageState extends State<FeasibilityPage> {
-
   @override
   void initState() {
     super.initState();
-    print("initState");
   }
+
   @override
   Widget build(BuildContext context) {
+    FeasibilityCubit cubit = BlocProvider.of<FeasibilityCubit>(context);
     return Container(
       color: AppColors.grey3,
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         color: AppColors.colorPrimary,
-        child: GridView.builder(
-            itemCount: 3,
-            physics: const NeverScrollableScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
+        child: BlocBuilder<FeasibilityCubit, FeasibilityState>(
+          builder: (context, state) {
+            List<CategoryModel> categories = cubit.categories;
 
-              return const FeasibilityScreenWidgets().buildListItem(context: context, object: Object(), index: index, onTaped: _onTaped);
-            }, gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),),
+            if (state is IsCategoryLoading) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.colorPrimary,
+                ),
+              );
+            } else if (state is OnCategoryDataSuccess) {
+              if (categories.length > 0) {
+                return GridView.builder(
+                  itemCount: categories.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    CategoryModel model = categories[index];
+                    return const FeasibilityScreenWidgets().buildListItem(
+                        context: context,
+                        model: model,
+                        index: index,
+                        onTaped: _onTaped);
+                  },
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    'no_departments'.tr(),
+                    style: TextStyle(color: AppColors.black, fontSize: 15.0),
+                  ),
+                );
+              }
+            }else{
+              return Container();
+            }
+          },
+        ),
       ),
     );
   }
 
-  void _onTaped({required Object object ,required int index}){
-    Navigator.pushNamed(context, AppConstant.pageSendGeneralStudyRoute,arguments: 'ttt');
-
+  void _onTaped({required CategoryModel model, required int index}) {
+    Navigator.pushNamed(context, AppConstant.pageSendGeneralStudyRoute,
+        arguments: model);
   }
-  Future<void> _onRefresh() async {
 
+  Future<void> _onRefresh() async {
+    FeasibilityCubit cubit = BlocProvider.of<FeasibilityCubit>(context);
+    cubit.getCategories();
   }
 }

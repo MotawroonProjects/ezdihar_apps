@@ -32,12 +32,9 @@ class InvestmentScreenWidgets {
                 aspectRatio:1 / .67,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                  child: Hero(
-                    tag: "investmentImage",
-                    child: Image.asset(
-                      '${AppConstant.localImagePath}test.png',
-                      fit: BoxFit.cover,
-                    ),
+                  child: Image.asset(
+                    '${AppConstant.localImagePath}test.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

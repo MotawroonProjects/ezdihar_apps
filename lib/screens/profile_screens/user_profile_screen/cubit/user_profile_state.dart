@@ -13,16 +13,16 @@ class IsLoadingData extends UserProfileState {
 class IsLoadingPosts extends UserProfileState {
 }
 
-class OnDataSuccess extends UserProfileState {
+class OnFavDataSuccess extends UserProfileState {
   List<ProjectModel> list;
 
-  OnDataSuccess(this.list);
+  OnFavDataSuccess(this.list);
 }
 
-class OnPostsSuccess extends UserProfileState {
+class OnMyPostsSuccess extends UserProfileState {
   List<ProjectModel> list;
 
-  OnPostsSuccess(this.list);
+  OnMyPostsSuccess(this.list);
 }
 
 class OnRemoveFavorite extends UserProfileState {

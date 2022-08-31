@@ -13,7 +13,7 @@
   "save": "Save",
   "saveToItems": "Add to your saved items",
   "report": "Report",
-  "cancel_report" : "إلغاء الإبلاغ",
+  "cancel_report": "إلغاء الإبلاغ",
   "reportWithWrong": "Report if something is wrong",
   "generalConsultation": "General Consultation",
   "consulting": "Consulting",
@@ -136,6 +136,13 @@
   "edit_profile": "Edit Profile",
   "followers": "Followers",
   "following_users": "Following",
-  "my_posts":"My Post"
+  "my_posts": "My Post",
+  "no_departments": "No Departments To Show",
+  "follow_credits": "If you want to display your project in the list of projects, you must take the following credits",
+  "project_photo": "Project photo",
+  "ch_photo": "Choose photo",
+  "delete": "Delete",
+  "deleted": "Deleted"
+
 
 }

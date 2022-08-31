@@ -3,8 +3,11 @@ import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/category_model.dart';
 import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/accounting_consultants_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/add_screen/add_screen.dart';
+import 'package:ezdihar_apps/screens/add_screen/cubit/add_screen_cubit.dart';
+import 'package:ezdihar_apps/screens/add_screen/navigation_screens/feasibility_screen/cubit/feasibility_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/consultant_sign_up/consultant_sign_up.dart';
 import 'package:ezdihar_apps/screens/auth_screens/consultant_sign_up/cubit/consultant_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/invistor_sign_up/cubit/investor_cubit.dart';
@@ -17,6 +20,7 @@ import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/user_sign_up_scre
 import 'package:ezdihar_apps/screens/cities_screen/cities_page.dart';
 import 'package:ezdihar_apps/screens/cities_screen/cubit/cities_cubit.dart';
 import 'package:ezdihar_apps/screens/consultant_details_screen/consultant_details.dart';
+import 'package:ezdihar_apps/screens/consultant_details_screen/cubit/consultant_details_cubit.dart';
 import 'package:ezdihar_apps/screens/contact_us_screen/contact_us_screen.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/consulting_screen/cubit/consulting_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/home_screen/HomePage.dart';
@@ -27,7 +31,9 @@ import 'package:ezdihar_apps/screens/investment_details_screen/investment_detail
 import 'package:ezdihar_apps/screens/offer_screen/offer_screen.dart';
 import 'package:ezdihar_apps/screens/profile_screens/user_profile_screen/cubit/user_profile_cubit.dart';
 import 'package:ezdihar_apps/screens/profile_screens/user_profile_screen/user_profile_screen.dart';
+import 'package:ezdihar_apps/screens/request_consultation_screen/cubit/request_consultation_cubit.dart';
 import 'package:ezdihar_apps/screens/request_consultation_screen/request_consultation_screen.dart';
+import 'package:ezdihar_apps/screens/send_general_study_screen/cubit/send_general_study_cubit.dart';
 import 'package:ezdihar_apps/screens/send_general_study_screen/send_general_study_screen.dart';
 import 'package:ezdihar_apps/screens/settings_screen/cubit/setting_cubit.dart';
 import 'package:ezdihar_apps/screens/settings_screen/setting_screen.dart';
@@ -88,7 +94,13 @@ class AppRoutes {
                 ));
 
       case AppConstant.pageAddRoute:
-        return MaterialPageRoute(builder: (context) => const AddPage());
+        return MaterialPageRoute(
+            builder: (context) => MultiBlocProvider(providers: [
+                  BlocProvider<AddScreenCubit>(
+                      create: (context) => AddScreenCubit()),
+                  BlocProvider<FeasibilityCubit>(
+                      create: (context) => FeasibilityCubit()),
+                ], child: AddPage()));
 
       case AppConstant.pageInvestmentDetailsRoute:
         return MaterialPageRoute(
@@ -113,17 +125,30 @@ class AppRoutes {
         int consultant_id = settings.arguments as int;
 
         return MaterialPageRoute(
-            builder: (context) => ConsultantDetailsPage(
-                  consultant_id: consultant_id,
+            builder: (context) => BlocProvider(
+                  create: (context) => ConsultantDetailsCubit(),
+                  child: ConsultantDetailsPage(
+                    consultant_id: consultant_id,
+                  ),
                 ));
       case AppConstant.pageRequestConsultationRoute:
+        UserModel userModel = settings.arguments as UserModel;
+
         return MaterialPageRoute(
-            builder: (context) => const RequestConsultationPage());
+            builder: (context) => BlocProvider(
+                  create: (context) => RequestConsultationCubit(),
+                  child: RequestConsultationPage(
+                    userModel: userModel,
+                  ),
+                ));
       case AppConstant.pageSendGeneralStudyRoute:
-        String title = settings.arguments.toString();
+        CategoryModel model = settings.arguments as CategoryModel;
         return MaterialPageRoute(
-            builder: (context) => SendGeneralStudyScreen(
-                  title: title,
+            builder: (context) => BlocProvider(
+                  create: (context) => SendGeneralStudyCubit(),
+                  child: SendGeneralStudyScreen(
+                    model: model,
+                  ),
                 ));
       case AppConstant.pageLoginRoute:
         return MaterialPageRoute(builder: (context) {
@@ -172,7 +197,6 @@ class AppRoutes {
             child: CitiesPage(),
           );
         });
-
 
       case AppConstant.pageUserProfileRoute:
         return MaterialPageRoute(builder: (context) {

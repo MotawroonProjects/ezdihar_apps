@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/request_consultation_screen/cubit/request_consultation_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
@@ -8,18 +10,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class RequestConsultationPage extends StatefulWidget {
-  const RequestConsultationPage({Key? key}) : super(key: key);
+  final UserModel userModel;
+
+  RequestConsultationPage({Key? key, required this.userModel})
+      : super(key: key);
 
   @override
   State<RequestConsultationPage> createState() =>
-      _RequestConsultationPageState();
+      _RequestConsultationPageState(userModel);
 }
 
 class _RequestConsultationPageState extends State<RequestConsultationPage> {
-  RequestConsultationCubit cubit = RequestConsultationCubit();
+  UserModel userModel;
+
+  _RequestConsultationPageState(this.userModel);
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.white,
@@ -39,6 +48,8 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
   }
 
   _buildBodySection({required BuildContext context}) {
+    RequestConsultationCubit cubit = BlocProvider.of<RequestConsultationCubit>(context);
+
     double width = MediaQuery.of(context).size.width;
 
     return BlocProvider(
@@ -66,7 +77,7 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
               InkWell(
                 onTap: isValid
                     ? () {
-                        _openSheet(context: context,object: Object());
+                        _openSheet(context: context, object: Object());
                       }
                     : null,
                 child: Container(
@@ -93,6 +104,7 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
   }
 
   _buildProfileSection() {
+    String lang = EasyLocalization.of(context)!.locale.languageCode;
     return Card(
       color: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
@@ -104,12 +116,25 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppWidget.circleAvatar(144.0, 144.0),
+            userModel.user.image.isNotEmpty
+                ? CachedNetworkImage(
+                    width: 144.0,
+                    height: 144.0,
+                    imageUrl: userModel.user.image,
+                    imageBuilder: (context, imageProvider) => CircleAvatar(
+                      backgroundImage: imageProvider,
+                    ),
+                    placeholder: (context, url) =>
+                        AppWidget.circleAvatar(144.0, 144.0),
+                    errorWidget: (context, url, error) =>
+                        AppWidget.circleAvatar(144.0, 144.0),
+                  )
+                : AppWidget.circleAvatar(144.0, 144.0),
             const SizedBox(
               height: 8.0,
             ),
             Text(
-              'Emad Magdy',
+              userModel.user.firstName + " " + userModel.user.lastName,
               style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -119,14 +144,21 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
               height: 8.0,
             ),
             Text(
-              'Accounting Consultants',
+              userModel.adviser_data != null
+                  ? lang == 'ar'
+                      ? userModel.adviser_data!.consultant_type.title_ar
+                      : userModel.adviser_data!.consultant_type.title_en
+                  : "",
               style: const TextStyle(
                   fontSize: 12.0, color: AppColors.colorPrimary),
             ),
             const SizedBox(
               height: 8.0,
             ),
-            _buildRateBar(rate: 4),
+            _buildRateBar(
+                rate: userModel.adviser_data != null
+                    ? userModel.adviser_data!.rate
+                    : 0),
           ],
         ),
       ),
@@ -134,6 +166,8 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
   }
 
   _buildFormSection() {
+    RequestConsultationCubit cubit = BlocProvider.of<RequestConsultationCubit>(context);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -254,7 +288,7 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
         onRatingUpdate: (rate) {});
   }
 
-  _openSheet({required BuildContext context,required Object object}) {
+  _openSheet({required BuildContext context, required Object object}) {
     showModalBottomSheet(
         enableDrag: true,
         isScrollControlled: true,
@@ -264,42 +298,46 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(24.0),
                 topLeft: Radius.circular(24.0))),
-        context: context, builder:(context){
-      return Container(
-        padding: const EdgeInsets.only(top: 24.0,bottom: 36.0,left: 36.0,right: 36.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text.rich(TextSpan(
-              text: 'doYouWantToConfirmDeduct'.tr(),
-              style:
-              const TextStyle(fontSize: 16.0, color: AppColors.black),
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.only(
+                top: 24.0, bottom: 36.0, left: 36.0, right: 36.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextSpan(
-                  text: ' 100',
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.colorPrimary),
+                Text.rich(TextSpan(
+                  text: 'doYouWantToConfirmDeduct'.tr(),
+                  style:
+                      const TextStyle(fontSize: 16.0, color: AppColors.black),
                   children: [
                     TextSpan(
-                        text: ' ${'sar'.tr()} ',
-                        style: TextStyle(
-                            fontSize: 12.0, color: AppColors.grey1)),
+                      text: ' 100',
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.colorPrimary),
+                      children: [
+                        TextSpan(
+                            text: ' ${'sar'.tr()} ',
+                            style: TextStyle(
+                                fontSize: 12.0, color: AppColors.grey1)),
+                      ],
+                    ),
+                    TextSpan(
+                        text: 'fromYourWalletBalance'.tr(),
+                        style:
+                            TextStyle(fontSize: 16.0, color: AppColors.black)),
                   ],
+                )),
+                const SizedBox(
+                  height: 24.0,
                 ),
-                TextSpan(
-                    text: 'fromYourWalletBalance'.tr(),
-                    style:
-                    TextStyle(fontSize: 16.0, color: AppColors.black)),
-              ],
-            )),
-            const SizedBox(height: 24.0,),
-            Row(
-              children: [
-                Expanded(
-                    child: InkWell(
+                Row(
+                  children: [
+                    Expanded(
+                        child: InkWell(
                       onTap: () {
                         Navigator.of(context).pop();
                         FocusManager.instance.primaryFocus!.unfocus();
@@ -310,8 +348,8 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
                         decoration: BoxDecoration(
                             color: AppColors.transparent,
                             borderRadius: BorderRadius.circular(8.0),
-                            border:
-                            Border.all(color: AppColors.color1, width: 1.0)),
+                            border: Border.all(
+                                color: AppColors.color1, width: 1.0)),
                         child: Text(
                           'cancel'.tr(),
                           style: const TextStyle(
@@ -319,11 +357,11 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
                         ),
                       ),
                     )),
-                const SizedBox(
-                  width: 16.0,
-                ),
-                Expanded(
-                    child: InkWell(
+                    const SizedBox(
+                      width: 16.0,
+                    ),
+                    Expanded(
+                        child: InkWell(
                       onTap: () {
                         Navigator.of(context).pop();
                         FocusManager.instance.primaryFocus!.unfocus();
@@ -342,14 +380,14 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
                         ),
                       ),
                     )),
+                  ],
+                ),
               ],
             ),
-
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
+
   @override
   void dispose() {
     // TODO: implement dispose

@@ -69,11 +69,11 @@
   "user": "مستخدم",
   "consultantDetails": "تفاصيل الاستشاري",
   "bio": "السيرة الزاتية",
-  "requestConsultationNow": "طلب استشار الان",
+  "requestConsultationNow": "طلب استشارة الان",
   "yearsExperience": "سنوات الخبرة",
   "years": "سنوات",
   "graduationRate": "معدل التخرج",
-  "requestConsultation": "طلب استشار",
+  "requestConsultation": "طلب استشارة",
   "projectName": "إسم المشروع",
   "doYouWantToConfirmDeduct": "هل تريد تأكيد وخصم",
   "fromYourWalletBalance": "من رصيد المحفظة",
@@ -136,5 +136,11 @@
   "edit_profile": "تعديل الحساب",
   "followers": "متابعين",
   "following_users": "تتابع",
-  "my_posts":"المشاريع"
+  "my_posts":"المشاريع",
+  "no_departments":"لا توجد أقسام لعرضها",
+  "follow_credits":"إذا كنت ترغب في عرض مشروعك في قائمة المشاريع ، يجب أن تأخذ الاعتمادات التالية",
+  "project_photo": "صورة المشروع",
+  "ch_photo": "إختر الصورة",
+  "delete": "هل تريد حذف",
+  "deleted": "تم حذف المشروع"
 }

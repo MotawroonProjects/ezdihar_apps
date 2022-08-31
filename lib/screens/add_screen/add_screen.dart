@@ -11,7 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class AddPage extends StatefulWidget {
   const AddPage({Key? key}) : super(key: key);
 
@@ -40,8 +39,7 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
               context: context,
               title: 'feasibility'.tr(),
               imageName: 'feasibility.svg',
-              color: pos == 0 ? AppColors.colorPrimary : AppColors
-                  .grey1);
+              color: pos == 0 ? AppColors.colorPrimary : AppColors.grey1);
         },
       ),
       BlocBuilder<AddScreenCubit, AddScreenState>(
@@ -54,8 +52,7 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
               context: context,
               title: 'investment'.tr(),
               imageName: 'investment.svg',
-              color: pos == 1 ? AppColors.colorPrimary : AppColors
-                  .grey1);
+              color: pos == 1 ? AppColors.colorPrimary : AppColors.grey1);
         },
       )
     ];
@@ -79,28 +76,34 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
-              SliverAppBar(
-                backgroundColor: AppColors.white,
-                pinned: true,
-                leading: AppWidget.buildBackArrow(context: context),
-                title: Text(
-                  'add'.tr(),
-                  style: const TextStyle(
-                      fontSize: 16.0,
-                      color: AppColors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                centerTitle: true,
-                expandedHeight: 320,
-                flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.parallax,
-                  background: AddScreenWidget()
-                      .buildSliderSection(context: context, images: []),
-                ),
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(60),
-                  child: _buildTabBarView(context: context),
-                ),
+              BlocBuilder<AddScreenCubit, AddScreenState>(
+                builder: (context, state) {
+                  print("status=>${state.toString()}");
+                  return SliverAppBar(
+                    backgroundColor: AppColors.white,
+                    pinned: true,
+                    leading: AppWidget.buildBackArrow(context: context),
+                    title: Text(
+                      'add'.tr(),
+                      style: const TextStyle(
+                          fontSize: 16.0,
+                          color: AppColors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    centerTitle: true,
+                    expandedHeight: _cubit.sliders.length > 0?320:0,
+                    flexibleSpace: _cubit.sliders.length > 0 ? FlexibleSpaceBar(
+                      collapseMode: CollapseMode.parallax,
+                      background: AddScreenWidget().buildSliderSection(
+                          context: context, images: _cubit.sliders),
+                    )
+                        : SizedBox(),
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(60),
+                      child: _buildTabBarView(context: context),
+                    ),
+                  );
+                },
               )
             ];
           },
@@ -124,14 +127,14 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
         },
         unselectedLabelColor: AppColors.grey1,
         labelColor: AppColors.colorPrimary,
-
       ),
     );
   }
 
   Widget _buildTabBarItem({required BuildContext context,
     required String title,
-    required String imageName, required Color color}) {
+    required String imageName,
+    required Color color}) {
     return Tab(
       child: Row(
         children: [
