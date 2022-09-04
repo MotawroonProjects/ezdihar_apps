@@ -7,7 +7,6 @@ import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/routes/app_routes.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
 import 'package:ezdihar_apps/screens/home_page/navigation_screens/more_screen/more_widgets/more_widgets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';

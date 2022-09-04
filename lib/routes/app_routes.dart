@@ -38,10 +38,13 @@ import 'package:ezdihar_apps/screens/send_general_study_screen/send_general_stud
 import 'package:ezdihar_apps/screens/settings_screen/cubit/setting_cubit.dart';
 import 'package:ezdihar_apps/screens/settings_screen/setting_screen.dart';
 import 'package:ezdihar_apps/screens/splashPage/splash_page.dart';
+import 'package:ezdihar_apps/screens/sub_services/cubit/sub_services_cubit.dart';
+import 'package:ezdihar_apps/screens/sub_services/sub_services_screen.dart';
 import 'package:ezdihar_apps/screens/wallet_screen/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../screens/accounting_consulting_by_subCategory_screen/accounting_consultants_screen.dart';
 import '../screens/home_page/navigation_screens/home_screen/cubit/home_page_cubit.dart';
 
 class AppRoutes {
@@ -49,6 +52,8 @@ class AppRoutes {
   static late MainPageCubit mainPageCubit;
   static late ConsultingCubit consultingCubit;
   static late ServicesCubit servicesCubit;
+  static late SubServicesCubit subServicesCubit;
+
   static late UserProfileCubit userProfileCubit;
 
   static Route<dynamic>? getRoutes(RouteSettings settings) {
@@ -147,7 +152,9 @@ class AppRoutes {
             builder: (context) => BlocProvider(
                   create: (context) => SendGeneralStudyCubit(),
                   child: SendGeneralStudyScreen(
+
                     model: model,
+
                   ),
                 ));
       case AppConstant.pageLoginRoute:
@@ -208,6 +215,20 @@ class AppRoutes {
             child: UserProfilePage(),
           );
         });
+      case AppConstant.pageSubCategorieRoute:
+        CategoryModel categoryModel = settings.arguments as CategoryModel;
+
+        return MaterialPageRoute(
+            builder: (context) => SubServicesPage(
+              categoryModel: categoryModel,
+            ));
+      case AppConstant.pageAccountingbySubCategoryConsultantsRoute:
+        CategoryModel categoryModel =
+        settings.arguments as CategoryModel;
+        return MaterialPageRoute(
+            builder: (context) => AccountingConsultantsBySubCategoryPage(
+              categoryModel: categoryModel,
+            ));
     }
   }
 }

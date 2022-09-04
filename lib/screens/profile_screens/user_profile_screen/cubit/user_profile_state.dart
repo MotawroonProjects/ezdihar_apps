@@ -24,7 +24,11 @@ class OnMyPostsSuccess extends UserProfileState {
 
   OnMyPostsSuccess(this.list);
 }
+class OnSavedPostsSuccess extends UserProfileState {
+  List<ProjectModel> list;
 
+  OnSavedPostsSuccess(this.list);
+}
 class OnRemoveFavorite extends UserProfileState {
 
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:ezdihar_apps/models/category_model.dart';
 import 'package:ezdihar_apps/models/consultant_data_model.dart';
@@ -11,6 +13,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
+import '../../../models/category_data_model.dart';
+import '../../accounting_consultants_screen/cubit/consultants_cubit.dart';
+
 part 'send_general_study_state.dart';
 
 class SendGeneralStudyCubit extends Cubit<SendGeneralStudyState> {
@@ -18,12 +23,12 @@ class SendGeneralStudyCubit extends Cubit<SendGeneralStudyState> {
   String imageType = '';
   SendGeneralStudyModel model = SendGeneralStudyModel();
   late ServiceApi api;
-  late List<ConsultantTypeModel> list;
-  SendGeneralStudyCubit() : super(SendGeneralStudyInitial()){
+  late List<CategoryModel> list;
+
+  SendGeneralStudyCubit() : super(SendGeneralStudyInitial()) {
     list = [];
     api = ServiceApi();
-    getData();
-
+    //  getData(model.category_id);
   }
 
   pickImage({required String type}) async {
@@ -31,18 +36,28 @@ class SendGeneralStudyCubit extends Cubit<SendGeneralStudyState> {
         source: type == 'camera' ? ImageSource.camera : ImageSource.gallery);
     imageType = 'file';
 
-
-    CroppedFile? croppedFile = await ImageCropper.platform.cropImage(sourcePath:imageFile!.path,aspectRatioPresets: [CropAspectRatioPreset.square,CropAspectRatioPreset.original,CropAspectRatioPreset.ratio7x5,CropAspectRatioPreset.ratio16x9],cropStyle: CropStyle.rectangle,compressFormat: ImageCompressFormat.png,compressQuality: 90);
+    CroppedFile? croppedFile = await ImageCropper.platform.cropImage(
+        sourcePath: imageFile!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        cropStyle: CropStyle.rectangle,
+        compressFormat: ImageCompressFormat.png,
+        compressQuality: 90);
     model.project_photo_path = croppedFile!.path;
 
     emit(PhotoPicked(model.project_photo_path));
     checkData();
   }
+
   void checkData() {
     if (model.isDataValid()) {
       emit(OnDataValid());
     } else {
-      emit(SendGeneralStudyInitial());
+      //emit(SendGeneralStudyInitial());
     }
   }
 
@@ -51,46 +66,49 @@ class SendGeneralStudyCubit extends Cubit<SendGeneralStudyState> {
     emit(OnShowProjectInvestmentChanged(model.showProjectInvestment));
   }
 
-  getData() async {
-    try{
-      emit(IsLoading());
-      ConsultantDataModel response = await api.getConsultantTypes();
-      if(response.status.code==200){
-        list = response.list;
-        emit(OnConsultantTypesSuccess(list));
-      }
-    }catch (e){
-      print('RRRrrr${e.toString()}');
-      OnDataError(e.toString());
-    }
-
-  }
-
-  updateConsultantTypeData(ConsultantTypeModel model,int pos){
-    list[pos] = model;
-    this.model.addRemoveConsultant(model);
-    emit(OnConsultantTypesSuccess(list));
+  getData(int category_id) async {
+    model.category_id = category_id;
     checkData();
+    print("RRRr${category_id}");
 
+    try {
+      CategoryDataModel response = await api.getsubCategories(category_id);
+      print(response.status.code);
+      if (response.status.code == 200) {
+        print(response.data.length);
+        list = response.data;
+        //   emit(OnCategorySuccess(list));
+      }
+    } catch (e) {
+      // onErrorData(e.toString());
+      print("RRRr${e.toString()}");
+    }
   }
 
-  addPost() async{
-    try{
+  // updateConsultantTypeData(ConsultantTypeModel model,int pos){
+  //   list[pos] = model;
+  //   this.model.addRemoveConsultant(model);
+  //   emit(OnConsultantTypesSuccess(list));
+  //   checkData();
+  //
+  // }
+
+  addPost() async {
+    try {
       emit(IsLoading());
       UserModel model = await Preferences.instance.getUserModel();
-      if(model.user.isLoggedIn){
-        StatusResponse response = await api.addPost(model.access_token, this.model);
-        if(response.code==200){
+      if (model.user.isLoggedIn) {
+        StatusResponse response =
+            await api.addPost(model.access_token, this.model);
+        if (response.code == 200) {
           emit(OnAddedSuccess());
-        }else{
+        } else {
           OnDataError("Error data");
         }
       }
-    }catch (e){
+    } catch (e) {
       print("err=> ${e.toString()}");
       OnDataError(e.toString());
     }
   }
-
-
 }

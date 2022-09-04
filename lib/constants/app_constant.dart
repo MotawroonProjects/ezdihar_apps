@@ -1,6 +1,6 @@
 class AppConstant {
   ///////////////////////routes//////////////////////////
-  static const baseUrl = 'https://ezdehar.obibusiness.com/';
+  static const baseUrl = 'https://ezdhar.motaweron.com/';
   static const localImagePath = 'assets/images/';
   static const pageSplashRoute = '/';
   static const pageHomeRoute = '/homePage';
@@ -21,6 +21,8 @@ class AppConstant {
   static const pageConsultantSignUpRoleRoute = '/consultantSignUp';
   static const pageCitiesRoute = '/cities';
   static const pageUserProfileRoute = '/userProfile';
+  static const pageSubCategorieRoute = '/SubCategories';
+  static const pageAccountingbySubCategoryConsultantsRoute = '/accountingbySubcategoryConsultantsDetails';
 
   //////////////////////////////////////////////
   static const following = 'following';

@@ -18,21 +18,21 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   UserModel? userModel;
   late List<ProjectModel> fav_posts;
   late List<ProjectModel> my_posts;
-
+  late List<ProjectModel> savedPosts;
   UserProfileCubit() : super(UpdateIndex(0)) {
     fav_posts =[];
     my_posts = [];
+    savedPosts=[];
     api = ServiceApi();
     getUserData().then((value) {
-      userModel = value;
-      emit(OnUserDataGet(userModel!));
-      getPosts();
-      Future.delayed(Duration(seconds: 1)).then((value){
-        getFavoritePosts();
-      });
-
+      emit(OnUserDataGet(value!));
     });
-
+    getPosts();
+    Future.delayed(Duration(seconds: 1)).then((value){
+      getFavoritePosts();
+    });
+    Future.delayed(Duration(seconds: 1)).then((value){
+      getSaved();    });
 
   }
 
@@ -42,8 +42,12 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     if(index==0){
       emit(OnFavDataSuccess(fav_posts));
 
-    }else{
+    }else if(index==1){
       emit(OnMyPostsSuccess(my_posts));
+
+    }
+    else{
+      emit(OnSavedPostsSuccess(savedPosts));
 
     }
   }
@@ -68,6 +72,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
 
   }
 
+
   getPosts() async{
 
     try{
@@ -83,6 +88,29 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     }
 
 
+  }
+  getSaved() async{
+    try{
+      getUserData().then((value) async{
+        emit(IsLoadingData());
+        ProjectsDataModel response =  await api.getSaved(value!.access_token);
+
+        if(response.status.code==200){
+          savedPosts = response.data;
+          emit(OnSavedPostsSuccess(savedPosts));
+        }
+      });
+    }catch (e){
+      emit(OnError(e.toString()));
+    }
+
+  }
+  void onErrorData(String error) {
+    emit(OnError(error));
+  }
+
+  void onErrorPosts(String error) {
+    emit(OnError(error));
   }
   deleteProject(ProjectModel model,int index) async{
     my_posts.removeAt(index);
@@ -101,14 +129,6 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       Future.delayed(Duration(seconds: 1)).then((value) => emit(OnError(e.toString())));
     }
   }
-  void onErrorData(String error) {
-    emit(OnError(error));
-  }
-
-  void onErrorPosts(String error) {
-    emit(OnError(error));
-  }
-
   void love_report_follow(int post_index,ProjectModel model,String type) async{
     try{
       getUserData().then((value) async{
@@ -129,5 +149,6 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       emit(OnError(e.toString()));
     }
   }
+
 
 }

@@ -47,3 +47,7 @@ class OnSignUpSuccess extends UserSignUpState {
 class OnUserDataGet extends UserSignUpState {
 
 }
+class OnError extends UserSignUpState {
+  String error;
+  OnError(this.error);
+}

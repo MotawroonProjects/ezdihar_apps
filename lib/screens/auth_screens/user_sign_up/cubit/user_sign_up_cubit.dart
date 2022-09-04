@@ -9,7 +9,6 @@ import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/remote/service.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_state.dart';
-import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -88,9 +87,13 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
           emit(OnSignUpSuccess());
         });
       }
+      else{
+        Navigator.pop(context);
+        emit(OnError(response.status.message));
+      }
     } catch (e) {
       Navigator.pop(context);
-      OnError(e.toString());
+      emit(OnError(e.toString()));
     }
   }
 

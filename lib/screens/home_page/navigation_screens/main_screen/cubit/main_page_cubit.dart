@@ -79,7 +79,7 @@ class MainPageCubit extends Cubit<MainPageState> {
       if (model.user.isLoggedIn) {
         user_token = model.access_token;
       }
-      String date = 'All';
+      String date = 'all';
       if (filterDate == 'الكل') {
         date = "All";
       } else {

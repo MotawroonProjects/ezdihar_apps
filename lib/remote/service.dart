@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
@@ -55,6 +57,7 @@ class ServiceApi {
 
       return ProjectsDataModel.fromJson(response.data);
     } on DioError catch (e) {
+      print(e.toString());
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;
     }
@@ -70,7 +73,17 @@ class ServiceApi {
       throw errorMessage;
     }
   }
-
+  Future<CategoryDataModel> getsubCategories(int category_id) async {
+    try {
+      Response response;
+      response = await dio.get('api/home/subCategories',
+          queryParameters: {'category_id': category_id});
+      return CategoryDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
   Future<ConsultantDataModel> getConsultantTypes() async {
     try {
       Response response;
@@ -92,7 +105,16 @@ class ServiceApi {
       throw errorMessage;
     }
   }
-
+  Future<ConsultantsDataModel> getConsultantsbySubCategories(int sub_category) async {
+    try {
+      Response response = await dio.get('api/home/advisorsOfSubCategories',
+          queryParameters: {'sub_category_id': sub_category});
+      return ConsultantsDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
   Future<UserDataModel> getConsultantDetails(int consultant_id) async {
     try {
       Response response = await dio.get('api/home/oneAdvisor',
@@ -181,6 +203,19 @@ class ServiceApi {
       throw errorMessage;
     }
   }
+  Future<ProjectsDataModel> getSaved(String user_token) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+
+      Response response = await dio.get('api/profile/savedPost');
+      return ProjectsDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
 
   Future<ProjectsDataModel> getMyFavorites(String user_token) async {
     try {
@@ -243,14 +278,15 @@ class ServiceApi {
     }
   }
 
-  Future<UserDataModel> updateProfile(UserSignUpModel model,String user_token) async {
+  Future<UserDataModel> updateProfile(
+      UserSignUpModel model, String user_token) async {
     var fields = FormData.fromMap({});
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': user_token};
       dio.options = options;
 
-      if (model.imagePath.isNotEmpty&&!model.imagePath.startsWith('http')) {
+      if (model.imagePath.isNotEmpty && !model.imagePath.startsWith('http')) {
         fields = FormData.fromMap({
           'first_name': model.firstName,
           'last_name': model.lastName,
@@ -273,7 +309,8 @@ class ServiceApi {
         });
       }
 
-      Response response = await dio.post('api/auth/updateProfile', data: fields);
+      Response response =
+          await dio.post('api/auth/updateProfile', data: fields);
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -296,12 +333,12 @@ class ServiceApi {
         'title': model.projectName,
         'text': model.details,
         'category_id': model.category_id,
-        'consultants_ids[]': model.consultantTypes,
+        'ownership_rate': model.ownership_rate,
         'is_investment':model.showProjectInvestment?1:0,
         'image': await MultipartFile.fromFile(model.project_photo_path)
       });
 
-      Response response = await dio.post('api/post/storePost', data: fields);
+      Response response = await dio.post('api/project/storeProject', data: fields);
       print("data=>${response.data.toString()}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {

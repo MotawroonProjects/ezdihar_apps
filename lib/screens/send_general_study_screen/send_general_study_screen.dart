@@ -5,10 +5,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/category_model.dart';
-import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/screens/send_general_study_screen/cubit/send_general_study_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SendGeneralStudyScreen extends StatefulWidget {
@@ -32,7 +32,8 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
   @override
   Widget build(BuildContext context) {
     cubit = BlocProvider.of(context);
-    cubit.model.category_id = model.id.toString();
+    cubit.model.category_id = model.id;
+    cubit.checkData();
     double width = MediaQuery.of(context).size.width;
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return Scaffold(
@@ -116,23 +117,24 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
                               topRight: Radius.circular(24.0))),
                       child: Center(
                           child: Text(
-                            'send'.tr(),
-                            style: const TextStyle(
-                                fontSize: 16.0, color: AppColors.white),
-                          )),
+                        'send'.tr(),
+                        style: const TextStyle(
+                            fontSize: 16.0, color: AppColors.white),
+                      )),
                     )
                   ],
                 );
               }
 
-
               return Column(
                 children: [
                   _buildBodySection(state),
                   InkWell(
-                    onTap: isValid ? () {
-                      cubit.addPost();
-                    } : null,
+                    onTap: isValid
+                        ? () {
+                            cubit.addPost();
+                          }
+                        : null,
                     child: Container(
                       width: width,
                       height: 56.0,
@@ -288,8 +290,105 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
                             color: AppColors.grey1, fontSize: 14.0)),
                   ),
                 )),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AppWidget.svg(
+                    'project.svg', AppColors.colorPrimary, 24.0, 24.0),
+                const SizedBox(
+                  width: 8.0,
+                ),
+                Text(
+                  'ownership_rate'.tr(),
+                  style:
+                  const TextStyle(fontSize: 16.0, color: AppColors.black),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            Container(
+              height: 54.0,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(8)),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                initialValue: cubit.model.ownership_rate,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(3),
+                  LimitRange(1, 100)
+                ],
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 14.0,
+                ),
+                onChanged: (data) {
+                   cubit.model.ownership_rate = data;
+                  cubit.checkData();
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'ownership_rate'.tr(),
+                  hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
+                ),
+              ),
+            ),
             const SizedBox(
               height: 24.0,
+            ),
+            const SizedBox(
+              height: 24.0,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AppWidget.svg(
+                    'feasibility_img.svg', AppColors.colorPrimary, 24.0, 24.0),
+                const SizedBox(
+                  width: 8.0,
+                ),
+                Text(
+                  'brief'.tr(),
+                  style:
+                      const TextStyle(fontSize: 16.0, color: AppColors.black),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            Container(
+                height: 176.0,
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(16.0)),
+                child: TextFormField(
+                  initialValue: cubit.model.feasibilityStudy,
+                  maxLines: null,
+                  minLines: null,
+                  expands: true,
+                  autofocus: false,
+                  onChanged: (text) {
+                    cubit.model.feasibilityStudy = text;
+                    cubit.checkData();
+                  },
+                  cursorColor: AppColors.colorPrimary,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'writeHere'.tr(),
+                      hintStyle: const TextStyle(
+                          color: AppColors.grey1, fontSize: 14.0)),
+                )),
+            const SizedBox(
+              height: 8.0,
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -338,6 +437,7 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
             const SizedBox(
               height: 24.0,
             ),
+
             Container(
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -369,33 +469,61 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
                     height: 16.0,
                   ),
                   AppWidget.buildDashHorizontalLine(context: context),
-                  ListView.builder(
-                      itemCount: cubit.list.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        ConsultantTypeModel model = cubit.list[index];
-                        return Column(
-                          children: [
-                            CheckboxListTile(
-                              contentPadding: EdgeInsets.zero,
-                              value: model.isSelected,
-                              onChanged: (checked) {
-                                model.isSelected = checked!;
-                                cubit.updateConsultantTypeData(model, index);
-                              },
-                              title: Text(
-                                lang == 'ar' ? model.title_ar : model.title_en,
-                                style: const TextStyle(
-                                    color: AppColors.black, fontSize: 14.0),
-                              ),
-                              checkColor: AppColors.white,
-                              activeColor: AppColors.colorPrimary,
-                            ),
-                            AppWidget.buildDashHorizontalLine(context: context),
-                          ],
+                  Container(
+                      child: BlocProvider(
+                    create: (context) {
+                      cubit.getData(model.id);
+                      return cubit;
+                    },
+                    child: BlocBuilder<SendGeneralStudyCubit,
+                        SendGeneralStudyState>(builder: (context, state) {
+                      if (state is IsLoading) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.colorPrimary,
+                          ),
                         );
-                      })
+                      } else {
+                        cubit = BlocProvider.of<SendGeneralStudyCubit>(context);
+                        List<CategoryModel> list = cubit.list;
+                        print("sss${list.length}");
+                        if (list.length > 0) {
+                          print("ssdds${list.length}");
+                          return ListView.builder(
+                              itemCount: list.length,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                CategoryModel model = list[index];
+                                print(model.title_ar);
+                                return Column(
+                                  children: [
+                                    Text(
+                                      lang == 'ar'
+                                          ? model.title_ar
+                                          : model.title_en,
+                                      style: const TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          color: AppColors.black,
+                                          fontSize: 14.0),
+                                    ),
+                                    AppWidget.buildDashHorizontalLine(
+                                        context: context),
+                                  ],
+                                );
+                              });
+                        } else {
+                          return Center(
+                              child: Text(
+                            'no_consultants'.tr(),
+                            style: TextStyle(
+                                color: AppColors.black, fontSize: 15.0),
+                          ));
+                        }
+                      }
+                      return Container();
+                    }),
+                  ))
                 ],
               ),
             ),
@@ -427,51 +555,7 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
                   ),
                   const SizedBox(
                     height: 16.0,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      AppWidget.svg('feasibility_img.svg',
-                          AppColors.colorPrimary, 24.0, 24.0),
-                      const SizedBox(
-                        width: 8.0,
-                      ),
-                      Text(
-                        'feasibility'.tr(),
-                        style: const TextStyle(
-                            fontSize: 16.0, color: AppColors.black),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8.0,
-                  ),
-                  Container(
-                      height: 176.0,
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(16.0)),
-                      child: TextFormField(
-                        initialValue: cubit.model.feasibilityStudy,
-                        maxLines: null,
-                        minLines: null,
-                        expands: true,
-                        autofocus: false,
-                        onChanged: (text) {
-                          cubit.model.feasibilityStudy = text;
-                          cubit.checkData();
-                        },
-                        cursorColor: AppColors.colorPrimary,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction: TextInputAction.newline,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'writeHere'.tr(),
-                            hintStyle: const TextStyle(
-                                color: AppColors.grey1, fontSize: 14.0)),
-                      )),
+                  )
                 ],
               ),
             ),
@@ -561,5 +645,31 @@ class _SendGeneralStudyScreenState extends State<SendGeneralStudyScreen> {
             ),
           );
         });
+  }
+}
+
+class LimitRange extends TextInputFormatter {
+  LimitRange(
+    this.minRange,
+    this.maxRange,
+  ) : assert(
+          minRange < maxRange,
+        );
+
+  final int minRange;
+  final int maxRange;
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    var value = int.parse(newValue.text);
+    if (value < minRange) {
+      print('value print in between 1 - 20');
+      return TextEditingValue(text: minRange.toString());
+    } else if (value > maxRange) {
+      print('not more 20');
+      return TextEditingValue(text: maxRange.toString());
+    }
+    return newValue;
   }
 }

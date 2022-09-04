@@ -75,7 +75,7 @@ class MainPageWidgets {
                       fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  model.title,
+                  model.time,
                   style: TextStyle(
                     color: AppColors.grey1,
                     fontSize: 14.0,

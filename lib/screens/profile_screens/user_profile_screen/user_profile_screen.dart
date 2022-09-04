@@ -27,9 +27,10 @@ class _UserProfilePageState extends State<UserProfilePage>
   Widget build(BuildContext context) {
     _tabs = [
       buildTab('my_posts'.tr(), 'post.svg', 0),
-      buildTab('love'.tr(), 'empty_love.svg', 1)
+      buildTab('love'.tr(), 'empty_love.svg', 1),
+      buildTab('saved'.tr(), 'empty_love.svg', 2)
     ];
-    _screens = [buildMyPostList(), buildMyFavoriteList()];
+    _screens = [buildMyPostList(), buildMyFavoriteList(),buildSavedPostList()];
     _controller = TabController(length: _tabs.length, vsync: this);
 
     return Scaffold(
@@ -264,9 +265,8 @@ class _UserProfilePageState extends State<UserProfilePage>
 
     return BlocBuilder<UserProfileCubit, UserProfileState>(
       builder: (context, state) {
-        List<ProjectModel> list = cubit.my_posts;
-
         if(state is UpdateIndex){
+          List<ProjectModel> list = cubit.my_posts;
 
           if (list.length > 0) {
             return myPostWidget(list);
@@ -282,17 +282,16 @@ class _UserProfilePageState extends State<UserProfilePage>
 
 
         }
-        if (state is IsLoadingPosts||state is OnUserDataGet) {
+        else if (state is IsLoadingPosts||state is OnUserDataGet) {
           return Center(
             child: CircularProgressIndicator(
               color: AppColors.colorPrimary,
             ),
           );
-        }
-        if (state is OnErrorPosts) {
+        } else if (state is OnErrorPosts) {
           return Center(
             child: InkWell(
-              onTap: refreshData,
+              onTap: refreshPosts,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -311,19 +310,21 @@ class _UserProfilePageState extends State<UserProfilePage>
               ),
             ),
           );
-        }
-        if (list.length > 0) {
-          return myPostWidget(list);
         } else {
-          return Center(
-            child: Text(
-              'no_projects'.tr(),
+          List<ProjectModel> list = cubit.my_posts;
 
-              style: TextStyle(color: AppColors.black, fontSize: 15.0),
-            ),
-          );
+          if (list.length > 0) {
+            return myPostWidget(list);
+          } else {
+            return Center(
+              child: Text(
+                'no_projects'.tr(),
+
+                style: TextStyle(color: AppColors.black, fontSize: 15.0),
+              ),
+            );
+          }
         }
-
       },
     );
   }
@@ -336,7 +337,7 @@ class _UserProfilePageState extends State<UserProfilePage>
       child: ListView.builder(
           itemCount: list.length,
           scrollDirection: Axis.vertical,
-          shrinkWrap: false,
+          shrinkWrap: true,
           itemBuilder: (context, index) {
             ProjectModel model = list[index];
             String approved = "";
@@ -395,13 +396,6 @@ class _UserProfilePageState extends State<UserProfilePage>
                             fontSize: 14.0,
                           ),
                         ),
-                        trailing: InkWell(
-                          onTap: () {
-                            showSheet(context, model, index);
-                          },
-                          child: AppWidget.svg(
-                              'menu_dots.svg', AppColors.color1, 20.0, 20.0),
-                        ),
                       ),
                       const SizedBox(
                         height: 8.0,
@@ -429,6 +423,34 @@ class _UserProfilePageState extends State<UserProfilePage>
                         MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  addRemoveFavorite(index, model);
+                                },
+                                child: SizedBox(
+                                  child: AppWidget.svg(
+                                      'love.svg',
+                                      AppColors.colorPrimary,
+                                      24.0,
+                                      24.0),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                "${model.likesCount}",
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: AppColors.color1),
+                              )
+                            ],
+                          ),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 12.0),
@@ -577,7 +599,268 @@ class _UserProfilePageState extends State<UserProfilePage>
       child: ListView.builder(
           itemCount: list.length,
           scrollDirection: Axis.vertical,
-          shrinkWrap: false,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            ProjectModel model = list[index];
+            String approved = "";
+            if (model.approvedFrom.length > 0) {
+              approved = model.approvedFrom
+                  .map((e) => lang == 'ar'
+                  ? "#" + e.title_ar
+                  : "#" + e.title_en)
+                  .join(' ');
+            }
+            return Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                color: AppColors.white,
+                shape: const RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(24.0))),
+                elevation: 5.0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        leading: CachedNetworkImage(
+                            width: 60,
+                            height: 60,
+                            imageUrl: model.user.image,
+                            placeholder: (context, url) =>
+                                AppWidget.circleAvatar(60, 60),
+                            errorWidget: (context, url, error) {
+                              return Container(
+                                color: AppColors.grey3,
+                              );
+                            },
+                            imageBuilder: (context, imageProvider) =>
+                                CircleAvatar(
+                                  backgroundImage: imageProvider,
+                                  radius: 60,
+                                )),
+                        title: Text(
+                          model.user.firstName +
+                              " " +
+                              model.user.lastName,
+                          style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          model.title,
+                          style: TextStyle(
+                            color: AppColors.grey1,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      AspectRatio(
+                        aspectRatio: 1 / .67,
+                        child: ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(8.0)),
+                            child: model.image.isNotEmpty
+                                ? CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: model.image,
+                            )
+                                : Container(
+                              color: AppColors.grey3,
+                            )),
+                      ),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  addRemoveFavorite(index, model);
+                                },
+                                child: SizedBox(
+                                  child: AppWidget.svg(
+                                      'love.svg',
+                                      AppColors.colorPrimary,
+                                      24.0,
+                                      24.0),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                "${model.likesCount}",
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: AppColors.color1),
+                              )
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                                color: AppColors.grey1,
+                                borderRadius:
+                                BorderRadius.circular(24.0)),
+                            child: Row(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 24.0,
+                                  height: 24.0,
+                                  child: AppWidget.svg('donate.svg',
+                                      AppColors.white, 24.0, 24.0),
+                                ),
+                                Text(
+                                  'donate'.tr(),
+                                  style: const TextStyle(
+                                      fontSize: 12.0,
+                                      color: AppColors.white),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                              text: model.text,
+                              style: const TextStyle(
+                                fontSize: 14.0,
+                                color: AppColors.black,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              children: []),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      approved.isNotEmpty
+                          ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            approved,
+                            maxLines: 3,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: AppColors.colorPrimary,
+                                fontSize: 16.0),
+                          ))
+                          : SizedBox(),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+    );
+  }
+  buildSavedPostList() {
+    UserProfileCubit cubit = BlocProvider.of(context);
+
+    return BlocBuilder<UserProfileCubit, UserProfileState>(
+      builder: (context, state) {
+        if(state is UpdateIndex){
+          if (cubit.savedPosts.length > 0) {
+            return savedPostWidget(cubit.savedPosts);
+          } else {
+            return Center(
+              child: Text(
+                'no_projects'.tr(),
+
+                style: TextStyle(color: AppColors.black, fontSize: 15.0),
+              ),
+            );
+          }
+
+        }
+        else if (state is IsLoadingData||state is OnUserDataGet) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: AppColors.colorPrimary,
+            ),
+          );
+        } else if (state is OnError) {
+          return Center(
+            child: InkWell(
+              onTap: refreshSavedPosts,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppWidget.svg(
+                      'reload.svg', AppColors.colorPrimary, 24.0, 24.0),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Text(
+                    'reload'.tr(),
+                    style: TextStyle(
+                        color: AppColors.colorPrimary, fontSize: 15.0),
+                  )
+                ],
+              ),
+            ),
+          );
+        } else {
+          List<ProjectModel> list = cubit.savedPosts;
+
+          if (list.length > 0) {
+            return savedPostWidget(list);
+          } else {
+            return Center(
+              child: Text(
+                'no_projects'.tr(),
+
+                style: TextStyle(color: AppColors.black, fontSize: 15.0),
+              ),
+            );
+          }
+        }
+      },
+    );
+  }
+  savedPostWidget(List<ProjectModel> list){
+    String lang = EasyLocalization.of(context)!.locale.languageCode;
+
+    return RefreshIndicator(
+      color: AppColors.colorPrimary,
+      onRefresh: refreshSavedPosts,
+      child: ListView.builder(
+          itemCount: list.length,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
           itemBuilder: (context, index) {
             ProjectModel model = list[index];
             String approved = "";
@@ -774,7 +1057,10 @@ class _UserProfilePageState extends State<UserProfilePage>
     UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
     cubit.getPosts();
   }
-
+  Future<void> refreshSavedPosts() async {
+    UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
+    cubit.getSaved();
+  }
   void addRemoveFavorite(int index, ProjectModel model) {
     UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
     cubit.love_report_follow(index, model, AppConstant.actionLove);
@@ -823,33 +1109,5 @@ class _UserProfilePageState extends State<UserProfilePage>
         );
       },
     );
-  }
-
-  void showSheet(BuildContext c, ProjectModel model, int index) {
-    showModalBottomSheet(
-        isDismissible: true,
-        elevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(24.0),topRight: Radius.circular(24.0))),
-        backgroundColor: AppColors.white,
-        context: c, builder: (_){
-      return Container(
-        child:ListTile(
-            leading:
-            AppWidget.svg('delete.svg', AppColors.color1, 24.0, 24.0),
-            title: Text(
-              '${'delete'.tr()} ${model.title} ?',
-              style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              UserProfileCubit cubit = BlocProvider.of(c);
-              cubit.deleteProject(model, index);
-
-            }),
-      );
-    });
   }
 }

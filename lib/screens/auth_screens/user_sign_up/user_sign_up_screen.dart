@@ -10,10 +10,12 @@ import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_state.dart';
-import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dropdown_alert/alert_controller.dart';
+import 'package:flutter_dropdown_alert/model/data_alert.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserSignUpPage extends StatefulWidget {
@@ -56,6 +58,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
     return BlocListener<UserSignUpCubit, UserSignUpState>(
       listener: (context, state) {
         if (state is OnError) {
+          AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
+
         } else if (state is OnSignUpSuccess) {
           Navigator.pop(context, true);
         }
@@ -335,6 +339,9 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           child: TextFormField(
             controller: cubit.controllerFirstName,
             keyboardType: TextInputType.name,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp('[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]'))
+            ],
             style: TextStyle(color: AppColors.black, fontSize: 14.0),
             onChanged: (data) {
               cubit.model.firstName = data;
@@ -364,11 +371,17 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           child: TextFormField(
             controller: cubit.controllerLastName,
             keyboardType: TextInputType.name,
+
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp('[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]'))],
+
             style: TextStyle(color: AppColors.black, fontSize: 14.0),
             onChanged: (data) {
               cubit.model.lastName = data;
               cubit.checkData();
+
             },
+
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: 'last_name'.tr(),

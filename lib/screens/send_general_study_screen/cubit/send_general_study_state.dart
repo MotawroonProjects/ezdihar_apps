@@ -16,9 +16,9 @@ class OnDataError extends SendGeneralStudyState{
   String error;
   OnDataError(this.error);
 }
-class OnConsultantTypesSuccess extends SendGeneralStudyState{
-  List<ConsultantTypeModel> list;
-  OnConsultantTypesSuccess(this.list);
+class OnCategorySuccess extends SendGeneralStudyState{
+  List<CategoryModel> list;
+  OnCategorySuccess(this.list);
 }
 class PhotoPicked extends SendGeneralStudyState {
   String imagePath;

@@ -88,7 +88,7 @@ class _ServicesPageState extends State<ServicesPage> {
   }
 
   void _onTaped({required CategoryModel model, required int index}) {
-    //Navigator.pushNamed(context, AppConstant.pageAccountingConsultantsRoute,arguments: model);
+    Navigator.pushNamed(context, AppConstant.pageSubCategorieRoute,arguments: model);
   }
 
   Future<void> onRefresh() async {
