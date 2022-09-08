@@ -5,6 +5,8 @@ import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/accounting_consultants_screen/accounting_consultants_screen.dart';
+import 'package:ezdihar_apps/screens/accounting_provider/cubit/provider_details_cubit.dart';
+import 'package:ezdihar_apps/screens/accounting_provider/provider_details.dart';
 import 'package:ezdihar_apps/screens/add_screen/add_screen.dart';
 import 'package:ezdihar_apps/screens/add_screen/cubit/add_screen_cubit.dart';
 import 'package:ezdihar_apps/screens/add_screen/navigation_screens/feasibility_screen/cubit/feasibility_cubit.dart';
@@ -127,15 +129,15 @@ class AppRoutes {
       case AppConstant.pageContactUsRoute:
         return MaterialPageRoute(builder: (context) => const ContactUsPage());
       case AppConstant.pageConsultantDetailsRoute:
-        int consultant_id = settings.arguments as int;
+      int consultant_id = settings.arguments as int;
 
-        return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => ConsultantDetailsCubit(),
-                  child: ConsultantDetailsPage(
-                    consultant_id: consultant_id,
-                  ),
-                ));
+      return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => ConsultantDetailsCubit(),
+            child: ConsultantDetailsPage(
+              consultant_id: consultant_id,
+            ),
+          ));
       case AppConstant.pageRequestConsultationRoute:
         UserModel userModel = settings.arguments as UserModel;
 
@@ -149,14 +151,16 @@ class AppRoutes {
       case AppConstant.pageSendGeneralStudyRoute:
         CategoryModel model = settings.arguments as CategoryModel;
         return MaterialPageRoute(
-            builder: (context) => BlocProvider(
+            builder: (BuildContext context) {
+           return BlocProvider<SendGeneralStudyCubit>(
                   create: (context) => SendGeneralStudyCubit(),
                   child: SendGeneralStudyScreen(
 
                     model: model,
 
                   ),
-                ));
+           );
+                   });
       case AppConstant.pageLoginRoute:
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<LoginCubit>(
@@ -228,6 +232,18 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (context) => AccountingConsultantsBySubCategoryPage(
               categoryModel: categoryModel,
+            ));
+
+
+      case AppConstant.pageProviderDetailsRoute:
+        UserModel userModel = settings.arguments as UserModel;
+
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => ProviderDetailsCubit(),
+              child: ProviderDetailsPage(
+                userModel: userModel,
+              ),
             ));
     }
   }

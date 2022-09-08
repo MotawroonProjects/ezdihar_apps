@@ -21,6 +21,7 @@ class MainPageWidgets {
       Function favourite,
       Function navigateToDetails,
       Function showSheet,
+      Function supportSheet,
       AnimationController animationController) {
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
     /*Animation<double> scaleAnimation =
@@ -33,6 +34,7 @@ class MainPageWidgets {
 */
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     String approved = "";
+
     if (model.approvedFrom.length > 0) {
       approved = model.approvedFrom
           .map((e) => lang == 'ar' ? "#" + e.title_ar : "#" + e.title_en)
@@ -168,24 +170,39 @@ class MainPageWidgets {
                     decoration: BoxDecoration(
                         color: AppColors.grey1,
                         borderRadius: BorderRadius.circular(24.0)),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 24.0,
-                          height: 24.0,
-                          child: AppWidget.svg(
-                              'donate.svg', AppColors.white, 24.0, 24.0),
-                        ),
-                        Text(
-                          'donate'.tr(),
-                          style: const TextStyle(
-                              fontSize: 12.0, color: AppColors.white),
-                        )
-                      ],
-                    ),
+                    child: InkWell(
+                        onTap: () {
+                          supportSheet(context, model, index);
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 24.0,
+                              height: 24.0,
+                              child: AppWidget.svg(
+                                  'donate.svg', AppColors.white, 24.0, 24.0),
+                            ),
+                            Text(
+                              'donate'.tr(),
+                              style: const TextStyle(
+                                  fontSize: 12.0, color: AppColors.white),
+                            )
+                          ],
+                        )),
                   )
                 ],
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+              Text(
+                model.title,
+                style: const TextStyle(
+                  fontSize: 14.0,
+                  color: AppColors.black,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(
                 height: 8.0,
@@ -521,5 +538,136 @@ class MainPageWidgets {
         },
       ),
     );
+  }
+
+  Widget buildSupportSheet({
+    required BuildContext context,
+    required ProjectModel model,
+    required index,
+    required MainPageCubit cubit,
+    required Function onTaped
+  }) {
+    String gender = cubit.num;
+    return BlocProvider.value(
+        value: cubit,
+        child: BlocBuilder<MainPageCubit, MainPageState>(
+          builder: (context, state) {
+            return Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'donate'.tr(),
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.black),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Column(
+                    children: [
+                      RadioListTile(
+                        title: Text("5"),
+                        value: "5",
+                        selected:gender=="5",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          gender = value.toString();
+                          cubit.num=gender;
+                          onTaped(
+                              model: model,
+                              index: index,
+                              action: gender);
+                        },
+                      ),
+                      RadioListTile(
+                        title: Text("10"),
+                        value: "10",
+                        selected:gender=="10",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          gender = value.toString();
+                          cubit.num=gender;
+                          onTaped(
+                              model: model,
+                              index: index,
+                              action: gender);
+                        },
+                      ),
+                      RadioListTile(
+                        title: Text("50"),
+                        value: "50",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          gender = value.toString();
+                          cubit.num=gender;
+                          onTaped(
+                              model: model,
+                              index: index,
+                              action: gender);
+                        },
+                      ),
+                      RadioListTile(
+                        title: Text("100"),
+                        value: "100",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          gender = value.toString();
+                          cubit.num=gender;
+                          onTaped(
+                              model: model,
+                              index: index,
+                              action: gender);
+                        },
+                      ),
+                      RadioListTile(
+                        title: Text("500"),
+                        value: "500",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          gender = value.toString();
+                          cubit.num=gender;
+                          onTaped(
+                              model: model,
+                              index: index,
+                              action: gender);
+                        },
+                      )
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            flex: 2,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                cubit.getData();
+                              },
+                              height: 56,
+                              color: AppColors.colorPrimary,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0)),
+                              child: Text(
+                                'confirm'.tr(),
+                                style: TextStyle(
+                                    fontSize: 16.0, color: AppColors.white),
+                              ),
+                            )),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ));
   }
 }

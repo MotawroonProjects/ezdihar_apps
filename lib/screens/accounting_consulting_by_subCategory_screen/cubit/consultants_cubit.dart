@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:ezdihar_apps/models/consultants_data_model.dart';
+import 'package:ezdihar_apps/models/provider_model.dart';
+import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/remote/service.dart';
 import 'package:meta/meta.dart';
@@ -19,7 +21,7 @@ class ConsultantsCubit extends Cubit<ConsultantsState> {
     try{
       emit(IsLoading());
 
-      ConsultantsDataModel response = await api.getConsultantsbySubCategories(consultant_type_id);
+      ProviderDataModel response = await api.getConsultantsbySubCategories(consultant_type_id);
       print("Error${response.status.code}");
 
       if(response.status.code==200){

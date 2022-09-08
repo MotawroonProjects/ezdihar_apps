@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ class AccountingConsultantsWidgets {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              subtitle: _buildRateBar(rate: model.adviser_data!.rate),
+              subtitle: _buildRateBar(rate: .5),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,7 +90,7 @@ class AccountingConsultantsWidgets {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'consultationPrice'.tr(),
+                          'servicePrice'.tr(),
                           style: const TextStyle(
                               fontSize: 12.0, color: AppColors.grey6),
                         ),
@@ -106,7 +107,7 @@ class AccountingConsultantsWidgets {
                             const SizedBox(width: 8,),
                             RichText(
                               text: TextSpan(
-                                  text: '${model.adviser_data!.consultant_price}',
+                                  text: '${model.sub_category.price}',
                                   style: const TextStyle(
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,
@@ -130,7 +131,7 @@ class AccountingConsultantsWidgets {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'consultations'.tr(),
+                      'servicenum'.tr(),
                       style: const TextStyle(
                           fontSize: 12.0, color: AppColors.grey6),
                     ),
@@ -147,7 +148,7 @@ class AccountingConsultantsWidgets {
                         const SizedBox(width: 8,),
                         RichText(
                           text: TextSpan(
-                              text: '${model.adviser_data!.count_people}',
+                              text: '${10}',
                               style: const TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold,

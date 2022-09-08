@@ -23,7 +23,7 @@ class MainPageCubit extends Cubit<MainPageState> {
   DateTime selectedDate = DateTime.now();
   String filterDate = 'all'.tr();
   String category_id = 'all'.tr();
-
+  String num ='5';
   List<CategoryModel> categories = [];
   List<ProjectModel> projects = [];
   late CategoryModel selectedCategoryModel;
@@ -153,4 +153,5 @@ class MainPageCubit extends Cubit<MainPageState> {
     projects[index] = model;
     emit(OnDataSuccess(projects));
   }
+
 }

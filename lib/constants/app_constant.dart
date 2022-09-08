@@ -9,6 +9,8 @@ class AppConstant {
   static const pageInvestmentDetailsRoute = '/investmentDetails';
   static const pageAccountingConsultantsRoute = '/accountingConsultantsDetails';
   static const pageConsultantDetailsRoute = '/consultantDetails';
+  static const pageProviderDetailsRoute = '/ProviderDetails';
+
   static const pageRequestConsultationRoute = '/requestConsultation';
   static const pageSendGeneralStudyRoute = '/sendGeneralStudy';
   static const pageOfferRoute = '/offer';

@@ -21,6 +21,8 @@ part 'send_general_study_state.dart';
 class SendGeneralStudyCubit extends Cubit<SendGeneralStudyState> {
   XFile? imageFile;
   String imageType = '';
+  bool isDataValid = false;
+
   SendGeneralStudyModel model = SendGeneralStudyModel();
   late ServiceApi api;
   late List<CategoryModel> list;
@@ -55,10 +57,12 @@ class SendGeneralStudyCubit extends Cubit<SendGeneralStudyState> {
 
   void checkData() {
     if (model.isDataValid()) {
-      emit(OnDataValid());
+      isDataValid = true;
     } else {
-      //emit(SendGeneralStudyInitial());
+      isDataValid = false;
     }
+
+    emit(OnDataValid(isDataValid));
   }
 
   void updateShowProjectInvestment(bool value) {

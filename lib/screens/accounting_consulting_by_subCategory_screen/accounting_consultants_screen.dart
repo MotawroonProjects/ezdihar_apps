@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+import '../../models/user_data_model.dart';
+
 
 class AccountingConsultantsBySubCategoryPage extends StatefulWidget {
   final CategoryModel categoryModel;
@@ -122,7 +124,7 @@ class _AccountingConsultantsBySubCategoryPageState extends State<AccountingConsu
   }
 
   void _onTaped({required UserModel userModel, required int index}) {
-    Navigator.pushNamed(context, AppConstant.pageConsultantDetailsRoute,arguments: userModel.user.id);
+    Navigator.pushNamed(context, AppConstant.pageProviderDetailsRoute,arguments:  userModel);
   }
 
   Future<void> onRefresh(BuildContext context) async {

@@ -7,8 +7,12 @@
   "investors": "Investors",
   "more": "More",
   "brief": "Brief",
+  "servicenum": "Service Count",
+  "birthdate":"BirthDate" ,
+  "servicePrice": "Service Price",
+  "requestserviceNow": "Request Service Now",
 
-  "donate": "Donate",
+  "donate": "Support",
   "seeMore": "  See More",
   "follow": "Follow",
   "followForUpdate": "You can follow to see his updates",

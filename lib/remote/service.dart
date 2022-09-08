@@ -19,6 +19,8 @@ import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cu
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 
+import '../models/provider_model.dart';
+
 class ServiceApi {
   late Dio dio;
 
@@ -105,11 +107,11 @@ class ServiceApi {
       throw errorMessage;
     }
   }
-  Future<ConsultantsDataModel> getConsultantsbySubCategories(int sub_category) async {
+  Future<ProviderDataModel> getConsultantsbySubCategories(int sub_category) async {
     try {
-      Response response = await dio.get('api/home/advisorsOfSubCategories',
+      Response response = await dio.get('api/home/providersOfSubCategories',
           queryParameters: {'sub_category_id': sub_category});
-      return ConsultantsDataModel.fromJson(response.data);
+      return ProviderDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;
@@ -119,6 +121,18 @@ class ServiceApi {
     try {
       Response response = await dio.get('api/home/oneAdvisor',
           queryParameters: {'advisor_id': consultant_id});
+      return UserDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+  Future<UserDataModel> getproviderDetails(int provider_id,int sub_category_id) async {
+    try {
+      Response response = await dio.get('api/home/oneProvider',
+          queryParameters: {'provider_id': provider_id,'sub_category_id':sub_category_id},
+
+      );
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();

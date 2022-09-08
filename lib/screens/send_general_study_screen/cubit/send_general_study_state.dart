@@ -7,7 +7,12 @@ class SendGeneralStudyInitial extends SendGeneralStudyState {}
 class IsLoading extends SendGeneralStudyState{
 
 }
-class OnDataValid extends SendGeneralStudyState {}
+class OnDataValid extends SendGeneralStudyState {
+  bool valid;
+
+  OnDataValid(this.valid);
+
+}
 class OnShowProjectInvestmentChanged extends SendGeneralStudyState {
   bool isChecked;
   OnShowProjectInvestmentChanged(this.isChecked);

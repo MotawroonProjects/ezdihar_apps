@@ -186,6 +186,7 @@ class _MainPageState extends State<MainPage>
                           addRemoveFavorite,
                           navigateToProjectDetails,
                           showSheet,
+                          showSupportSheet,
                           _controller);
                     }),
               ));
@@ -236,6 +237,28 @@ class _MainPageState extends State<MainPage>
               model: model,
               cubit: cubit,
               onTaped: _onBottomSheetTaped);
+        });
+  }
+  void showSupportSheet(BuildContext context, ProjectModel model, int index) {
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+    showModalBottomSheet(
+        enableDrag: true,
+        isScrollControlled: true,
+        elevation: 8.0,
+        isDismissible: false,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(24.0),
+                topLeft: Radius.circular(24.0))),
+        context: context,
+        builder: (context) {
+          return MainPageWidgets().buildSupportSheet(
+              context: context,
+              index: index,
+              model: model,
+              cubit: cubit,
+              onTaped: _onBottomsupportSheetTaped
+          );
         });
   }
 
@@ -363,7 +386,16 @@ class _MainPageState extends State<MainPage>
     cubit.love_report_follow(index, model, 'follow');
     Navigator.of(context).pop();
   }
+  void _onBottomsupportSheetTaped(
+      {required ProjectModel model,
+        required int index,
+        required String action}) {
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+cubit.num=action;
 
+    Navigator.of(context).pop();
+    showSupportSheet(context, model, index);
+  }
   @override
   void dispose() {
     super.dispose();

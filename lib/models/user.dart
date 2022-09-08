@@ -1,4 +1,5 @@
 import 'package:ezdihar_apps/models/city_model.dart';
+import 'package:ezdihar_apps/models/sub_category_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class User {
@@ -12,6 +13,7 @@ class User {
   late String birthdate='';
   late String userType;
   late CityModel city;
+
   late bool isLoggedIn = false;
 
 
@@ -43,6 +45,7 @@ class User {
       'birthdate'  :user.birthdate,
       'user_type'  :user.userType,
       'city'       :CityModel.toJson(user.city),
+
     };
   }
 }
