@@ -1,19 +1,24 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/cubit/user_role_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserRolePage extends StatefulWidget {
-  const UserRolePage({Key? key}) : super(key: key);
+  LoginModel loginModel;
+ UserRolePage({Key? key, required this.loginModel}) : super(key: key);
 
   @override
-  State<UserRolePage> createState() => _UserRolePageState();
+  State<UserRolePage> createState() => _UserRolePageState(loginModel);
 }
 
 class _UserRolePageState extends State<UserRolePage> {
+  LoginModel loginModel;
+
+  _UserRolePageState(this.loginModel);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +75,7 @@ class _UserRolePageState extends State<UserRolePage> {
         const SizedBox(
           height: 36.0,
         ),
-       /* BlocBuilder<UserRoleCubit, UserRoleState>(
+        BlocBuilder<UserRoleCubit, UserRoleState>(
           builder: (context, state) {
             UserRoleInitial initState = state as UserRoleInitial;
             return buildCardData(
@@ -82,7 +87,7 @@ class _UserRolePageState extends State<UserRolePage> {
                 role: AppConstant.role_user,
                 context: context);
           },
-        ),*/
+        ),
         BlocBuilder<UserRoleCubit, UserRoleState>(
           builder: (context, state) {
             UserRoleInitial initState = state as UserRoleInitial;
@@ -218,7 +223,7 @@ class _UserRolePageState extends State<UserRolePage> {
 
   navigateToSignUp({required String role}) async {
     if (role == AppConstant.role_user) {
-      var result = await Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
+      var result = await Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute,arguments: loginModel);
       if(result!=null){
         Navigator.pop(context,true);
       }

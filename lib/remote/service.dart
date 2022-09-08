@@ -15,7 +15,7 @@ import 'package:ezdihar_apps/models/status_resspons.dart';
 import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/remote/handle_exeption.dart';
-import 'package:ezdihar_apps/screens/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
+import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/main_screen/cubit/main_page_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -156,7 +156,7 @@ class ServiceApi {
           {'phone_code': loginModel.phone_code, 'phone': loginModel.phone});
 
       Response response = await dio.post('api/auth/login', data: fields);
-
+print(response.data);
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();

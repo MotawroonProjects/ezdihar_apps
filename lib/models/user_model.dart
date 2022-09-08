@@ -18,7 +18,7 @@ class UserModel{
     user = User.fromJson(json['user']);
     adviser_data = json['adviser_data']!=null?AdvisorModel.fromJson(json['adviser_data']):null;
     access_token = json['access_token']!=null? json['access_token'] as String:'';
-    sub_category      =  (json['sub_category']!=null?SubCategoryModel.fromJson(json['sub_category']):null)!;
+    sub_category      = (json['sub_category']!=null?SubCategoryModel.fromJson(json['sub_category']):null)!;
 
   }
 

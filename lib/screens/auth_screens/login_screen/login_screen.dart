@@ -404,7 +404,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void navigateToUserScreen(LoginModel loginModel) async {
-    var result = await Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute,arguments: loginModel);
+    var result = await Navigator.pushNamed(context, AppConstant.pageUserRoleRoute,arguments: loginModel);
     if(result!=null){
       Navigator.pop(context,true);
     }
