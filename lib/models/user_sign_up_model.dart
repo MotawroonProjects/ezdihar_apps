@@ -8,6 +8,7 @@ class UserSignUpModel {
   String lastName = '';
   String email = '';
   int cityId = 0;
+  int categoryModel=0;
   String dateOfBirth = '';
   String cv_path='';
 

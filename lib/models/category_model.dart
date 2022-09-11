@@ -3,7 +3,11 @@
   late String title_ar;
   late String title_en;
   late String image;
-
+  CategoryModel.initValues(){
+    id = 0;
+    title_ar ='إختر القسم';
+    title_en = 'Choose category';
+  }
   CategoryModel();
   CategoryModel.factory(this.id,this.title_ar,this.title_en,this.image);
   CategoryModel.fromJson(Map<String,dynamic> json){

@@ -3,20 +3,25 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/category_model.dart';
+import 'package:ezdihar_apps/models/city_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/invistor_sign_up/cubit/investor_cubit.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InvestorSignUpPage extends StatefulWidget {
-  const InvestorSignUpPage({Key? key}) : super(key: key);
+   InvestorSignUpPage({Key? key}) : super(key: key);
 
   @override
   State<InvestorSignUpPage> createState() => _InvestorSignUpPageState();
 }
 
 class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
+  int currentValue=0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,53 +56,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
         SizedBox(
           height: 24.0,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MaterialButton(
-                onPressed: () {
-                  BlocProvider.of<InvestorCubit>(context)
-                      .pickUpFile();
-                },
-                height: 48.0,
-                elevation: 1.0,
-                color: AppColors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-                child: Text(
-                  'chooseFile'.tr(),
-                  style: TextStyle(fontSize: 16.0, color: AppColors.black),
-                ),
-              ),
-              SizedBox(
-                width: 16.0,
-              ),
-              BlocBuilder<InvestorCubit, InvestorState>(
-                builder: (context, state) {
-                  String fileName =
-                      BlocProvider.of<InvestorCubit>(context)
-                          .fileName;
-                  if (state is InvestorFilePicked) {
-                    fileName = state.fileName;
-                  }
-                  return Flexible(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          fileName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                          TextStyle(fontSize: 13.0, color: AppColors.black),
-                        ),
-                      ));
-                },
-              )
-            ],
-          ),
-        ),
+
         SizedBox(
           height: 56.0,
         ),
@@ -286,7 +245,15 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
             SizedBox(
               height: 8.0,
             ),
-            buildTextTown(hint: 'town'.tr()),
+            buildCityField(),
+            SizedBox(
+              height: 24.0,
+            ),
+            buildRow(icon: 'category.svg', title: 'category'.tr()),
+            SizedBox(
+              height: 8.0,
+            ),
+           buildCategoryField(),
             SizedBox(
               height: 24.0,
             ),
@@ -295,6 +262,14 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
               height: 8.0,
             ),
             buildTextDate(),
+            SizedBox(
+              height: 8.0,
+            ),
+            buildRow(icon: 'years.svg', title: 'yearsOfExperience'.tr()),
+            SizedBox(
+              height: 8.0,
+            ),
+            buildyearcounter(),
           ],
         ),
       ),
@@ -330,7 +305,9 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
       child: TextFormField(
         keyboardType: inputType,
         style: TextStyle(color: AppColors.black, fontSize: 14.0),
-        onChanged: (data) {
+        onChanged: (data)
+        {
+
           if (action == 'firstName') {
             cubit.model.firstName = data;
           } else if (action == 'lastName') {
@@ -436,6 +413,87 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
       ),
     ));
   }
+  buildyearcounter(){
+ return   Container(
+
+
+   decoration: BoxDecoration(
+       color: AppColors.white, borderRadius: BorderRadius.circular(8)
+   ),
+
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: TextFormField(
+              decoration: InputDecoration(
+                border: InputBorder.none,
+              //  hintText: 'hint',
+                labelText: currentValue.toString(),
+                contentPadding: EdgeInsets.all(5),
+                hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
+              ),
+         
+
+            //  controller: _controller,
+              keyboardType: TextInputType.numberWithOptions(
+                decimal: false,
+                signed: true,
+              ),
+              inputFormatters: <TextInputFormatter>[
+               FilteringTextInputFormatter.digitsOnly
+              ],
+            ),
+          ),
+          Container(
+            height: 38.0,
+
+            child: Column(
+
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+
+                  child: InkWell(
+                    child: Icon(
+                      Icons.arrow_drop_up,
+                      size: 18.0,
+                    ),
+                    onTap: () {
+                 //     int currentValue = int.parse(_controller.text);
+                      setState(() {
+                        currentValue++;
+
+              //          _controller.text = (currentValue)
+                        //    .toString(); // incrementing value
+                      });
+                    },
+                  ),
+                ),
+                InkWell(
+                  child: Icon(
+                    Icons.arrow_drop_down,
+                    size: 18.0,
+                  ),
+                  onTap: () {
+               //     int currentValue = int.parse(_controller.text);
+                    setState(() {
+                      print("Setting state");
+                      currentValue--;
+                   //   _controller.text =
+                     //     (currentValue > 0 ? currentValue : 0)
+                //              .toString(); // decrementing value
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   showBirthDateCalender() async {
     DateTime? date = await showDatePicker(
@@ -459,5 +517,76 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
       BlocProvider.of<InvestorCubit>(context)
           .updateBirthDate(date: DateFormat('dd-MM-yyyy').format(date));
     }
+  }
+  buildCityField() {
+    double width = MediaQuery.of(context).size.width;
+    InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
+    String lang = EasyLocalization.of(context)!.locale.languageCode;
+    return InkWell(
+      onTap: () => navigateToCitiesPage(),
+      child: BlocBuilder<InvestorCubit, InvestorState>(
+        builder: (context, state) {
+          return Container(
+            width: width,
+            height: 54.0,
+            alignment:
+            lang == 'ar' ? Alignment.centerRight : Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+                color: AppColors.white, borderRadius: BorderRadius.circular(8)),
+            child: Text(
+                '${lang == 'ar' ? cubit.selectedCityModel.cityNameAr : cubit.selectedCityModel.cityNameEn}'),
+          );
+        },
+      ),
+    );
+
+  }
+  void navigateToCitiesPage() async {
+    var result =
+    await Navigator.pushNamed(context, AppConstant.pageCitiesRoute);
+    if (result != null) {
+      CityModel model = result as CityModel;
+      InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
+      cubit.updateSelectedCity(model);
+    }
+  }
+  buildCategoryField() {
+    double width = MediaQuery.of(context).size.width;
+    InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
+    String lang = EasyLocalization.of(context)!.locale.languageCode;
+    return InkWell(
+      onTap: () => navigateToCategoryPage(),
+      child: BlocBuilder<InvestorCubit, InvestorState>(
+        builder: (context, state) {
+          return Container(
+            width: width,
+            height: 54.0,
+            alignment:
+            lang == 'ar' ? Alignment.centerRight : Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+                color: AppColors.white, borderRadius: BorderRadius.circular(8)),
+            child: Text(
+                '${lang == 'ar' ? cubit.categoryModel.title_ar : cubit.categoryModel.title_en}'),
+          );
+        },
+      ),
+    );
+
+  }
+  void navigateToCategoryPage() async {
+    var result =
+    await Navigator.pushNamed(context, AppConstant.pageCategoryRoute);
+    if (result != null) {
+      CategoryModel model = result as CategoryModel;
+      InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
+      cubit.updateSelectedCategory(model);
+    }
+  }
+  @override
+  void setState(VoidCallback fn) {
+    // TODO: implement setState
+    super.setState(fn);
   }
 }

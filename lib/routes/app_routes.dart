@@ -5,6 +5,8 @@ import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/cubit/user_role_cubit.dart';
+import 'package:ezdihar_apps/screens/category_screen/category_page.dart';
+import 'package:ezdihar_apps/screens/category_screen/cubit/category_cubit.dart';
 import 'package:ezdihar_apps/screens/user/accounting_consultants_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/accounting_consulting_by_subCategory_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/accounting_provider/cubit/provider_details_cubit.dart';
@@ -21,8 +23,8 @@ import 'package:ezdihar_apps/screens/auth_screens/login_screen/login_screen.dart
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/user_role_screen.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/user_sign_up_screen.dart';
-import 'package:ezdihar_apps/screens/user/cities_screen/cities_page.dart';
-import 'package:ezdihar_apps/screens/user/cities_screen/cubit/cities_cubit.dart';
+import 'package:ezdihar_apps/screens/cities_screen/cities_page.dart';
+import 'package:ezdihar_apps/screens/cities_screen/cubit/cities_cubit.dart';
 import 'package:ezdihar_apps/screens/user/consultant_details_screen/consultant_details.dart';
 import 'package:ezdihar_apps/screens/user/consultant_details_screen/cubit/consultant_details_cubit.dart';
 import 'package:ezdihar_apps/screens/user/contact_us_screen/contact_us_screen.dart';
@@ -216,7 +218,13 @@ class AppRoutes {
             child: CitiesPage(),
           );
         });
-
+      case AppConstant.pageCategoryRoute:
+        return MaterialPageRoute(builder: (context) {
+          return BlocProvider<CategoryCubit>(
+            create: (context) => CategoryCubit(),
+            child: CategoryPage(),
+          );
+        });
       case AppConstant.pageUserProfileRoute:
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<UserProfileCubit>(

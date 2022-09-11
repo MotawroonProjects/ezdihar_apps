@@ -22,6 +22,7 @@ class AppConstant {
   static const pageInvestorSignUpRoleRoute = '/investorSignUp';
   static const pageConsultantSignUpRoleRoute = '/consultantSignUp';
   static const pageCitiesRoute = '/cities';
+  static const pageCategoryRoute = '/categorys';
   static const pageUserProfileRoute = '/userProfile';
   static const pageSubCategorieRoute = '/SubCategories';
   static const pageAccountingbySubCategoryConsultantsRoute = '/accountingbySubcategoryConsultantsDetails';

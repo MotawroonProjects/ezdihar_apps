@@ -2,7 +2,16 @@ part of 'investor_cubit.dart';
 
 @immutable
 abstract class InvestorState {}
+class OnCitySelected extends InvestorState {
+  CityModel cityModel;
 
+  OnCitySelected(this.cityModel);
+}
+class OnCategorySelected extends InvestorState {
+  CategoryModel categoryModel;
+
+  OnCategorySelected(this.categoryModel);
+}
 class InvestorInitial extends InvestorState {}
 class InvestorPhotoPicked extends InvestorState {
   XFile file;
