@@ -268,7 +268,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           backgroundColor: MaterialStateProperty.all(isValid
                               ? AppColors.colorPrimary
                               : AppColors.grey4)),
-                      onPressed: isValid ? () {} : null,
+                      onPressed: isValid ? () {
+                        cubit.send(context);
+
+                      } : null,
                       child: Text(
                         'send'.tr(),
                         style: const TextStyle(

@@ -107,7 +107,7 @@ class AccountingConsultantsWidgets {
                             const SizedBox(width: 8,),
                             RichText(
                               text: TextSpan(
-                                  text: '${model.sub_category.price}',
+                                  text: '${model.sub_category!.price}',
                                   style: const TextStyle(
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,

@@ -13,17 +13,18 @@
        this.userId, this.descAr, this.descEn, this.price);
 
    SubCategoryModel.fromJson(Map<String,dynamic> json){
-    id = json['id'] as int;
-    subCategoryId = json['sub_category_id'] as int;
+    id = json['id']!=null? json['id'] as int:0;
+    subCategoryId = json['sub_category_id']!=null?json['sub_category_id'] as int:0;
     consultantTypeId = json['consultant_type_id']!=null?json['consultant_type_id'] as String:"";
-    userId = json['user_id'] as int;
+    userId = json['user_id']!=null? json['user_id'] as int:0;
     descAr = json['desc_ar']!=null?json['desc_ar'] as String:"";
     descEn = json['desc_en']!=null?json['desc_en'] as String:"";
-    price = json['price'] as int;
+    price = json['price']!=null? json['price'] as int:0;
 
 
   }
-  static Map<String,dynamic> toJson(SubCategoryModel model){
+  static Map<String,dynamic> toJson(SubCategoryModel? model){
+     if(model!=null){
      return {
        'id':model.id,
        'sub_category_id':model.subCategoryId,
@@ -33,6 +34,7 @@
        'desc_en':model.descEn,
        'price':model.price,
 
-     };
+     };}
+     return{};
   }
 }

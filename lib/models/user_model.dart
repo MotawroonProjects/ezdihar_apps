@@ -8,7 +8,7 @@ class UserModel {
   AdvisorModel? adviser_data;
   late String access_token;
   late String firebase_token = '';
-  late SubCategoryModel sub_category;
+   SubCategoryModel? sub_category;
 
   UserModel() {
     user = User();
@@ -22,9 +22,9 @@ class UserModel {
         : null;
     access_token =
         json['access_token'] != null ? json['access_token'] as String : '';
-    sub_category = (json['sub_category'] != null
+    sub_category = json['sub_category'] != null
         ? SubCategoryModel.fromJson(json['sub_category'])
-        : null)!;
+        : null;
   }
 
   static Map<String, dynamic> toJson(UserModel user) {

@@ -3,12 +3,16 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/Message_data_model.dart';
 import 'package:ezdihar_apps/models/category_data_model.dart';
+import 'package:ezdihar_apps/models/chat_data_model.dart';
 import 'package:ezdihar_apps/models/city_data_model.dart';
 import 'package:ezdihar_apps/models/consultant_data_model.dart';
 import 'package:ezdihar_apps/models/consultants_data_model.dart';
 import 'package:ezdihar_apps/models/home_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/message_model.dart';
+import 'package:ezdihar_apps/models/payment_model.dart';
 import 'package:ezdihar_apps/models/send_general_study_model.dart';
 import 'package:ezdihar_apps/models/slider_model.dart';
 import 'package:ezdihar_apps/models/status_resspons.dart';
@@ -20,6 +24,8 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 
 import '../models/provider_model.dart';
+import '../models/single_Message_data_model.dart';
+import '../models/user_model.dart';
 
 class ServiceApi {
   late Dio dio;
@@ -178,7 +184,8 @@ print(response.data);
           'birthdate': model.dateOfBirth,
           'image': await MultipartFile.fromFile(model.imagePath)
         });
-      } else {
+      }
+      else {
         fields = FormData.fromMap({
           'first_name': model.firstName,
           'last_name': model.lastName,
@@ -390,4 +397,102 @@ print(response.data);
       throw errorMessage;
     }
   }
+  Future<PaymentDataModel> sendOrder(UserModel userModel,String user_token ) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      var fields = FormData.fromMap(
+          {'provider_id': userModel.user.id, 'sub_category_id': userModel.sub_category!.subCategoryId});
+
+      Response response = await dio.post('api/order/makeOrderFromProvider', data: fields);
+      print(response.data);
+      return PaymentDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      print(e.toString());
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+  Future<MessageDataModel> getAllMessage(String user_token,String room_id) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+
+      Response response = await dio.get('api/chat/oneRoom?room_id=${room_id}');
+
+      return MessageDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+  Future<ChatDataModel> getChatRoom(
+      String user_token) async {
+    try {
+      Response response;
+      BaseOptions baseOptions = dio.options;
+      CancelToken cancelToken = CancelToken();
+      if (user_token.isNotEmpty) {
+        baseOptions.headers = {'Authorization': user_token};
+        dio.options = baseOptions;
+      } else {
+        baseOptions.headers = {'Content-Type': 'application/json'};
+        dio.options = baseOptions;
+      }
+
+      response = await dio.get(
+          'api/chat/myRooms',
+          cancelToken: cancelToken);
+
+      if (!cancelToken.isCancelled) {
+        cancelToken.cancel();
+      }
+
+      return ChatDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      print(e.toString());
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+  Future<SingleMessageDataModel> sendMessage(String im_path,String message,String type,String room_id,String to_user_id,String user_token ) async {
+    BaseOptions options = dio.options;
+    options.headers = {'Authorization': user_token};
+    dio.options = options;
+    var fields = FormData.fromMap({});
+    try {
+      if (im_path.isNotEmpty) {
+        fields = FormData.fromMap({
+          'message':message,
+          'type':type,
+          'room_id':room_id,
+          'to_user_id':to_user_id,
+
+          'file': await MultipartFile.fromFile(im_path)
+        });
+      }
+
+    else {
+    fields = FormData.fromMap({
+      'message':message,
+      'type':type,
+      'room_id':room_id,
+      'to_user_id':to_user_id,
+    });
+
+      }
+
+
+      Response response = await dio.post('api/chat/storeChatData', data: fields);
+      return SingleMessageDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
+
 }

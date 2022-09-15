@@ -109,7 +109,8 @@ class _AccountingConsultantsBySubCategoryPageState extends State<AccountingConsu
                           context: context, model: model, index: index),
                     );
                   }));
-            } else {
+            }
+            else {
               return Center(
                   child: Text(
                 'no_consultants'.tr(),

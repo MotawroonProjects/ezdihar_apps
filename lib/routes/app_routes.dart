@@ -7,6 +7,8 @@ import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/cubit/user_role_cubit.dart';
 import 'package:ezdihar_apps/screens/category_screen/category_page.dart';
 import 'package:ezdihar_apps/screens/category_screen/cubit/category_cubit.dart';
+import 'package:ezdihar_apps/screens/chat/chat_page.dart';
+import 'package:ezdihar_apps/screens/chat/cubit/chat_cubit.dart';
 import 'package:ezdihar_apps/screens/user/accounting_consultants_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/accounting_consulting_by_subCategory_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/accounting_provider/cubit/provider_details_cubit.dart';
@@ -50,6 +52,9 @@ import 'package:ezdihar_apps/screens/user/sub_services/sub_services_screen.dart'
 import 'package:ezdihar_apps/screens/wallet_screen/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../models/chat_model.dart';
+import '../screens/payment_screen/payment_page.dart';
 
 
 class AppRoutes {
@@ -259,6 +264,23 @@ class AppRoutes {
               create: (context) => ProviderDetailsCubit(),
               child: ProviderDetailsPage(
                 userModel: userModel,
+              ),
+            ));
+      case AppConstant.pagePaymentRoute:
+        String url = settings.arguments as String;
+
+        return MaterialPageRoute(
+            builder: (context) => paymetPage(
+              url: url,
+            ));
+      case AppConstant.pageChatRoute:
+        ChatModel chatModel = settings.arguments as ChatModel;
+
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => ChatCubit(),
+              child: ChatPage(
+                chatModel: chatModel,
               ),
             ));
     }

@@ -26,7 +26,8 @@ class AppConstant {
   static const pageUserProfileRoute = '/userProfile';
   static const pageSubCategorieRoute = '/SubCategories';
   static const pageAccountingbySubCategoryConsultantsRoute = '/accountingbySubcategoryConsultantsDetails';
-
+  static const pagePaymentRoute = '/payment';
+  static const pageChatRoute = '/chat';
   //////////////////////////////////////////////
   static const following = 'following';
   static const mostPopular = 'popular';

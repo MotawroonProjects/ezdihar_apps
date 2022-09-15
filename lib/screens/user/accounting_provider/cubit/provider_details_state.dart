@@ -4,7 +4,10 @@ part of 'provider_details_cubit.dart';
 abstract class ProviderDetailsState {}
 
 class IsLoading extends ProviderDetailsState {}
-
+class OnOrderSuccess extends ProviderDetailsState {
+  PaymentData model;
+  OnOrderSuccess(this.model);
+}
 class OnDataSuccess extends ProviderDetailsState {
   UserModel model;
   OnDataSuccess(this.model);
