@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "628624317094",
+    "project_id": "ezdehar-app",
+    "storage_bucket": "ezdehar-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628624317094:android:cafd2a166321279983b267",
+        "android_client_info": {
+          "package_name": "com.apps.ezdihar_apps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628624317094-a15sd1ml7168k1taoh4t0d0k7ipogg6r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGpou2u8GxfIuS_OYP5QxExqZFND7Doo8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628624317094-a15sd1ml7168k1taoh4t0d0k7ipogg6r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
