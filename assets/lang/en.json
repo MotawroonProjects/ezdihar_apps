@@ -179,6 +179,10 @@
   "update_btn": "Update ",
   "delete_btn": "Delete ",
   "priceValidator": "Please Enter The Price !!! ",
-  "detailsValidator": "Please Enter The Details !!! "
+  "detailsValidator": "Please Enter The Details !!! ",
+  "serviceRequest": "Service Request",
+  "delivery_date": "Delivery Date",
+  "service_type": "Service Type",
+  "customer_name": "Customer Name"
 
 }

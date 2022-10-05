@@ -39,33 +39,36 @@ class SettingWidgets {
         title = 'changeLanguage'.tr();
         break;
       case 1:
-        title = 'edit_profile'.tr();
+        title = 'serviceRequest'.tr();
         break;
       case 2:
-        title = 'control_services'.tr();
+        title = 'edit_profile'.tr();
         break;
       case 3:
-        title = 'wallet'.tr();
+        title = 'control_services'.tr();
         break;
       case 4:
-        title = 'terms'.tr();
+        title = 'wallet'.tr();
         break;
       case 5:
-        title = 'privacy'.tr();
+        title = 'terms'.tr();
         break;
       case 6:
-        title = 'aboutUs'.tr();
+        title = 'privacy'.tr();
         break;
       case 7:
-        title = 'contactUs'.tr();
+        title = 'aboutUs'.tr();
         break;
       case 8:
-        title = 'rateApp'.tr();
+        title = 'contactUs'.tr();
         break;
       case 9:
-        title = 'shareApp'.tr();
+        title = 'rateApp'.tr();
         break;
       case 10:
+        title = 'shareApp'.tr();
+        break;
+      case 11:
         color = AppColors.red;
         title = 'logout'.tr();
         break;
@@ -85,35 +88,38 @@ class SettingWidgets {
         iconName = 'lang.svg';
         break;
       case 1:
-        iconName = 'edit_profile.svg';
+        iconName = 'service_request.svg';
         break;
       case 2:
-        iconName = 'control_service.svg';
+        iconName = 'edit_profile.svg';
         break;
       case 3:
+        iconName = 'control_service.svg';
+        break;
+      case 4:
         color=AppColors.black;
         iconName = 'wallet2.svg';
         break;
 
-      case 4:
+      case 5:
         iconName = 'terms.svg';
         break;
-      case 5:
+      case 6:
         iconName = 'privacy.svg';
         break;
-      case 6:
+      case 7:
         iconName = 'info.svg';
         break;
-      case 7:
+      case 8:
         iconName = 'contact_us.svg';
         break;
-      case 8:
+      case 9:
         iconName = 'rate.svg';
         break;
-      case 9:
+      case 10:
         iconName = 'share.svg';
         break;
-      case 10:
+      case 11:
         color = AppColors.red;
         iconName = 'logout.svg';
         break;

@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/category_model.dart';
 import 'package:ezdihar_apps/models/consultant_type_model.dart';
@@ -54,20 +53,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/chat_model.dart';
-import '../models/provider_order.dart';
 import '../models/user.dart';
 import '../screens/payment_screen/payment_page.dart';
 import '../screens/provider/control_services/cubit/control_services_cubit.dart';
 import '../screens/provider/control_services/screens/control_services.dart';
 import '../screens/provider/home_screen/cubit/provider_home_page_cubit.dart';
-import '../screens/provider/home_screen/screens/home_screen.dart';
 import '../screens/provider/navigation_bottom/cubit/navigator_bottom_cubit.dart';
 import '../screens/provider/navigation_bottom/screens/navigation_bottom.dart';
 import '../screens/provider/provider_orders/presentation/cubit/orders_cubit.dart';
 import '../screens/provider/provider_orders/presentation/screens/Order_Screen.dart';
-import '../screens/provider/provider_orders/presentation/screens/Orders_Deatils.dart';
+import '../screens/provider/service_request/cubit/service_request_cubit.dart';
+import '../screens/provider/service_request/screens/service_request.dart';
 import '../screens/splashPage/cubit/splash_cubit.dart';
-import '../screens/user/privacy_about _us_terms_screen/more_info_screen.dart';
 import '../screens/wallet_screen/cubit/wallet_cubit.dart';
 
 class AppRoutes {
@@ -353,6 +350,15 @@ class AppRoutes {
             return BlocProvider<ControlServicesCubit>(
               create: (context) => ControlServicesCubit(),
               child: ControlServices(),
+            );
+          },
+        );
+        case AppConstant.serviceRequestScreenRoute:
+        return MaterialPageRoute(
+          builder: (context) {
+            return BlocProvider<ServiceRequestCubit>(
+              create: (context) => ServiceRequestCubit(),
+              child: ServiceRequestScreen(),
             );
           },
         );

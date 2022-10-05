@@ -20,4 +20,5 @@ class ImageAssets {
   static const String editProfileIcon = '$iconsPath/edit_profile.svg';
   static const String providerServicesIcon = '$iconsPath/provider_services.svg';
   static const String providerDescIcon = '$iconsPath/provider_desc.svg';
+  static const String idIcon = '$iconsPath/id_icon.svg';
 }

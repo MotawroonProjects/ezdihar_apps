@@ -178,6 +178,10 @@
   "update_btn": "تعديل ",
   "delete_btn": "حذف ",
   "priceValidator": "من فضلك ادخل السعر !!! ",
-  "detailsValidator": "من فضلك ادخل التفاصيل !!! "
+  "detailsValidator": "من فضلك ادخل التفاصيل !!! ",
+  "serviceRequest": "تقديم طلب خدمه",
+  "delivery_date": "تاريخ التسليم",
+  "service_type": "نوع الخدمه",
+  "customer_name": "اسم العميل"
 
 }

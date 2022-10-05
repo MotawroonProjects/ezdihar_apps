@@ -33,6 +33,7 @@ class AppConstant {
 
   static const providerPageHomeRoute = '/ providerHomePage';
   static const providerNavigationBottomRoute = '/ providerNavigationBottom';
+  static const serviceRequestScreenRoute = '/ serviceRequestScreen';
 
   //////////////////////////////////////////////
   static const following = 'following';
