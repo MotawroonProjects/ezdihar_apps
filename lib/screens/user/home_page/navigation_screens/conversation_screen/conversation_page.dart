@@ -20,28 +20,31 @@ class ConversationPage extends StatefulWidget {
 
 class _ConversationPageState extends State<ConversationPage> {
   var hei,wid;
+
+  int user_id=0;
   @override
   Widget build(BuildContext context) {
+    _onRefresh();
     Size size = MediaQuery.of(context).size;
     hei = size.height;
     wid = size.width;
     return Scaffold(
 
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        centerTitle: true,
-        elevation: 0,
-        title: Text(
-          'chat'.tr(),
-          style: const TextStyle(
-              color: AppColors.black,
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold),
-        ),
-        leading:  context.read<NavigatorBottomCubit>().page != 1
-            ? AppWidget.buildBackArrow(context: context)
-            : SizedBox(),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: AppColors.white,
+      //   centerTitle: true,
+      //   elevation: 0,
+      //   title: Text(
+      //     'chat'.tr(),
+      //     style: const TextStyle(
+      //         color: AppColors.black,
+      //         fontSize: 16.0,
+      //         fontWeight: FontWeight.bold),
+      //   ),
+      //   leading:  context.read<NavigatorBottomCubit>().page != 1
+      //       ? AppWidget.buildBackArrow(context: context)
+      //       : SizedBox(),
+      // ),
       backgroundColor: AppColors.grey2,
       body: buildBodySection(),
     );
@@ -89,6 +92,7 @@ class _ConversationPageState extends State<ConversationPage> {
             ConversationPageCubit cubit = BlocProvider.of<ConversationPageCubit>(context);
 
             List<ChatModel> list = cubit.chatmodelList;
+            print(list.length);
             if (list.length > 0) {
               return ListView.builder(
                   itemCount: list.length,
@@ -98,10 +102,10 @@ class _ConversationPageState extends State<ConversationPage> {
                     return InkWell(
                       onTap: () => _onTaped(chatModel: model, index: index),
                       child: AccountingChatWidgets().buildListItem(
-                          context: context, model: model, index: index),
+                          context: context, model: model,user_id: user_id, index: index),
                     );
                   }));
-            } else {
+             }else {
               return Center(
                   child: Text(
                     'no_consultants'.tr(),
@@ -121,5 +125,12 @@ class _ConversationPageState extends State<ConversationPage> {
   Future<void> onRefresh(BuildContext context) async {
     ConversationPageCubit cubit = BlocProvider.of<ConversationPageCubit>(context);
     cubit.getData();
+  }
+  Future<void> _onRefresh() async {
+    UserModel model = await Preferences.instance.getUserModel();
+    user_id = model.user.id;
+    setState(() {
+      user_id;
+    });
   }
 }

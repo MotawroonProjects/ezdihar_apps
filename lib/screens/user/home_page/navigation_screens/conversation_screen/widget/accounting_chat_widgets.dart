@@ -27,6 +27,7 @@ class AccountingChatWidgets {
   Widget buildListItem(
       {required BuildContext context,
       required ChatModel model,
+        required int user_id,
       required int index}) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
 
@@ -41,8 +42,19 @@ class AccountingChatWidgets {
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              leading: model.provider.image.isNotEmpty?CachedNetworkImage(
+              leading:model.user_id==user_id?
+              model.provider.image.isNotEmpty?CachedNetworkImage(
                 imageUrl: model.provider.image,
+                placeholder: (context,url)=>_buildAvatar(width: 48.0, height: 48.0),
+                errorWidget: (context,url,error)=>_buildAvatar(width: 48.0, height: 48.0),
+                width: 48,
+                height: 48,
+                imageBuilder: (context,imageProvider){
+                  return CircleAvatar(backgroundImage:imageProvider,radius: 48.0,);
+                },
+              ):_buildAvatar(width: 48.0, height: 48.0):
+              model.user.image.isNotEmpty?CachedNetworkImage(
+                imageUrl: model.user.image,
                 placeholder: (context,url)=>_buildAvatar(width: 48.0, height: 48.0),
                 errorWidget: (context,url,error)=>_buildAvatar(width: 48.0, height: 48.0),
                 width: 48,
@@ -52,7 +64,7 @@ class AccountingChatWidgets {
                 },
               ):_buildAvatar(width: 48.0, height: 48.0),
               title: Text(
-                '${model.provider.firstName+" "+model.provider.lastName}',
+                '${model.user_id==user_id?model.provider.firstName+" "+model.provider.lastName:model.user.firstName+" "+model.user.lastName}',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.0,

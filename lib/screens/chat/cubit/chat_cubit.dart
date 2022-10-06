@@ -2,8 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:ezdihar_apps/models/Message_data_model.dart';
 import 'package:ezdihar_apps/models/chat_model.dart';
 
-import 'package:ezdihar_apps/models/city_data_model.dart';
-import 'package:ezdihar_apps/models/city_model.dart';
 import 'package:ezdihar_apps/models/message_model.dart';
 import 'package:ezdihar_apps/remote/service.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +24,7 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(IsLoading()) {
     api = ServiceApi();
     imagePath = "";
-    list = [];
+   // list = [];
 
     //  getChat();
   }
