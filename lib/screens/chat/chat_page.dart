@@ -90,7 +90,14 @@ class _ChatPageState extends State<ChatPage> {
                       MessageModel model = cubit.list[index];
 
                       bool isme = model.from_user.id == user_id;
-
+                      if (cubit.list.length > 0) {
+                        if (_scrollController.hasClients) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _scrollController.jumpTo(
+                                _scrollController.position.maxScrollExtent);
+                          });
+                        }
+                      }
                       return Align(
                           // align the child within the container
 
@@ -354,13 +361,6 @@ class _ChatPageState extends State<ChatPage> {
         });
       });
     });
-    if (_scrollController.hasClients) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.jumpTo(
-            _scrollController.position.maxScrollExtent);
-      });
-    }
-
     super.initState();
   }
 
