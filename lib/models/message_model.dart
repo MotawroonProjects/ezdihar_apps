@@ -1,7 +1,7 @@
 import 'package:ezdihar_apps/models/user.dart';
 
 class MessageModel {
-  late int from_user_id;
+   int from_user_id=0;
   late int to_user_id;
   late String type;
   late String message;

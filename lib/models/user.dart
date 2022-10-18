@@ -1,4 +1,5 @@
 import 'package:ezdihar_apps/models/city_model.dart';
+import 'package:ezdihar_apps/models/sub_category_model.dart';
 
 class User {
   late int id;
@@ -15,6 +16,7 @@ class User {
   late int wallet;
   late bool isLoggedIn = false;
   late String lan;
+  List<SubCategoryModel>? subCategories;
 
   User();
 
@@ -35,6 +37,13 @@ class User {
             json['city'],
           )
         : CityModel.initValues();
+    if (json['advisor_category'] != null) {
+      subCategories = <SubCategoryModel>[];
+      json['advisor_category'].forEach((v) {
+        subCategories!.add(new SubCategoryModel.fromJson(v));
+      });
+    }
+
   }
 
   static Map<String, dynamic> toJson(User user) {
@@ -51,6 +60,9 @@ class User {
       "city_id": user.cityId,
       "wallet": user.wallet,
       'city': CityModel.toJson(user.city),
+      if (user.subCategories != null)
+        'advisor_category':
+        user.subCategories!.map((v) => v.toJson(v)).toList()
     };
   }
 }

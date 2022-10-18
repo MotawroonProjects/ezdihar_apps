@@ -8,6 +8,8 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+import '../../../../models/user.dart';
+
 class AccountingConsultantsWidgets {
   Widget _buildAvatar({required double width, required double height}) {
     return SizedBox(
@@ -25,7 +27,7 @@ class AccountingConsultantsWidgets {
 
   Widget buildListItem(
       {required BuildContext context,
-      required UserModel model,
+      required User model,
       required int index}) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return Card(
@@ -42,8 +44,8 @@ class AccountingConsultantsWidgets {
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              leading: model.user.image.isNotEmpty?CachedNetworkImage(
-                imageUrl: model.user.image,
+              leading: model.image.isNotEmpty?CachedNetworkImage(
+                imageUrl: model.image,
                 placeholder: (context,url)=>_buildAvatar(width: 48.0, height: 48.0),
                 errorWidget: (context,url,error)=>_buildAvatar(width: 48.0, height: 48.0),
                 width: 48,
@@ -53,7 +55,7 @@ class AccountingConsultantsWidgets {
                 },
               ):_buildAvatar(width: 48.0, height: 48.0),
               title: Text(
-                '${model.user.firstName+" "+model.user.lastName}',
+                '${model.firstName+" "+model.lastName}',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.0,
@@ -107,7 +109,7 @@ class AccountingConsultantsWidgets {
                             const SizedBox(width: 8,),
                             RichText(
                               text: TextSpan(
-                                  text: '${model.sub_category!.price}',
+                                  text: '${model.subCategories!.elementAt(0).price}',
                                   style: const TextStyle(
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,

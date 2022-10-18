@@ -10,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+import '../../../models/user.dart';
+
 class ProviderDetailsPage extends StatefulWidget {
-  final UserModel userModel;
+  final User userModel;
 
   ProviderDetailsPage({Key? key, required this.userModel})
       : super(key: key);
@@ -22,7 +24,7 @@ class ProviderDetailsPage extends StatefulWidget {
 }
 
 class _ProviderDetailsPageState extends State<ProviderDetailsPage> {
-UserModel   userModel;
+User  userModel;
   _ProviderDetailsPageState(this.userModel);
 
   @override
@@ -49,7 +51,7 @@ UserModel   userModel;
     ProviderDetailsCubit cubit = BlocProvider.of<ProviderDetailsCubit>(context);
     double width = MediaQuery.of(context).size.width;
     String lang = EasyLocalization.of(context)!.locale.languageCode;
-    // cubit.getData(userModel.user.id,userModel.sub_category!.subCategoryId);
+     cubit.getData(userModel.id,userModel.subCategories!.elementAt(0).subCategoryId);
 
     return BlocListener<ProviderDetailsCubit, ProviderDetailsState>(listener: (context, state) {
 
@@ -223,8 +225,7 @@ UserModel   userModel;
                                   svgName: 'offers.svg',
                                   title: 'servicePrice'.tr(),
                                   count:
-                                  '${userModel.sub_category != 0 ? userModel
-                                      .sub_category!.price : "0.0"}',
+                                  '${userModel.subCategories!=null ? userModel.subCategories!.elementAt(0).price : "0.0"}',
                                   content: 'sar'.tr()),
                               _buildDetailsSection(
                                   svgName: 'users.svg',
@@ -263,9 +264,9 @@ UserModel   userModel;
 
                           '${lang == 'ar'
                               ? userModel
-                              .sub_category!.descAr
+                              .subCategories!.elementAt(0).descAr
                               : userModel
-                              .sub_category!.descEn}',
+                              .subCategories!.elementAt(0).descEn}',
                           style: const TextStyle(
                               fontSize: 14.0, color: AppColors.grey1),
                         ))
@@ -282,7 +283,7 @@ return Center();
     ,
     InkWell(
     onTap: () {
-    // cubit.sendOrder(context);
+     cubit.sendOrder(context,userModel);
     //   Navigator.pushNamed(context, AppConstant.pageRequestConsultationRoute,arguments: cubit.userModel);
     },
     child: Container(

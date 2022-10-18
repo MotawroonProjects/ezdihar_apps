@@ -1,4 +1,4 @@
- class SubCategoryModel{
+ class ServiceRequestModel{
   late int id;
   late int subCategoryId;
   late String consultantTypeId;
@@ -7,12 +7,12 @@
   late String descEn;
   late int price;
 
-  SubCategoryModel();
+  ServiceRequestModel();
 
-   SubCategoryModel.factory(this.id, this.subCategoryId, this.consultantTypeId,
+  ServiceRequestModel.factory(this.id, this.subCategoryId, this.consultantTypeId,
        this.userId, this.descAr, this.descEn, this.price);
 
-   SubCategoryModel.fromJson(Map<String,dynamic> json){
+   ServiceRequestModel.fromJson(Map<String,dynamic> json){
     id = json['id']!=null? json['id'] as int:0;
     subCategoryId = json['sub_category_id']!=null?json['sub_category_id'] as int:0;
     consultantTypeId = json['consultant_type_id']!=null?json['consultant_type_id'] as String:"";
@@ -23,7 +23,7 @@
 
 
   }
-   Map<String,dynamic> toJson(SubCategoryModel? model){
+   Map<String,dynamic> toJson(ServiceRequestModel? model){
      if(model!=null){
      return {
        'id':model.id,

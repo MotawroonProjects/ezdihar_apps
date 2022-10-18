@@ -6,10 +6,12 @@ import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/remote/service.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../models/user.dart';
+
 part 'consultants_state.dart';
 
 class ConsultantsCubit extends Cubit<ConsultantsState> {
-  late List<UserModel> data;
+  late List<User> data;
   late ServiceApi api;
   ConsultantsCubit() : super(IsLoading()){
     data = [];

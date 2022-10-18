@@ -5,11 +5,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/models/message_model.dart';
+import 'package:ezdihar_apps/screens/provider/service_request/cubit/service_request_cubit.dart';
 
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../constants/app_constant.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
 import '../../preferences/preferences.dart';
@@ -28,35 +31,72 @@ class _ChatPageState extends State<ChatPage> {
   ChatModel chatModel;
   String message = "";
   int user_id = 0;
+  bool needscroll = true;
+  double current = 0;
   var _controller = TextEditingController();
-  ScrollController _scrollController = new ScrollController();
+  final ItemScrollController _scrollController = ItemScrollController();
   var hei, wid;
-  bool _firstAutoscrollExecuted = false;
-  bool _shouldAutoscroll = false;
+
+  bool isend = false;
+
+  int position = 0;
 
   _ChatPageState({required this.chatModel});
 
   @override
   Widget build(BuildContext context) {
     _onRefresh();
+    //   WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+
     Size size = MediaQuery.of(context).size;
     hei = size.height;
     wid = size.width;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.white,
-        centerTitle: true,
-        title: Text(
-          chatModel.user.id == user_id
-              ? chatModel.provider.firstName + " " + chatModel.provider.lastName
-              : chatModel.user.firstName + " " + chatModel.user.lastName,
-          style: const TextStyle(
-              color: AppColors.black,
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold),
-        ),
-        leading: AppWidget.buildBackArrow(context: context),
-      ),
+          backgroundColor: AppColors.white,
+          centerTitle: true,
+          title: Text(
+            chatModel.user.id == user_id
+                ? chatModel.provider.firstName +
+                    " " +
+                    chatModel.provider.lastName
+                : chatModel.user.firstName + " " + chatModel.user.lastName,
+            style: const TextStyle(
+                color: AppColors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold),
+          ),
+          flexibleSpace: SafeArea(
+            right: true,
+            bottom: true,
+            top: true,
+            child: Center(
+                child: Row(
+              children: [
+                AppWidget.buildBackArrow(context: context),
+                Container(
+                    child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, AppConstant.serviceRequestScreenRoute,
+                              arguments: chatModel);
+                          // Add what you want to do on tap
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.add),
+                            SizedBox(width: 2.0),
+                            Text(
+                              "Add Request",
+                              style: TextStyle(
+                                fontSize: 10.0,
+                              ),
+                            ),
+                          ],
+                        ))),
+              ],
+            )),
+          )),
       backgroundColor: AppColors.grey2,
       body: buildBodySection(),
     );
@@ -79,42 +119,47 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 );
               } else if (state is OnDataSuccess) {
-                ChatCubit cubit = BlocProvider.of<ChatCubit>(context);
-                print(cubit.list.length);
-                return ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: cubit.list.length,
-                    controller: _scrollController,
-                    itemBuilder: (context, index) {
+                // ChatCubit cubit = BlocProvider.of<ChatCubit>(context);
+                print("fileName=>${state.data.length}");
+                if (position < state.data.length) {
+                  needscroll = true;
+                }
+                if (needscroll) {
+                  print("fileNamedddd=>${state.data.length}");
+                  scrollToBottom(state.data.length);
+                  //  needscroll=false;
+
+                }
+                return  ScrollablePositionedList.separated(
+                  itemScrollController: _scrollController,
+                  itemCount: cubit.list.length + 1,
+                  physics:ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index < cubit.list.length &&
+                        cubit.list[index].from_user_id != 0) {
                       MessageModel model = cubit.list[index];
 
                       bool isme = model.from_user.id == user_id;
-                      if (cubit.list.length > 0) {
-                        if (_scrollController.hasClients) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _scrollController.jumpTo(
-                                _scrollController.position.maxScrollExtent);
-                          });
-                        }
-                      }
-                      return Align(
-                          // align the child within the container
 
+                      return Align(
+
+                          // align the child within the container
                           alignment: isme
                               ? Alignment.centerRight
                               : Alignment.centerLeft,
                           child: Bubble(
                             color:
-                                isme ? AppColors.colorPrimary : AppColors.grey4,
+                                isme ?(model.type.contains("file")? AppColors.grey2:AppColors.grey6) : (model.type.contains("file")? AppColors.grey2:AppColors.grey4),
                             margin: BubbleEdges.only(top: 10),
                             nip: isme
                                 ? BubbleNip.rightBottom
                                 : BubbleNip.leftBottom,
+                            elevation: model.type.contains("file")?0:2,
                             child: Padding(
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(0),
                                 child: (model.type.contains("file")
                                     ? CachedNetworkImage(
+                                        height: 290,
                                         imageUrl: model.file,
                                         placeholder: (context, url) =>
                                             Container(
@@ -133,9 +178,15 @@ class _ChatPageState extends State<ChatPage> {
                                         ),
                                       ))),
                           ));
-                    });
+                    } else {
+                      return Container();
+                    }
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Container();
+                  },
+                );
               } else {
-                OnError error = state as OnError;
                 return InkWell(
                   onTap: () {
                     cubit.getChat(chatModel.id.toString());
@@ -162,51 +213,52 @@ class _ChatPageState extends State<ChatPage> {
               }
             },
           )),
-          BlocBuilder<ChatCubit, ChatState>(builder: (context, state) {
-            String imagePath = cubit.imagePath;
-            if (state is UserPhotoPicked) {
-              imagePath = state.imagePath;
-              cubit.sendimage(context, imagePath, chatModel);
-            }
-
-            return Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.photo),
-                  color: Theme.of(context).primaryColor,
-                  iconSize: 25.0,
-                  onPressed: () {
-                    buildAlertDialog();
-                  },
-                ),
-                Expanded(
-                    child: Container(
-                        margin: const EdgeInsets.all(15.0),
-                        padding: const EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                            color: AppColors.white,
-                            border: Border.all(color: AppColors.grey4),
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: TextField(
-                          controller: _controller,
-                          onChanged: (value) {
-                            message = value;
-                          },
-                          textCapitalization: TextCapitalization.sentences,
-                        ))),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  color: Theme.of(context).primaryColor,
-                  iconSize: 25.0,
-                  onPressed: () {
-                    cubit.sendmessage(context, message, chatModel);
-                    message = "";
-                    _controller.clear();
-                  },
-                ),
-              ],
-            );
-          }),
+          buildbottom()
+          // BlocBuilder<ChatCubit, ChatState>(builder: (context, state) {
+          //   String imagePath = cubit.imagePath;
+          //   if (state is UserPhotoPicked) {
+          //     imagePath = state.imagePath;
+          //     cubit.sendimage(context, imagePath, chatModel);
+          //   }
+          //
+          //   return Row(
+          //     children: [
+          //       IconButton(
+          //         icon: Icon(Icons.photo),
+          //         color: Theme.of(context).primaryColor,
+          //         iconSize: 25.0,
+          //         onPressed: () {
+          //           buildAlertDialog();
+          //         },
+          //       ),
+          //       Expanded(
+          //           child: Container(
+          //               margin: const EdgeInsets.all(15.0),
+          //               padding: const EdgeInsets.all(3.0),
+          //               decoration: BoxDecoration(
+          //                   color: AppColors.white,
+          //                   border: Border.all(color: AppColors.grey4),
+          //                   borderRadius: BorderRadius.all(Radius.circular(8))),
+          //               child: TextField(
+          //                 controller: _controller,
+          //                 onChanged: (value) {
+          //                   message = value;
+          //                 },
+          //                 textCapitalization: TextCapitalization.sentences,
+          //               ))),
+          //       IconButton(
+          //         icon: Icon(Icons.send),
+          //         color: Theme.of(context).primaryColor,
+          //         iconSize: 25.0,
+          //         onPressed: () {
+          //           cubit.sendmessage(context, message, chatModel);
+          //           message = "";
+          //           _controller.clear();
+          //         },
+          //       ),
+          //     ],
+          //   );
+          // }),
         ]));
   }
 
@@ -241,9 +293,12 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   InkWell(
                     onTap: () {
+                      needscroll = true;
                       Navigator.pop(context);
-                      BlocProvider.of<ChatCubit>(context)
-                          .pickImage(type: 'camera');
+                      BlocProvider.of<ChatCubit>(context).pickImage(
+                          type: 'camera',
+                          chatModel: chatModel,
+                          context: context);
                     },
                     child: Text(
                       'camera'.tr(),
@@ -255,9 +310,13 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   InkWell(
                     onTap: () {
+                      needscroll = true;
+
                       Navigator.pop(context);
-                      BlocProvider.of<ChatCubit>(context)
-                          .pickImage(type: 'gallery');
+                      BlocProvider.of<ChatCubit>(context).pickImage(
+                          type: 'gallery',
+                          chatModel: chatModel,
+                          context: context);
                     },
                     child: Text(
                       'gallery'.tr(),
@@ -298,10 +357,10 @@ class _ChatPageState extends State<ChatPage> {
       value: BlocProvider.of<ChatCubit>(context),
       child: BlocBuilder<ChatCubit, ChatState>(builder: (context, state) {
         String imagePath = cubit.imagePath;
-        if (state is UserPhotoPicked) {
-          imagePath = state.imagePath;
-          cubit.sendimage(context, imagePath, chatModel);
-        }
+        // if (state is UserPhotoPicked) {
+        //   imagePath = state.imagePath;
+        //   cubit.sendimage(context, imagePath, chatModel);
+        // }
 
         return Row(
           children: [
@@ -333,7 +392,10 @@ class _ChatPageState extends State<ChatPage> {
               color: Theme.of(context).primaryColor,
               iconSize: 25.0,
               onPressed: () {
+                needscroll = true;
                 cubit.sendmessage(context, message, chatModel);
+                FocusScope.of(context).requestFocus(FocusNode());
+
                 message = "";
                 _controller.clear();
               },
@@ -352,33 +414,33 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  void scrollToBottom(int index) {
+    // print('object${index}');
+    // if (position > 0 && position <= index) {
+    //   index = index + 1;
+    // }
+    Future.delayed(Duration(milliseconds: 1), () {
+      print('object${index}');
+      _scrollController.jumpTo(index: 0);
+      position = index;
+      needscroll = false;
+
+      // if ( _scrollController.offset == _scrollController.position.pixels) {
+      //   needscroll = false;
+      // } else {
+      //   needscroll = true;
+      // }
+    });
+  }
+
   @override
   void initState() {
-    Future.delayed(Duration.zero, () async {
-      Timer.run(() {
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
-          _scrollController.addListener(_scrollListener);
-        });
-      });
-    });
     super.initState();
   }
 
   @override
   void dispose() {
+    //  _scrollController.dispose();
     super.dispose();
-    _scrollController.dispose();
-  }
-
-  void _scrollListener() {
-    _firstAutoscrollExecuted = true;
-
-    if (_scrollController.hasClients &&
-        _scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent) {
-      _shouldAutoscroll = true;
-    } else {
-      _shouldAutoscroll = false;
-    }
   }
 }

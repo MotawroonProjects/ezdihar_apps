@@ -5,9 +5,11 @@ import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/remote/service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../models/payment_model.dart';
+import '../../../../models/user.dart';
 import '../../../../preferences/preferences.dart';
 import '../../../../widgets/app_widgets.dart';
 
@@ -26,9 +28,10 @@ class ProviderDetailsCubit extends Cubit<ProviderDetailsState> {
     try {
       UserDataModel userDataModel =
           await api.getProviderDetails(consultant_id,cate_id);
+     // print("Errororssss${userDataModel.status.code}");
       if(userDataModel.status.code==200){
         userModel = userDataModel.userModel;
-
+    //    print("Errororssss${userDataModel.userModel.user.id}");
       }
       emit(OnDataSuccess(userModel!));
     } catch (e) {
@@ -36,7 +39,7 @@ class ProviderDetailsCubit extends Cubit<ProviderDetailsState> {
       emit(OnError(e.toString()));
     }
   }
-  void sendOrder(BuildContext context) async {
+  void sendOrder(BuildContext context,User userModel) async {
     AppWidget.createProgressDialog(context, 'wait'.tr());
     UserModel model = await Preferences.instance.getUserModel();
     String user_token = '';
@@ -53,6 +56,14 @@ class ProviderDetailsCubit extends Cubit<ProviderDetailsState> {
 
 
       } else {
+        if(response.status.code==407){
+          Fluttertoast.showToast(
+              msg: "wallet_not_enough".tr(),  // message
+              toastLength: Toast.LENGTH_SHORT, // length
+              gravity: ToastGravity.BOTTOM,    // location
+              timeInSecForIosWeb: 1               // duration
+          );
+        }
         print("errorCode=>${response.status.code}");
       }
     } catch (e) {

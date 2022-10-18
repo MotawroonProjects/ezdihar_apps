@@ -15,3 +15,12 @@ class UserDataValidation extends ServiceRequestState {
 
   UserDataValidation(this.valid);
 }
+class OnOrderSuccess extends ServiceRequestState {
+  StatusResponse model;
+  OnOrderSuccess(this.model);
+}
+
+class OnError extends ServiceRequestState {
+  String error;
+  OnError(this.error);
+}

@@ -38,7 +38,8 @@ class CustomTextField extends StatelessWidget {
       child: Column(
         children: [
           image != "null"
-              ? Row(
+              ?
+          Row(
                   children: [
                     SvgPicture.asset(
                       AppConstant.localImagePath + image,

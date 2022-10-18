@@ -283,7 +283,7 @@ class AppRoutes {
                 ));
 
       case AppConstant.pageProviderDetailsRoute:
-        UserModel userModel = settings.arguments as UserModel;
+        User userModel = settings.arguments as User;
 
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
@@ -354,14 +354,13 @@ class AppRoutes {
           },
         );
         case AppConstant.serviceRequestScreenRoute:
-        return MaterialPageRoute(
-          builder: (context) {
-            return BlocProvider<ServiceRequestCubit>(
-              create: (context) => ServiceRequestCubit(),
-              child: ServiceRequestScreen(),
-            );
-          },
-        );
-    }
+          ChatModel chatModel = settings.arguments as ChatModel;
+          return MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => ServiceRequestCubit(),
+                child: ServiceRequestScreen(
+                  chatModel: chatModel,
+                ),
+              ));    }
   }
 }

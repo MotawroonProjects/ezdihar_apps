@@ -64,13 +64,13 @@ class ProviderHomeCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(25.0),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 56,
-                height: 56,
+
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(40),

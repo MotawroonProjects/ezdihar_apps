@@ -5,7 +5,7 @@ abstract class ConsultantsState {}
 
 class IsLoading extends ConsultantsState {}
 class OnDataSuccess extends ConsultantsState {
-  List<UserModel> data;
+  List<User> data;
   OnDataSuccess(this.data);
 }
 class OnError extends ConsultantsState {

@@ -24,7 +24,7 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(IsLoading()) {
     api = ServiceApi();
     imagePath = "";
-   // list = [];
+    // list = [];
 
     //  getChat();
   }
@@ -38,8 +38,8 @@ class ChatCubit extends Cubit<ChatState> {
       }
       emit(IsLoading());
       MessageDataModel response = await api.getAllMessage(user_token, room_id);
-    print(response.status.code);
-    print(response.data.messages.length);
+      // print(response.status.code);
+      // print(response.data.messages.length);
       if (response.status.code == 200) {
         list = response.data.messages;
         emit(OnDataSuccess(list));
@@ -49,18 +49,22 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-  pickImage({required String type}) async {
+  pickImage(
+      {required String type,
+      required ChatModel chatModel,
+      required BuildContext context}) async {
     imageFile = await ImagePicker().pickImage(
         source: type == 'camera' ? ImageSource.camera : ImageSource.gallery);
     imageType = 'file';
 
     imagePath = imageFile!.path;
-
-    emit(UserPhotoPicked(imagePath));
+    sendimage(context, imagePath, chatModel);
+    //emit(UserPhotoPicked(imagePath));
   }
 
   sendimage(BuildContext context, String imagepath, ChatModel chatModel) async {
     try {
+      //emit(OnDataSuccess(list));
       UserModel model = await Preferences.instance.getUserModel();
       String user_token = '';
       if (model.user.isLoggedIn) {
@@ -75,9 +79,11 @@ class ChatCubit extends Cubit<ChatState> {
           chatModel.id.toString(),
           chatModel.provider.id.toString(),
           user_token);
-      print(response.status!.code);
+      print("sssss${response.status!.code}");
       if (response.status?.code == 200) {
         list.add(response.data!);
+        //   list.add(new MessageModel());
+        print(list.length);
         emit(OnDataSuccess(list));
       } else {
         //  Navigator.pop(context);
@@ -85,11 +91,12 @@ class ChatCubit extends Cubit<ChatState> {
         emit(OnError(response.status!.message));
       }
     } catch (e) {
-      print('Error=>${e}');
+      print('Errorsssss=>${e}');
       //Navigator.pop(context);
       emit(OnError(e.toString()));
     }
   }
+
   sendmessage(BuildContext context, String message, ChatModel chatModel) async {
     try {
       UserModel model = await Preferences.instance.getUserModel();
@@ -111,6 +118,7 @@ class ChatCubit extends Cubit<ChatState> {
         print('Error=>${list.length}');
 
         list.add(response.data!);
+        // list.add(new MessageModel());
         print(list.length);
         emit(OnDataSuccess(list));
       } else {
@@ -124,5 +132,4 @@ class ChatCubit extends Cubit<ChatState> {
       emit(OnError(e.toString()));
     }
   }
-
 }

@@ -38,37 +38,37 @@ class SettingWidgets {
       case 0:
         title = 'changeLanguage'.tr();
         break;
+      // case 1:
+      //   title = 'serviceRequest'.tr();
+      //   break;
       case 1:
-        title = 'serviceRequest'.tr();
-        break;
-      case 2:
         title = 'edit_profile'.tr();
         break;
-      case 3:
+      case 2:
         title = 'control_services'.tr();
         break;
-      case 4:
+      case 3:
         title = 'wallet'.tr();
         break;
-      case 5:
+      case 4:
         title = 'terms'.tr();
         break;
-      case 6:
+      case 5:
         title = 'privacy'.tr();
         break;
-      case 7:
+      case 6:
         title = 'aboutUs'.tr();
         break;
-      case 8:
+      case 7:
         title = 'contactUs'.tr();
         break;
-      case 9:
+      case 8:
         title = 'rateApp'.tr();
         break;
-      case 10:
+      case 9:
         title = 'shareApp'.tr();
         break;
-      case 11:
+      case 10:
         color = AppColors.red;
         title = 'logout'.tr();
         break;

@@ -9,6 +9,7 @@ class ChatModel {
   late String is_end;
   late User user;
   late User provider;
+  late int sub_category_id;
    MessageModel? latest_message;
   ChatModel();
 
@@ -16,6 +17,7 @@ class ChatModel {
 
     id = json['id']!=null?json['id'] as int:0;
     user_id = json['user_id']!=null?json['user_id'] as int:0;
+    sub_category_id = json['sub_category_id']!=null?json['sub_category_id'] as int:0;
     adviser_id = json['adviser_id']!=null?json['adviser_id'] as String:"";
     post_id = json['post_id']!=null?json['post_id'] as String:"";
     is_end = json['is_end']!=null?json['is_end'] as String:"";

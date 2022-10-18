@@ -22,8 +22,10 @@ import '../models/provider_home_page_model.dart';
 import '../models/provider_model.dart';
 import '../models/provider_order.dart';
 import '../models/recharge_wallet_model.dart';
+import '../models/send_service_request_model.dart';
 import '../models/setting_model.dart';
 import '../models/single_Message_data_model.dart';
+import '../models/user.dart';
 import '../models/user_model.dart';
 
 class ServiceApi {
@@ -119,8 +121,9 @@ class ServiceApi {
   Future<ProviderDataModel> getConsultantsBySubCategories(
       int sub_category) async {
     try {
-      Response response = await dio.get('api/home/providersOfSubCategories',
-          queryParameters: {'sub_category_id': sub_category});
+      Response response =
+          await dio.get('api/home/providersOfSubCategories/${sub_category}');
+      // queryParameters: {'sub_category_id': sub_category});
       return ProviderDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -151,6 +154,7 @@ class ServiceApi {
       );
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
+      print(e.toString());
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;
     }
@@ -410,21 +414,44 @@ class ServiceApi {
     }
   }
 
-  Future<PaymentDataModel> sendOrder(
-      UserModel userModel, String user_token) async {
+  Future<PaymentDataModel> sendOrder(User userModel, String user_token) async {
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': user_token};
       dio.options = options;
       var fields = FormData.fromMap({
-        'provider_id': userModel.user.id,
-        // 'sub_category_id': userModel.sub_category!.subCategoryId
+        'provider_id': userModel.id,
+        'sub_category_id': userModel.subCategories!.elementAt(0).subCategoryId
       });
 
       Response response =
           await dio.post('api/order/makeOrderFromProvider', data: fields);
       print(response.data);
       return PaymentDataModel.fromJson(response.data);
+    } on DioError catch (e) {
+      print(e.toString());
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+  Future<StatusResponse> sendServiceRequest( String user_token,SendServiceRequestModel model) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      var fields = FormData.fromMap({
+        'user_id':model.user_id ,
+        'sub_category_id': model.category_id,
+        'price':model.price ,
+        'delivery_date': model.dateOfBirth,
+        'details':model.detials ,
+        'room_id': model.room_id
+      });
+
+      Response response =
+      await dio.post('api/service-request/store', data: fields);
+      print(response.data);
+      return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       print(e.toString());
       final errorMessage = DioExceptions.fromDioError(e).toString();

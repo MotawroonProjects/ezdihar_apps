@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/orders_cubit.dart';
 import '../widgets/completed_orders_widget.dart';
 import '../widgets/current_orders_widget.dart';
-import '../widgets/new_orders_widget.dart';
-import '../widgets/refused_orders_widget.dart';
 import '../widgets/tab_bar_widget.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -96,10 +94,10 @@ class _OrderScreenState extends State<OrderScreen>
 
                   controller: _tabController,
                   children: [
-                    NewOrderScreen(),
+                    //NewOrderScreen(),
                     CurrentOrdersWidget(),
                     CompletedOrdersWidget(),
-                    RefusedOrdersWidget()
+                    //RefusedOrdersWidget()
                   ],
                 ),
               ),

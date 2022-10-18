@@ -15,10 +15,10 @@ class ProviderOrdersScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-            TabTitleWidget(text:"New" ,index: 0,),
-            TabTitleWidget(text:"current" ,index: 1,),
-            TabTitleWidget(text:"Completed" ,index: 2,),
-            TabTitleWidget(text:"Refused" ,index: 3,),
+           // TabTitleWidget(text:"New" ,index: 0,),
+            TabTitleWidget(text:"current" ,index: 0,),
+            TabTitleWidget(text:"Completed" ,index: 1,),
+         //   TabTitleWidget(text:"Refused" ,index: 3,),
           ],)
         ],
       ),

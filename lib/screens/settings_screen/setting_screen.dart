@@ -91,7 +91,7 @@ class _SettingPageState extends State<SettingPage> {
       children: List.generate(count, (index) {
         return SettingWidgets().buildListItem(
             context: context,
-            index: count == 12 ? index : (index >= 1 ? index + 4 : index),
+            index: count == 11 ? index : (index >= 1 ? index + 4 : index),
             onTaped: _onTaped);
       }),
     );
@@ -111,16 +111,14 @@ class _SettingPageState extends State<SettingPage> {
         },
       );
       Navigator.pushReplacementNamed(context, AppConstant.pageSplashRoute);
-    } else if (index == 1) {
-      Navigator.of(context).pushNamed(AppConstant.serviceRequestScreenRoute);
-    } else if (index == 2) {
+    }  else if (index == 1) {
       Navigator.of(context).pushNamed(AppConstant.pageInvestorSignUpRoleRoute,
           arguments: context.read<SettingCubit>().model.user);
-    } else if (index == 3) {
+    } else if (index == 2) {
       Navigator.pushNamed(context, AppConstant.pageControlServicesRoute);
-    } else if (index == 4) {
+    } else if (index == 3) {
       Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
-    } else if (index == 5) {
+    } else if (index == 4) {
       if (settingModel != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -135,7 +133,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
         );
       }
-    } else if (index == 6) {
+    } else if (index == 5) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return MoreInfoScreen(
           Kind: "privacy",
@@ -144,7 +142,7 @@ class _SettingPageState extends State<SettingPage> {
               : settingModel!.data!.privacyEn!,
         );
       }));
-    } else if (index == 7) {
+    } else if (index == 6) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return MoreInfoScreen(
           Kind: "aboutUs",
@@ -153,12 +151,12 @@ class _SettingPageState extends State<SettingPage> {
               : settingModel!.data!.aboutEn!,
         );
       }));
-    } else if (index == 8) {
+    } else if (index == 7) {
       Navigator.of(context).pushNamed(AppConstant.pageContactUsRoute);
+    } else if (index == 8) {
     } else if (index == 9) {
-    } else if (index == 10) {
       shareApp();
-    } else if (index == 11) {
+    } else if (index == 10) {
       SettingCubit cubit = BlocProvider.of(context);
       cubit.logout(context);
     }

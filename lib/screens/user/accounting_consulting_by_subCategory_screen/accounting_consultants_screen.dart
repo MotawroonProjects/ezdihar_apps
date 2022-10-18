@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+import '../../../models/user.dart';
+
 
 
 class AccountingConsultantsBySubCategoryPage extends StatefulWidget {
@@ -96,13 +98,13 @@ class _AccountingConsultantsBySubCategoryPageState extends State<AccountingConsu
           else {
             ConsultantsCubit cubit = BlocProvider.of<ConsultantsCubit>(context);
 
-            List<UserModel> list = cubit.data;
+            List<User> list = cubit.data;
             if (list.length > 0) {
               return ListView.builder(
                   itemCount: list.length,
                   scrollDirection: Axis.vertical,
                   itemBuilder: ((context, index) {
-                    UserModel model = list[index];
+                    User model = list[index];
                     return InkWell(
                       onTap: () => _onTaped(userModel: model, index: index),
                       child: AccountingConsultantsWidgets().buildListItem(
@@ -123,7 +125,7 @@ class _AccountingConsultantsBySubCategoryPageState extends State<AccountingConsu
     );
   }
 
-  void _onTaped({required UserModel userModel, required int index}) {
+  void _onTaped({required User userModel, required int index}) {
     Navigator.pushNamed(context, AppConstant.pageProviderDetailsRoute,arguments:  userModel);
   }
 
