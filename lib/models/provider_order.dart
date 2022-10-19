@@ -10,25 +10,22 @@ String providerOrderToJson(MainOrdersModel data) => json.encode(data.toJson());
 
 class MainOrdersModel {
   MainOrdersModel({
-    required this.status,
     required this.message,
     required this.code,
     required this.orders,
   });
 
-  late bool status;
   late String message;
   late int code;
   late List<ProviderOrder> orders;
 
   factory MainOrdersModel.fromJson(Map<String, dynamic> json) =>
       MainOrdersModel(
-        status: json["status"],
         message: json["message"],
         code: json["code"],
-        orders: json["orders"] != null
+        orders: json["service_requests"] != null
             ? List<ProviderOrder>.from(
-                json["orders"].map(
+                json["service_requests"].map(
                   (x) => ProviderOrder.fromJson(x),
                 ),
               )
@@ -36,92 +33,60 @@ class MainOrdersModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
         "message": message,
         "code": code,
-        "orders": List<dynamic>.from(orders.map((x) => x.toJson())),
+        "service_requests": List<dynamic>.from(orders.map((x) => x.toJson())),
       };
 }
 
 class ProviderOrder {
-  ProviderOrder({
-    required this.id,
-    required this.status,
-    required this.details,
-    required this.img,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.user,
-    required this.subCategory,
-  });
+  ProviderOrder(
+      {required this.id,
+      required this.price,
+      required this.details,
+      required this.delivery_date,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.user,
+      required this.subCategory,
+      required this.status});
 
   late final int id;
   late final String status;
   late final String details;
   late final String img;
+  late String price;
+  late String delivery_date;
   late final DateTime createdAt;
   late final DateTime updatedAt;
   late final UserModel user;
-  late final SubCategoryOrders subCategory;
+  late final SubCategory subCategory;
 
   factory ProviderOrder.fromJson(Map<String, dynamic> json) => ProviderOrder(
         id: json["id"],
         status: json["status"],
         details: json["details"],
-        img: json["img"],
+        price: json["price"],
+        delivery_date: json["delivery_date"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        user: json["user"] != null ? UserModel.fromJson(json["user"]) : UserModel(),
-        subCategory: SubCategoryOrders.fromJson(json["sub_category"]),
+        user: json["user"] != null
+            ? UserModel.fromJson(json["user"])
+            : UserModel(),
+        subCategory: SubCategory.fromJson(json["sub_category"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "status": status,
         "details": details,
-        "img": img,
+        "price": price,
+        "delivery_date": delivery_date,
         "created_at":
             "${createdAt.year.toString().padLeft(4, '0')}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.day.toString().padLeft(2, '0')}",
         "updated_at":
             "${updatedAt.year.toString().padLeft(4, '0')}-${updatedAt.month.toString().padLeft(2, '0')}-${updatedAt.day.toString().padLeft(2, '0')}",
         "user": UserModel.toJson,
         "sub_category": subCategory.toJson(),
-      };
-}
-
-class SubCategoryOrders {
-  SubCategoryOrders({
-    required this.id,
-    required this.categoryId,
-    required this.title,
-    required this.terms,
-    required this.price,
-    required this.image,
-  });
-
-  late int id;
-  late int categoryId;
-  late String title;
-  late String terms;
-  late int price;
-  late String image;
-
-  factory SubCategoryOrders.fromJson(Map<String, dynamic> json) =>
-      SubCategoryOrders(
-        id: json["id"],
-        categoryId: json["category_id"]??0,
-        title: json["title"]??"",
-        terms: json["terms"]??"",
-        price: json["price"]??0,
-        image: json["image"]??"",
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "category_id": categoryId,
-        "title": title,
-        "terms": terms,
-        "price": price,
-        "image": image,
       };
 }

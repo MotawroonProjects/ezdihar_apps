@@ -45,7 +45,8 @@ class _CategoryPageState extends State<CategoryPage> {
               color: AppColors.colorPrimary,
             ),
           );
-        } else if (state is OnDataSuccess) {
+        }
+        else if (state is OnDataSuccess) {
           return Column(
             children: [ buildListSection()],
           );

@@ -20,13 +20,13 @@ class _OrderScreenState extends State<OrderScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: 4, initialIndex: 0);
+    _tabController = new TabController(vsync: this, length: 2, initialIndex: 0);
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 4,
+        length: 2,
         child: Scaffold(
           backgroundColor: const Color(0XFFF5F5F5),
           appBar: AppBar(
@@ -47,42 +47,28 @@ class _OrderScreenState extends State<OrderScreen>
                     return Row(
                       children: [
                         TabBarWidget(
-                          text: "new_order".tr(),
+                          text: "current_order".tr(),
                           index: 0,
                         ),
                         TabBarWidget(
-                          text: "current_order".tr(),
-                          index: 1,
-                        ),
-                        TabBarWidget(
                           text: "completed_order".tr(),
-                          index: 2,
-                        ),
-                        TabBarWidget(
-                          text: "refused_order".tr(),
-                          index: 3,
-                        ),
+                          index: 1,
+                        )
                       ],
                     );
                   } else {
                     return Row(
                       children: [
+
                         TabBarWidget(
-                          text: "new_order".tr(),
+                          text: "current_order".tr(),
                           index: 0,
                         ),
                         TabBarWidget(
-                          text: "current_order".tr(),
+                          text: "completed_order".tr(),
                           index: 1,
                         ),
-                        TabBarWidget(
-                          text: "completed_order".tr(),
-                          index: 2,
-                        ),
-                        TabBarWidget(
-                          text: "refused_order".tr(),
-                          index: 3,
-                        ),
+
                       ],
                     );
                   }

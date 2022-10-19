@@ -617,18 +617,6 @@ class ServiceApi {
     }
   }
 
-  Future<MainOrdersModel> getProviderNewOrder(String token, String lan) async {
-    try {
-      BaseOptions options = dio.options;
-      options.headers = {'Authorization': token, "Accept-Language": lan};
-      dio.options = options;
-      Response response = await dio.get('api/orders/new');
-      return MainOrdersModel.fromJson(response.data);
-    } on DioError catch (e) {
-      final errorMessage = DioExceptions.fromDioError(e).toString();
-      throw errorMessage;
-    }
-  }
 
   Future<MainOrdersModel> getProviderAcceptOrder(
       String token, String lan) async {
@@ -636,7 +624,7 @@ class ServiceApi {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token, "Accept-Language": lan};
       dio.options = options;
-      Response response = await dio.get('api/orders/accepted');
+      Response response = await dio.get('api/service-request/provider-accepted');
       return MainOrdersModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -650,7 +638,7 @@ class ServiceApi {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token, "Accept-Language": lan};
       dio.options = options;
-      Response response = await dio.get('api/orders/completed');
+      Response response = await dio.get('api/service-request/provider-completed');
       return MainOrdersModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -658,19 +646,6 @@ class ServiceApi {
     }
   }
 
-  Future<MainOrdersModel> getProviderRefusedOrder(
-      String token, String lan) async {
-    try {
-      BaseOptions options = dio.options;
-      options.headers = {'Authorization': token, "Accept-Language": lan};
-      dio.options = options;
-      Response response = await dio.get('api/orders/refused');
-      return MainOrdersModel.fromJson(response.data);
-    } on DioError catch (e) {
-      final errorMessage = DioExceptions.fromDioError(e).toString();
-      throw errorMessage;
-    }
-  }
 
   Future<StatusResponse> changeProviderOrderStatus(
       String token, String id, String status) async {

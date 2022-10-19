@@ -64,7 +64,7 @@ class orderDetailsBodyWidget extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               Text(
-                mainOrdersModel.subCategory.title,
+                mainOrdersModel.subCategory.titleAr!,
                 style: const TextStyle(fontSize: 14),
               )
             ],

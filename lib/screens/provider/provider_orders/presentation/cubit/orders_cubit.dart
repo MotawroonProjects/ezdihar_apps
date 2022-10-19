@@ -18,22 +18,14 @@ class OrdersCubit extends Cubit<OrdersState> {
   late ServiceApi api;
   UserModel? user;
   int page = 0;
-  MainOrdersModel? mainNewOrders;
   MainOrdersModel? mainAcceptOrders;
   MainOrdersModel? mainCompletedOrders;
-  MainOrdersModel? mainRefusedOrders;
   String lan = 'ar';
 
   getLan(context) {
     lan = EasyLocalization.of(context)!.locale.languageCode;
   }
 
-  Future<void> getProviderNewOrder() async {
-    emit(OrdersLoading());
-    var model = await api.getProviderNewOrder(user!.access_token, lan);
-    mainNewOrders = model;
-    emit(OrdersLoaded(model));
-  }
 
   Future<void> getProviderAcceptOrder() async {
     emit(OrdersLoading());
@@ -49,13 +41,6 @@ class OrdersCubit extends Cubit<OrdersState> {
     emit(OrdersLoaded(model));
   }
 
-  Future<void> getProviderRefusedOrder() async {
-    emit(OrdersLoading());
-    var model = await api.getProviderRefusedOrder(user!.access_token, lan);
-    mainRefusedOrders = model;
-    emit(OrdersLoaded(model));
-  }
-
   Future<void> changeProviderOrderStatus(String id,String status) async {
     emit(OrderChangeStatusLoading());
     var model = await api.changeProviderOrderStatus(user!.access_token,id,status);
@@ -68,12 +53,8 @@ class OrdersCubit extends Cubit<OrdersState> {
         .getUserModel()
         .then((value) => user = value)
         .whenComplete(() {
-      getProviderNewOrder().then(
-        (value) => getProviderAcceptOrder().then(
-          (value) => getProviderCompletedOrder().then(
-            (value) => getProviderRefusedOrder(),
-          ),
-        ),
+      getProviderAcceptOrder().then(
+          (value) => getProviderCompletedOrder(),
       );
     });
   }

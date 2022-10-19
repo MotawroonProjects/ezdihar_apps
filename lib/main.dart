@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';

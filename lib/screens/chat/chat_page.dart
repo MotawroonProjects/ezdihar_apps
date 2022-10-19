@@ -133,7 +133,7 @@ class _ChatPageState extends State<ChatPage> {
                 return  ScrollablePositionedList.separated(
                   itemScrollController: _scrollController,
                   itemCount: cubit.list.length + 1,
-                  physics:ClampingScrollPhysics(),
+                  physics:ScrollPhysics(),
                   itemBuilder: (context, index) {
                     if (index < cubit.list.length &&
                         cubit.list[index].from_user_id != 0) {
@@ -421,7 +421,7 @@ class _ChatPageState extends State<ChatPage> {
     // }
     Future.delayed(Duration(milliseconds: 1), () {
       print('object${index}');
-      _scrollController.jumpTo(index: 0);
+      _scrollController.jumpTo(index: index);
       position = index;
       needscroll = false;
 
