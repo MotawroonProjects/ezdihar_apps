@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../../constants/asset_manager.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,8 +33,9 @@ class _HomePageState extends State<HomePage> {
       const MainPage(),
       const ConsultantsPage(),
       const ConversationPage(),
+
       const MorePage(),
-      const NotificationPage()
+      const NotificationPage(),
     ];
     return BlocBuilder<HomePageCubit, HomePageState>(
       builder: (context, state) {
@@ -112,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                                 : AppColors.grey1,
                             'conversation'.tr(),
                             2),
+
                         _buildBottomNavigationItem(
                             context,
                             'squares.svg',
@@ -158,6 +162,23 @@ class _HomePageState extends State<HomePage> {
                         AssetImage('${AppConstant.localImagePath}logo.png'))),
           ),
           InkWell(
+            onTap: () {
+              Navigator.of(context).pushNamed(AppConstant.pageUserOrderRoute);            },
+            child: Container(
+
+              child: Center(
+                child: Stack(
+                  children: [
+                    Positioned(
+                        child: AppWidget.svg(
+                            "order_icon.svg", AppColors.color1, 32, 32)),
+
+                  ],
+                ),
+              ),
+            ),
+          ),
+          InkWell(
             onTap: ()=>AppRoutes.homePageCubit.updateIndex(4),
             child: Container(
               width: 48.0,
@@ -169,25 +190,26 @@ class _HomePageState extends State<HomePage> {
                     Positioned(
                         child: AppWidget.svg(
                             "notification.svg", AppColors.color1, 32, 32)),
+
                     Positioned(
                         child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          color: AppColors.colorPrimary,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "0",
-                          style: TextStyle(
-                              color: AppColors.white,
-                              decoration: TextDecoration.none,
-                              fontSize: 12.0),
-                          maxLines: 1,
-                        ),
-                      ),
-                    )),
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              color: AppColors.colorPrimary,
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "0",
+                              style: TextStyle(
+                                  color: AppColors.white,
+                                  decoration: TextDecoration.none,
+                                  fontSize: 12.0),
+                              maxLines: 1,
+                            ),
+                          ),
+                        )),
                   ],
                 ),
               ),

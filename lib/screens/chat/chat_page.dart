@@ -32,6 +32,7 @@ class _ChatPageState extends State<ChatPage> {
   String message = "";
   int user_id = 0;
   bool needscroll = true;
+  bool first = false;
   double current = 0;
   var _controller = TextEditingController();
   final ItemScrollController _scrollController = ItemScrollController();
@@ -46,12 +47,14 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     _onRefresh();
+
     //   WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
 
     Size size = MediaQuery.of(context).size;
     hei = size.height;
     wid = size.width;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
           backgroundColor: AppColors.white,
           centerTitle: true,
@@ -109,7 +112,7 @@ class _ChatPageState extends State<ChatPage> {
           cubit.getChat(chatModel.id.toString());
           return cubit;
         },
-        child: Column(children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           Expanded(child: BlocBuilder<ChatCubit, ChatState>(
             builder: (context, state) {
               if (state is IsLoading) {
@@ -130,10 +133,11 @@ class _ChatPageState extends State<ChatPage> {
                   //  needscroll=false;
 
                 }
-                return  ScrollablePositionedList.separated(
+
+                return ScrollablePositionedList.separated(
                   itemScrollController: _scrollController,
                   itemCount: cubit.list.length + 1,
-                  physics:ScrollPhysics(),
+                  shrinkWrap: true,
                   itemBuilder: (context, index) {
                     if (index < cubit.list.length &&
                         cubit.list[index].from_user_id != 0) {
@@ -141,43 +145,51 @@ class _ChatPageState extends State<ChatPage> {
 
                       bool isme = model.from_user.id == user_id;
 
-                      return Align(
+                      return Visibility(
+                          visible: first,
+                          child: Align(
 
-                          // align the child within the container
-                          alignment: isme
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: Bubble(
-                            color:
-                                isme ?(model.type.contains("file")? AppColors.grey2:AppColors.grey6) : (model.type.contains("file")? AppColors.grey2:AppColors.grey4),
-                            margin: BubbleEdges.only(top: 10),
-                            nip: isme
-                                ? BubbleNip.rightBottom
-                                : BubbleNip.leftBottom,
-                            elevation: model.type.contains("file")?0:2,
-                            child: Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: (model.type.contains("file")
-                                    ? CachedNetworkImage(
-                                        height: 290,
-                                        imageUrl: model.file,
-                                        placeholder: (context, url) =>
-                                            Container(
-                                              color: AppColors.grey2,
+                              // align the child within the container
+                              alignment: isme
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Bubble(
+                                color: isme
+                                    ? (model.type.contains("file")
+                                        ? AppColors.grey2
+                                        : AppColors.grey6)
+                                    : (model.type.contains("file")
+                                        ? AppColors.grey2
+                                        : AppColors.grey4),
+                                margin: BubbleEdges.only(top: 10),
+                                nip: isme
+                                    ? BubbleNip.rightBottom
+                                    : BubbleNip.leftBottom,
+                                elevation: model.type.contains("file") ? 0 : 2,
+                                child: Padding(
+                                    padding: const EdgeInsets.all(0),
+                                    child: (model.type.contains("file")
+                                        ? CachedNetworkImage(
+                                            height: 290,
+                                            imageUrl: model.file,
+                                            placeholder: (context, url) =>
+                                                Container(
+                                                  color: AppColors.grey2,
+                                                ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                                      color: AppColors.grey2,
+                                                    ))
+                                        : Text(
+                                            model.message,
+                                            softWrap: true,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20.0,
                                             ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                              color: AppColors.grey2,
-                                            ))
-                                    : Text(
-                                        model.message,
-                                        softWrap: true,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20.0,
-                                        ),
-                                      ))),
-                          ));
+                                          ))),
+                              )));
                     } else {
                       return Container();
                     }
@@ -189,6 +201,7 @@ class _ChatPageState extends State<ChatPage> {
               } else {
                 return InkWell(
                   onTap: () {
+                    needscroll = true;
                     cubit.getChat(chatModel.id.toString());
                   },
                   child: Center(
@@ -381,6 +394,9 @@ class _ChatPageState extends State<ChatPage> {
                         border: Border.all(color: AppColors.grey4),
                         borderRadius: BorderRadius.all(Radius.circular(8))),
                     child: TextField(
+                      onTap: () {
+                        scrollToBottom(cubit.list.length);
+                      },
                       controller: _controller,
                       onChanged: (value) {
                         message = value;
@@ -394,7 +410,7 @@ class _ChatPageState extends State<ChatPage> {
               onPressed: () {
                 needscroll = true;
                 cubit.sendmessage(context, message, chatModel);
-                FocusScope.of(context).requestFocus(FocusNode());
+                //FocusScope.of(context).requestFocus(FocusNode());
 
                 message = "";
                 _controller.clear();
@@ -416,14 +432,17 @@ class _ChatPageState extends State<ChatPage> {
 
   void scrollToBottom(int index) {
     // print('object${index}');
-    // if (position > 0 && position <= index) {
+    // if (pcosition > 0 && position <= index) {
     //   index = index + 1;
     // }
-    Future.delayed(Duration(milliseconds: 1), () {
+    Future.delayed(Duration(milliseconds: 0), () {
       print('object${index}');
-      _scrollController.jumpTo(index: index);
+
+      _scrollController.scrollTo(
+          index: index, duration: Duration(milliseconds: 1));
       position = index;
       needscroll = false;
+      first = true;
 
       // if ( _scrollController.offset == _scrollController.position.pixels) {
       //   needscroll = false;

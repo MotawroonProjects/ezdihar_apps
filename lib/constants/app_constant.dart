@@ -24,6 +24,8 @@ class AppConstant {
   static const pageCitiesRoute = '/cities';
   static const pageCategoryRoute = '/categorys';
   static const pageUserProfileRoute = '/userProfile';
+  static const pageUserOrderRoute = '/userOrder';
+
   static const pageSubCategorieRoute = '/SubCategories';
   static const pageAccountingbySubCategoryConsultantsRoute = '/accountingbySubcategoryConsultantsDetails';
   static const pagePaymentRoute = '/payment';

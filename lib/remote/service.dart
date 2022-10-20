@@ -646,6 +646,33 @@ class ServiceApi {
     }
   }
 
+  Future<MainOrdersModel> getUserAcceptOrder(
+      String token, String lan) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': token, "Accept-Language": lan};
+      dio.options = options;
+      Response response = await dio.get('api/service-request/user-accepted');
+      return MainOrdersModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+
+  Future<MainOrdersModel> getUserCompletedOrder(
+      String token, String lan) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': token, "Accept-Language": lan};
+      dio.options = options;
+      Response response = await dio.get('api/service-request/user-completed');
+      return MainOrdersModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
 
   Future<StatusResponse> changeProviderOrderStatus(
       String token, String id, String status) async {

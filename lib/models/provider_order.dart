@@ -48,6 +48,7 @@ class ProviderOrder {
       required this.createdAt,
       required this.updatedAt,
       required this.user,
+      required this.provider,
       required this.subCategory,
       required this.status});
 
@@ -60,6 +61,7 @@ class ProviderOrder {
   late final DateTime createdAt;
   late final DateTime updatedAt;
   late final UserModel user;
+  late final UserModel provider;
   late final SubCategory subCategory;
 
   factory ProviderOrder.fromJson(Map<String, dynamic> json) => ProviderOrder(
@@ -72,6 +74,9 @@ class ProviderOrder {
         updatedAt: DateTime.parse(json["updated_at"]),
         user: json["user"] != null
             ? UserModel.fromJson(json["user"])
+            : UserModel(),
+        provider: json["provider"] != null
+            ? UserModel.fromJson(json["provider"])
             : UserModel(),
         subCategory: SubCategory.fromJson(json["sub_category"]),
       );
@@ -87,6 +92,7 @@ class ProviderOrder {
         "updated_at":
             "${updatedAt.year.toString().padLeft(4, '0')}-${updatedAt.month.toString().padLeft(2, '0')}-${updatedAt.day.toString().padLeft(2, '0')}",
         "user": UserModel.toJson,
+        "provider": UserModel.toJson,
         "sub_category": subCategory.toJson(),
       };
 }

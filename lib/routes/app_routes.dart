@@ -65,6 +65,8 @@ import '../screens/provider/provider_orders/presentation/screens/Order_Screen.da
 import '../screens/provider/service_request/cubit/service_request_cubit.dart';
 import '../screens/provider/service_request/screens/service_request.dart';
 import '../screens/splashPage/cubit/splash_cubit.dart';
+import '../screens/user_order_screen/user_order_screen/cubit/user_order_cubit.dart';
+import '../screens/user_order_screen/user_order_screen/user_order_screen.dart';
 import '../screens/wallet_screen/cubit/wallet_cubit.dart';
 
 class AppRoutes {
@@ -75,6 +77,7 @@ class AppRoutes {
   static late SubServicesCubit subServicesCubit;
 
   static late UserProfileCubit userProfileCubit;
+  static late UserOrderCubit userOrderCubit;
 
   static Route<dynamic>? getRoutes(RouteSettings settings) {
     print('ROUTENAME${settings.name}');
@@ -266,6 +269,16 @@ class AppRoutes {
               return userProfileCubit;
             },
             child: UserProfilePage(),
+          );
+        });
+      case AppConstant.pageUserOrderRoute:
+        return MaterialPageRoute(builder: (context) {
+          return BlocProvider<UserOrderCubit>(
+            create: (context) {
+              userOrderCubit = UserOrderCubit();
+              return userOrderCubit;
+            },
+            child: UserOrderPage(),
           );
         });
       case AppConstant.pageSubCategorieRoute:
