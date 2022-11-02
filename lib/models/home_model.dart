@@ -11,8 +11,8 @@ class ProjectsDataModel{
 
   ProjectsDataModel.fromJson(Map<String,dynamic> json){
     data = <ProjectModel>[];
-    if(json['data']!=null){
-      json['data'].forEach((v)=>{
+    if(json['posts']!=null){
+      json['posts'].forEach((v)=>{
         data.add(ProjectModel.fromJson(v))
       });
     }

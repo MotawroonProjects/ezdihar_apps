@@ -35,11 +35,6 @@ class MainPageWidgets {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     String approved = "";
 
-    if (model.approvedFrom.length > 0) {
-      approved = model.approvedFrom
-          .map((e) => lang == 'ar' ? "#" + e.title_ar : "#" + e.title_en)
-          .join(' ');
-    }
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -57,7 +52,7 @@ class MainPageWidgets {
                 leading: CachedNetworkImage(
                     width: 60,
                     height: 60,
-                    imageUrl: model.user.image,
+                    imageUrl: model.provider.user.image,
                     placeholder: (context, url) =>
                         AppWidget.circleAvatar(60, 60),
                     errorWidget: (context, url, error) {
@@ -70,14 +65,15 @@ class MainPageWidgets {
                           radius: 60,
                         )),
                 title: Text(
-                  model.user.firstName + " " + model.user.lastName,
+                  model.provider.user.firstName + " " + model.provider.user.lastName,
                   style: TextStyle(
                       color: AppColors.black,
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  model.time,
+                  "dkdj",
+                //  model.time,
                   style: TextStyle(
                     color: AppColors.grey1,
                     fontSize: 14.0,
@@ -98,10 +94,10 @@ class MainPageWidgets {
                 aspectRatio: 1 / .67,
                 child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                    child: model.image.isNotEmpty
+                    child: model.img.isNotEmpty
                         ? CachedNetworkImage(
                             fit: BoxFit.cover,
-                            imageUrl: model.image,
+                            imageUrl: model.img,
                           )
                         : Container(
                             color: AppColors.grey3,
@@ -122,35 +118,29 @@ class MainPageWidgets {
                       InkWell(
                         onTap: () {
                           cubit.getUserData().then((value) {
-                            if (value!.user.isLoggedIn) {
-                              model.isLicked = !model.isLicked;
-                              if (model.isLicked) {
-                                model.likesCount = model.likesCount + 1;
-                                animationController.forward();
-                              } else {
-                                model.likesCount = model.likesCount - 1;
-
-                                animationController.reverse();
-                              }
-
-                              favourite(index, model);
-                            } else {
-                              cubit.loginFirst();
-                            }
+                            // if (value!.user.isLoggedIn) {
+                            //   model.isLicked = !model.isLicked;
+                            //   if (model.isLicked) {
+                            //     model.likesCount = model.likesCount + 1;
+                            //     animationController.forward();
+                            //   } else {
+                            //     model.likesCount = model.likesCount - 1;
+                            //
+                            //     animationController.reverse();
+                            //   }
+                            //
+                            //   favourite(index, model);
+                            // } else {
+                            //   cubit.loginFirst();
+                            // }
                           });
                         },
                         child: SizedBox(
                           child: AnimatedBuilder(
                             animation: animationController,
                             builder: (BuildContext context, _) {
-                              return AppWidget.svg(
-                                  'love.svg',
-                                  model.isLicked
-                                      ? AppColors.colorPrimary
-                                      : AppColors.grey1,
-                                  24.0,
-                                  24.0);
-                            },
+                              return Container();
+                              },
                           ),
                         ),
                       ),
@@ -158,7 +148,7 @@ class MainPageWidgets {
                         width: 12,
                       ),
                       Text(
-                        "${model.likesCount}",
+                        "",
                         style:
                             TextStyle(fontSize: 14.0, color: AppColors.color1),
                       )
@@ -197,7 +187,7 @@ class MainPageWidgets {
                 height: 8.0,
               ),
               Text(
-                model.title,
+                model.description,
                 style: const TextStyle(
                   fontSize: 14.0,
                   color: AppColors.black,
@@ -213,7 +203,7 @@ class MainPageWidgets {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   text: TextSpan(
-                      text: model.text,
+                      text: model.description,
                       style: const TextStyle(
                         fontSize: 14.0,
                         color: AppColors.black,
@@ -262,7 +252,7 @@ class MainPageWidgets {
               leading:
                   AppWidget.svg('follow.svg', AppColors.color1, 24.0, 24.0),
               title: Text(
-                '${model.isFollowed ? 'un_follow'.tr() : 'follow'.tr()} ${model.user.firstName + " " + model.user.lastName}',
+                ' ${model.provider.user.firstName + " " + model.provider.user.lastName}',
                 style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 14.0,
@@ -275,7 +265,7 @@ class MainPageWidgets {
               onTap: () {
                 cubit.getUserData().then((value) {
                   if (value != null) {
-                    model.isFollowed = !model.isFollowed;
+                   // model.isFollowed = !model.isFollowed;
                     onTaped(
                         model: model,
                         index: index,
@@ -305,7 +295,7 @@ class MainPageWidgets {
               leading:
                   AppWidget.svg('report.svg', AppColors.color1, 24.0, 24.0),
               title: Text(
-                model.is_reported ? 'cancel_report'.tr() : 'report'.tr(),
+               'cancel_report'.tr() ,
                 style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 14.0,
@@ -318,7 +308,7 @@ class MainPageWidgets {
               onTap: () {
                 cubit.getUserData().then((value) {
                   if (value != null) {
-                    model.is_reported = !model.is_reported;
+                   // model.is_reported = !model.is_reported;
                     onTaped(
                         model: model,
                         index: index,

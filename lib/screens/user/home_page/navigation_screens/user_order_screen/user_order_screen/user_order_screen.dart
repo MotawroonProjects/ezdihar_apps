@@ -3,11 +3,13 @@ import 'package:ezdihar_apps/colors/colors.dart';
 
 import 'package:ezdihar_apps/models/provider_order.dart';
 
-import 'package:ezdihar_apps/screens/user_order_screen/user_order_screen/cubit/user_order_cubit.dart';
-import 'package:ezdihar_apps/screens/user_order_screen/user_order_screen/widget/ItemsOrder.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../../constants/app_constant.dart';
+import '../../../../../new_orders_screen/widget/ItemsOrder.dart';
+import 'cubit/user_order_cubit.dart';
 
 class UserOrderPage extends StatefulWidget {
   const UserOrderPage({Key? key}) : super(key: key);
@@ -36,24 +38,26 @@ class _UserOrderPageState extends State<UserOrderPage>
         color: AppColors.grey3,
         child: SafeArea(
           child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 SliverAppBar(
-                  leading: AppWidget.buildBackArrow(context: context),
-                  title: Text(
-                    'order'.tr(),
-                    style: TextStyle(color: AppColors.black, fontSize: 16.0),
-                  ),
-                  expandedHeight: 20,
-                  pinned: true,
-                  centerTitle: true,
+                  // leading: AppWidget.buildBackArrow(context: context),
+                  // title: Text(
+                  //   'order'.tr(),
+                  //   style: TextStyle(color: AppColors.black, fontSize: 16.0),
+                  // ),
+                  expandedHeight: 40,
+
+                  // pinned: true,
+                  // centerTitle: true,
                   backgroundColor: AppColors.white,
 
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(60),
+                  flexibleSpace: PreferredSize(
+                    preferredSize: Size.fromHeight(50),
                     child: Container(
                         color: AppColors.white,
-                        height: 60,
+                        height: 50,
                         child: TabBar(
                           tabs: _tabs,
                           indicatorColor: AppColors.transparent,
@@ -74,28 +78,24 @@ class _UserOrderPageState extends State<UserOrderPage>
     );
   }
 
-
-
   body() {
     UserOrderCubit cubit = BlocProvider.of(context);
 
     return BlocListener<UserOrderCubit, UserOrderState>(
-  listener: (context, state) {
-
-  },
-  child: BlocBuilder<UserOrderCubit, UserOrderState>(
-      builder: (context, state) {
-        int index = cubit.index;
-        if (state is UpdateIndex) {
-          index = state.index;
-        }
-        return IndexedStack(
-          index: index,
-          children: _screens,
-        );
-      },
-    ),
-);
+      listener: (context, state) {},
+      child: BlocBuilder<UserOrderCubit, UserOrderState>(
+        builder: (context, state) {
+          int index = cubit.index;
+          if (state is UpdateIndex) {
+            index = state.index;
+          }
+          return IndexedStack(
+            index: index,
+            children: _screens,
+          );
+        },
+      ),
+    );
   }
 
   buildCurrentOrderList() {
@@ -103,8 +103,8 @@ class _UserOrderPageState extends State<UserOrderPage>
 
     return BlocBuilder<UserOrderCubit, UserOrderState>(
       builder: (context, state) {
-        if(state is UpdateIndex){
-          if(cubit.mainAcceptOrders!=null) {
+        if (state is UpdateIndex) {
+          if (cubit.mainAcceptOrders != null) {
             List<ProviderOrder> list = cubit.mainAcceptOrders!.orders;
 
             if (list.length > 0) {
@@ -113,31 +113,25 @@ class _UserOrderPageState extends State<UserOrderPage>
               return Center(
                 child: Text(
                   'no_orders'.tr(),
-
                   style: TextStyle(color: AppColors.black, fontSize: 15.0),
                 ),
               );
             }
-          }
-          else {
+          } else {
             return Center(
               child: Text(
                 'no_orders'.tr(),
-
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
           }
-
-        }
-        else if (state is IsLoadingData) {
+        } else if (state is IsLoadingData) {
           return Center(
             child: CircularProgressIndicator(
               color: AppColors.colorPrimary,
             ),
           );
-        }
-        else if (state is OnError) {
+        } else if (state is OnError) {
           return Center(
             child: InkWell(
               onTap: refreshCurrent,
@@ -168,7 +162,6 @@ class _UserOrderPageState extends State<UserOrderPage>
             return Center(
               child: Text(
                 'no_orders'.tr(),
-
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
@@ -178,7 +171,7 @@ class _UserOrderPageState extends State<UserOrderPage>
     );
   }
 
-  CurrentOrderWidget(List<ProviderOrder> list){
+  CurrentOrderWidget(List<ProviderOrder> list) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return RefreshIndicator(
       color: AppColors.colorPrimary,
@@ -190,14 +183,13 @@ class _UserOrderPageState extends State<UserOrderPage>
           itemBuilder: (context, index) {
             ProviderOrder model = list[index];
             return InkWell(
-              onTap: (){
-                Navigator.pop(context,model);
+              onTap: () {
+                Navigator.pushNamed(
+                    context, AppConstant.OrdersDetialsScreenRoute,
+                    arguments: model);
               },
-              child: ItemsOrders().buildListItem(
-                  context: context, model: model, index: index),
-
-
-
+              child: ItemsOrders()
+                  .buildListItem(context: context, model: model, index: index),
             );
           }),
     );
@@ -208,21 +200,19 @@ class _UserOrderPageState extends State<UserOrderPage>
 
     return BlocBuilder<UserOrderCubit, UserOrderState>(
       builder: (context, state) {
-        if(state is UpdateIndex){
-          if (cubit.mainCompletedOrders!=null&&cubit.mainCompletedOrders!.orders.length > 0) {
+        if (state is UpdateIndex) {
+          if (cubit.mainCompletedOrders != null &&
+              cubit.mainCompletedOrders!.orders.length > 0) {
             return CompeleteWidget(cubit.mainCompletedOrders!.orders);
           } else {
             return Center(
               child: Text(
                 'no_orders'.tr(),
-
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
           }
-
-        }
-        else if (state is IsLoadingData) {
+        } else if (state is IsLoadingData) {
           return Center(
             child: CircularProgressIndicator(
               color: AppColors.colorPrimary,
@@ -254,12 +244,11 @@ class _UserOrderPageState extends State<UserOrderPage>
           List<ProviderOrder> list = cubit.mainCompletedOrders!.orders;
 
           if (list.length > 0) {
-           return CompeleteWidget(list);
+            return CompeleteWidget(list);
           } else {
             return Center(
               child: Text(
                 'no_orders'.tr(),
-
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
@@ -268,7 +257,8 @@ class _UserOrderPageState extends State<UserOrderPage>
       },
     );
   }
-  CompeleteWidget(List<ProviderOrder> list){
+
+  CompeleteWidget(List<ProviderOrder> list) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return RefreshIndicator(
       color: AppColors.colorPrimary,
@@ -280,21 +270,17 @@ class _UserOrderPageState extends State<UserOrderPage>
           itemBuilder: (context, index) {
             ProviderOrder model = list[index];
             return InkWell(
-              onTap: (){
-                Navigator.pop(context,model);
+              onTap: () {
+                Navigator.pushNamed(
+                    context, AppConstant.OrdersDetialsScreenRoute,
+                    arguments: model);
               },
-              child: ItemsOrders().buildListItem(
-                  context: context, model: model, index: index),
-
-
-
+              child: ItemsOrders()
+                  .buildListItem(context: context, model: model, index: index),
             );
           }),
     );
   }
-
-
-
 
   Future<void> refreshData() async {
     UserOrderCubit cubit = BlocProvider.of<UserOrderCubit>(context);

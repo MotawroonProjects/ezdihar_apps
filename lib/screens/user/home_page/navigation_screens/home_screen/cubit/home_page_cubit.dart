@@ -29,6 +29,7 @@ class HomePageCubit extends Cubit<HomePageState> {
     getUserData().then((value)async{
       if(value.user.isLoggedIn){
         String? token = await FirebaseMessaging.instance.getToken();
+      print('token'+token!);
         if(token!=null){
           value.firebase_token = token;
           Preferences.instance.setUser(value);

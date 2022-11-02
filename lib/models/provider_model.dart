@@ -4,6 +4,7 @@ import 'package:ezdihar_apps/models/user_model.dart';
 
 class ProviderDataModel{
   late List<User> data;
+  late User user;
   late StatusResponse status;
 
   ProjectsDataModel(){
@@ -18,7 +19,8 @@ class ProviderDataModel{
         data.add(User.fromJson(v))
       });
     }
-
+    user =
+    json['user'] != null ? User.fromJson(json['user']) : User();
     status = StatusResponse.fromJson(json);
   }
 

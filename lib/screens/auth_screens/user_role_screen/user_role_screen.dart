@@ -228,7 +228,7 @@ class _UserRolePageState extends State<UserRolePage> {
         Navigator.pop(context,true);
       }
     } else if (role == AppConstant.role_investor) {
-      var result = await Navigator.pushNamed(context, AppConstant.pageInvestorSignUpRoleRoute);
+      var result = await Navigator.pushNamed(context, AppConstant.pageInvestorSignUpRoleRoute,arguments: loginModel);
       if(result!=null){
         Navigator.pop(context,true);
       }

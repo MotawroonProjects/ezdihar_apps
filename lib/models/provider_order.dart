@@ -55,7 +55,6 @@ class ProviderOrder {
   late final int id;
   late final String status;
   late final String details;
-  late final String img;
   late String price;
   late String delivery_date;
   late final DateTime createdAt;

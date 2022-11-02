@@ -10,7 +10,7 @@ import 'package:ezdihar_apps/remote/service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../models/provider_order.dart';
+import '../../../../../../../models/provider_order.dart';
 
 part 'user_order_state.dart';
 

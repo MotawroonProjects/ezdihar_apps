@@ -44,87 +44,87 @@ class _MainPageState extends State<MainPage>
           AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
         }
       },
-      child: Column(children: [_buildFilterSection(), _buildListView()]),
+      child: Column(children: [ _buildListView()]),
     ));
   }
 
-  Widget _buildFilterSection() {
-    double width = MediaQuery.of(context).size.width;
-    double height = 56.0;
-    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
-    String filterType = cubit.filterType;
-
-    return Container(
-      margin: const EdgeInsets.only(top: 5.0),
-      width: width,
-      height: height,
-      color: AppColors.white,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: InkWell(
-                onTap: () => showFilterSheet(),
-                child: AppWidget.svg("filter.svg", AppColors.color1, 24, 24)),
-          ),
-          Expanded(
-            child: BlocBuilder<MainPageCubit, MainPageState>(
-              builder: (context, state) {
-                if (state is IsLoadingData) {
-                  filterType = state.type;
-                }
-                return MaterialButton(
-                    textColor: filterType == AppConstant.mostPopular
-                        ? AppColors.colorPrimary
-                        : AppColors.grey1,
-                    onPressed: () {
-                      if (cubit.filterType != AppConstant.mostPopular) {
-                        cubit.updateFilterType(AppConstant.mostPopular);
-                      }
-                    },
-                    child: Text('mostPopular'.tr(),
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)));
-              },
-            ),
-          ),
-          SizedBox(
-            width: 1,
-            height: 36,
-            child: Container(
-              color: AppColors.black,
-            ),
-          ),
-          Expanded(
-            child: BlocBuilder<MainPageCubit, MainPageState>(
-              builder: (context, state) {
-                if (state is IsLoadingData) {
-                  filterType = state.type;
-                }
-                return MaterialButton(
-                    textColor: filterType == AppConstant.following
-                        ? AppColors.colorPrimary
-                        : AppColors.grey1,
-                    onPressed: () {
-                      if (cubit.filterType != AppConstant.following) {
-                        cubit.updateFilterType(AppConstant.following);
-                      }
-                    },
-                    child: Text(
-                      'following'.tr(),
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ));
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildFilterSection() {
+  //   double width = MediaQuery.of(context).size.width;
+  //   double height = 56.0;
+  //   MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+  //   String filterType = cubit.filterType;
+  //
+  //   return Container(
+  //     margin: const EdgeInsets.only(top: 5.0),
+  //     width: width,
+  //     height: height,
+  //     color: AppColors.white,
+  //     child: Row(
+  //       mainAxisSize: MainAxisSize.max,
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  //           child: InkWell(
+  //               onTap: () => showFilterSheet(),
+  //               child: AppWidget.svg("filter.svg", AppColors.color1, 24, 24)),
+  //         ),
+  //         Expanded(
+  //           child: BlocBuilder<MainPageCubit, MainPageState>(
+  //             builder: (context, state) {
+  //               if (state is IsLoadingData) {
+  //                 filterType = state.type;
+  //               }
+  //               return MaterialButton(
+  //                   textColor: filterType == AppConstant.mostPopular
+  //                       ? AppColors.colorPrimary
+  //                       : AppColors.grey1,
+  //                   onPressed: () {
+  //                     if (cubit.filterType != AppConstant.mostPopular) {
+  //                       cubit.updateFilterType(AppConstant.mostPopular);
+  //                     }
+  //                   },
+  //                   child: Text('mostPopular'.tr(),
+  //                       style: const TextStyle(
+  //                           fontSize: 16, fontWeight: FontWeight.bold)));
+  //             },
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           width: 1,
+  //           height: 36,
+  //           child: Container(
+  //             color: AppColors.black,
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: BlocBuilder<MainPageCubit, MainPageState>(
+  //             builder: (context, state) {
+  //               if (state is IsLoadingData) {
+  //                 filterType = state.type;
+  //               }
+  //               return MaterialButton(
+  //                   textColor: filterType == AppConstant.following
+  //                       ? AppColors.colorPrimary
+  //                       : AppColors.grey1,
+  //                   onPressed: () {
+  //                     if (cubit.filterType != AppConstant.following) {
+  //                       cubit.updateFilterType(AppConstant.following);
+  //                     }
+  //                   },
+  //                   child: Text(
+  //                     'following'.tr(),
+  //                     style: const TextStyle(
+  //                         fontSize: 16, fontWeight: FontWeight.bold),
+  //                   ));
+  //             },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildListView() {
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
@@ -380,7 +380,7 @@ class _MainPageState extends State<MainPage>
       {required ProjectModel model,
       required int index,
       required String action}) {
-    print("dat=>${model.isFollowed}");
+  //  print("dat=>${model.isFollowed}");
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
     cubit.updateProject(index, model);
     cubit.love_report_follow(index, model, 'follow');

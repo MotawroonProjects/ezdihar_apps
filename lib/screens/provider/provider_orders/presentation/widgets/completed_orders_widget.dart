@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../colors/colors.dart';
+import '../../../../../constants/app_constant.dart';
 import '../../../../../widgets/app_widgets.dart';
 import '../cubit/orders_cubit.dart';
 import 'ItemsOrder.dart';
@@ -32,8 +33,10 @@ class CompletedOrdersWidget extends StatelessWidget {
                     ProviderOrder model =context.read<OrdersCubit>().mainCompletedOrders!.orders[index];
                     return InkWell(
                       onTap: (){
-                        Navigator.pop(context,model);
-                      },
+                        Navigator.pushNamed(
+
+                            context,AppConstant.OrdersDetialsScreenRoute,
+                            arguments: model);                      },
                       child: ItemsOrders().buildListItem(
                           context: context, model: model, index: index),
 

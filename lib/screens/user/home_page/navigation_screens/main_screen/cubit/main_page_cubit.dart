@@ -86,16 +86,16 @@ class MainPageCubit extends Cubit<MainPageState> {
         date = filterDate;
       }
       ProjectsDataModel home = await api.getHomeData(
-          user_token, filterType, date, selectedCategoryModel.id);
+      );
       if (home.status.code == 200) {
-        for (ProjectModel model in home.data) {
-          print('like=>${model.isLicked}');
-        }
+
         projects = home.data;
         emit(OnDataSuccess(projects));
       } else {}
     } catch (e) {
+      print("ldlldkdkkd${e.toString()}");
       emit(OnError(e.toString()));
+
     }
   }
 
@@ -149,7 +149,7 @@ class MainPageCubit extends Cubit<MainPageState> {
   }
 
   void updateProject(int index, ProjectModel model) {
-    print('data=>${model.isFollowed}');
+  //  print('data=>${model.isFollowed}');
     projects[index] = model;
     emit(OnDataSuccess(projects));
   }

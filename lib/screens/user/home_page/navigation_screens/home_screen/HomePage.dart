@@ -17,7 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../constants/asset_manager.dart';
-
+import '../user_order_screen/user_order_screen/user_order_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,7 +31,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     List<Widget> screens = [
       const MainPage(),
-      const ConsultantsPage(),
+      const UserOrderPage(),
+       const ConsultantsPage(),
       const ConversationPage(),
 
       const MorePage(),
@@ -63,15 +64,15 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: ()  {
-                Navigator.of(context).pushNamed(AppConstant.pageAddRoute);
-              },
-              backgroundColor: AppColors.color1,
-              child: AppWidget.svg('add.svg', AppColors.white, 24, 24),
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () {
+            //     Navigator.of(context).pushNamed(AppConstant.pageAddRoute);
+            //   },
+            //   backgroundColor: AppColors.color1,
+            //   child: AppWidget.svg('add.svg', AppColors.white, 24, 24),
+            // ),
+            // floatingActionButtonLocation:
+            //     FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: BottomAppBar(
               color: AppColors.white,
               elevation: 12.0,
@@ -80,13 +81,15 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: 60,
                 child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    Expanded(
+
+                        child:
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+
                         _buildBottomNavigationItem(
                             context,
                             'home.svg',
@@ -97,35 +100,39 @@ class _HomePageState extends State<HomePage> {
                             0),
                         _buildBottomNavigationItem(
                             context,
-                            'group.svg',
+                            'order_icon.svg',
                             index == 1
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
-                            'consultants'.tr(),
-                            1)
-                      ],
-                    ),
-                    Row(
-                      children: [
+                            'orders'.tr(),
+                            1),
                         _buildBottomNavigationItem(
                             context,
-                            'chat.svg',
+                            'order_icon.svg',
                             index == 2
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
-                            'conversation'.tr(),
+                            'orders'.tr(),
                             2),
-
                         _buildBottomNavigationItem(
                             context,
-                            'squares.svg',
+                            'chat.svg',
                             index == 3
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
-                            'more'.tr(),
+                            'conversation'.tr(),
                             3),
+                        _buildBottomNavigationItem(
+                            context,
+                            'squares.svg',
+                            index == 4
+                                ? AppColors.colorPrimary
+                                : AppColors.grey1,
+                            'more'.tr(),
+                            4),
                       ],
-                    )
+                    )),
+
                   ],
                 ),
               ),
@@ -161,25 +168,25 @@ class _HomePageState extends State<HomePage> {
                     image:
                         AssetImage('${AppConstant.localImagePath}logo.png'))),
           ),
+          // InkWell(
+          //   onTap: () {
+          //     Navigator.of(context).pushNamed(AppConstant.pageUserOrderRoute);            },
+          //   child: Container(
+          //
+          //     child: Center(
+          //       child: Stack(
+          //         children: [
+          //           Positioned(
+          //               child: AppWidget.svg(
+          //                   "order_icon.svg", AppColors.color1, 32, 32)),
+          //
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           InkWell(
-            onTap: () {
-              Navigator.of(context).pushNamed(AppConstant.pageUserOrderRoute);            },
-            child: Container(
-
-              child: Center(
-                child: Stack(
-                  children: [
-                    Positioned(
-                        child: AppWidget.svg(
-                            "order_icon.svg", AppColors.color1, 32, 32)),
-
-                  ],
-                ),
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: ()=>AppRoutes.homePageCubit.updateIndex(4),
+            onTap: () => AppRoutes.homePageCubit.updateIndex(4),
             child: Container(
               width: 48.0,
               height: 48.0,
@@ -190,26 +197,25 @@ class _HomePageState extends State<HomePage> {
                     Positioned(
                         child: AppWidget.svg(
                             "notification.svg", AppColors.color1, 32, 32)),
-
                     Positioned(
                         child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                              color: AppColors.colorPrimary,
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: const Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "0",
-                              style: TextStyle(
-                                  color: AppColors.white,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 12.0),
-                              maxLines: 1,
-                            ),
-                          ),
-                        )),
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          color: AppColors.colorPrimary,
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "0",
+                          style: TextStyle(
+                              color: AppColors.white,
+                              decoration: TextDecoration.none,
+                              fontSize: 12.0),
+                          maxLines: 1,
+                        ),
+                      ),
+                    )),
                   ],
                 ),
               ),
@@ -226,8 +232,9 @@ class _HomePageState extends State<HomePage> {
       onPressed: () {
         AppRoutes.homePageCubit.updateIndex(index);
       },
-      minWidth: 48,
-      child: Column(
+
+      child:
+        Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -245,7 +252,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<bool> _onWillPop() async {
-    if(AppRoutes.homePageCubit.index!=0){
+    if (AppRoutes.homePageCubit.index != 0) {
       AppRoutes.homePageCubit.updateIndex(0);
       return false;
     }

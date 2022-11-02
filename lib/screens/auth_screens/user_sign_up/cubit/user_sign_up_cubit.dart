@@ -79,6 +79,7 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
   signUp(BuildContext context) async {
     AppWidget.createProgressDialog(context, 'wait'.tr());
     try {
+      model.user_type='client';
       UserDataModel response = await api.signUp(model);
       response.userModel.user.isLoggedIn = true;
       if (response.status.code == 200) {

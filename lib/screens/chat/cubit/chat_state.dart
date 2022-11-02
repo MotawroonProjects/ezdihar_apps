@@ -4,7 +4,10 @@ part of 'chat_cubit.dart';
 abstract class ChatState {}
 
 class IsLoading extends ChatState {}
-
+class First extends ChatState {
+  bool  first;
+  First(this.first);
+}
 class OnDataSuccess extends ChatState {
   List<MessageModel> data;
   OnDataSuccess(this.data);

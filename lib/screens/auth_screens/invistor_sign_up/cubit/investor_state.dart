@@ -30,3 +30,10 @@ class InvestorDataValidation extends InvestorState {
   InvestorDataValidation(this.valid);
 
 }
+class OnSignUpSuccess extends InvestorState {
+
+}
+class OnError extends InvestorState {
+  String error;
+  OnError(this.error);
+}

@@ -10,22 +10,27 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dropdown_alert/alert_controller.dart';
+import 'package:flutter_dropdown_alert/model/data_alert.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../models/login_model.dart';
 import '../../../models/user.dart';
 
 class InvestorSignUpPage extends StatefulWidget {
-  InvestorSignUpPage({Key? key,  this.kindOfPage = 'new', required this.user}) : super(key: key);
+  InvestorSignUpPage({Key? key,  this.kindOfPage = 'new', required this.loginModel}) : super(key: key);
   final String kindOfPage;
-  final User user;
+  final LoginModel loginModel;
 
   @override
-  State<InvestorSignUpPage> createState() => _InvestorSignUpPageState();
+  State<InvestorSignUpPage> createState() => _InvestorSignUpPageState(loginModel);
 }
 
 class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   int currentValue = 0;
+  LoginModel loginModel;
 
+  _InvestorSignUpPageState(this.loginModel);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +52,18 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   }
 
   buildBodySection() {
-    return ListView(
+    InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
+    cubit.updatePhoneCode_Phone(loginModel.phone_code, loginModel.phone);
+    return BlocListener<InvestorCubit, InvestorState>(
+      listener: (context, state) {
+        if (state is OnError) {
+          AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
+
+        } else if (state is OnSignUpSuccess) {
+          Navigator.pop(context, true);
+        }
+      },
+        child: ListView(
       children: [
         SizedBox(
           height: 36.0,
@@ -80,7 +96,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
           height: 56.0,
         ),
       ],
-    );
+    ));
   }
 
   buildAvatarSection(String image) {
@@ -386,7 +402,10 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
         }
         return Expanded(
             child: MaterialButton(
-          onPressed: isValid ? () {} : null,
+          onPressed: isValid ? () {
+            cubit.signUp(context);
+
+          } : null,
           height: 56.0,
           color: AppColors.colorPrimary,
           disabledColor: AppColors.grey4,

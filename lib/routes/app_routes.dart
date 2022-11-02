@@ -2,12 +2,14 @@ import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/category_model.dart';
 import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
+import 'package:ezdihar_apps/models/provider_order.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/cubit/user_role_cubit.dart';
 import 'package:ezdihar_apps/screens/category_screen/category_page.dart';
 import 'package:ezdihar_apps/screens/category_screen/cubit/category_cubit.dart';
 import 'package:ezdihar_apps/screens/chat/chat_page.dart';
 import 'package:ezdihar_apps/screens/chat/cubit/chat_cubit.dart';
+import 'package:ezdihar_apps/screens/new_orders_screen/orders_page.dart';
 import 'package:ezdihar_apps/screens/user/accounting_consultants_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/accounting_consulting_by_subCategory_screen/accounting_consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/accounting_provider/cubit/provider_details_cubit.dart';
@@ -54,6 +56,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/chat_model.dart';
 import '../models/user.dart';
+import '../screens/new_orders_screen/cubit/orders_cubit.dart';
 import '../screens/payment_screen/payment_page.dart';
 import '../screens/provider/control_services/cubit/control_services_cubit.dart';
 import '../screens/provider/control_services/screens/control_services.dart';
@@ -62,12 +65,14 @@ import '../screens/provider/navigation_bottom/cubit/navigator_bottom_cubit.dart'
 import '../screens/provider/navigation_bottom/screens/navigation_bottom.dart';
 import '../screens/provider/provider_orders/presentation/cubit/orders_cubit.dart';
 import '../screens/provider/provider_orders/presentation/screens/Order_Screen.dart';
+import '../screens/provider/provider_orders/presentation/screens/Orders_Deatils.dart';
 import '../screens/provider/service_request/cubit/service_request_cubit.dart';
 import '../screens/provider/service_request/screens/service_request.dart';
 import '../screens/splashPage/cubit/splash_cubit.dart';
-import '../screens/user_order_screen/user_order_screen/cubit/user_order_cubit.dart';
-import '../screens/user_order_screen/user_order_screen/user_order_screen.dart';
+import '../screens/user/home_page/navigation_screens/user_order_screen/user_order_screen/cubit/user_order_cubit.dart';
+import '../screens/user/home_page/navigation_screens/user_order_screen/user_order_screen/user_order_screen.dart';
 import '../screens/wallet_screen/cubit/wallet_cubit.dart';
+
 
 class AppRoutes {
   static late HomePageCubit homePageCubit;
@@ -106,6 +111,10 @@ class AppRoutes {
                 BlocProvider<ConsultingCubit>(create: (context) {
                   consultingCubit = ConsultingCubit();
                   return consultingCubit;
+                }),
+                BlocProvider<UserOrderCubit>(create: (context) {
+                  userOrderCubit = UserOrderCubit();
+                  return userOrderCubit;
                 }),
                 BlocProvider<ServicesCubit>(create: (context) {
                   servicesCubit = ServicesCubit();
@@ -230,12 +239,12 @@ class AppRoutes {
         });
 
       case AppConstant.pageInvestorSignUpRoleRoute:
-        User user = settings.arguments as User;
+        LoginModel loginModel = settings.arguments as LoginModel;
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<InvestorCubit>(
             create: (context) => InvestorCubit(),
             child: InvestorSignUpPage(
-              user: user,
+              loginModel: loginModel,
             ),
           );
         });
@@ -268,7 +277,7 @@ class AppRoutes {
               userProfileCubit = UserProfileCubit();
               return userProfileCubit;
             },
-            child: UserProfilePage(),
+          //  child: UserProfilePage(),
           );
         });
       case AppConstant.pageUserOrderRoute:
@@ -322,7 +331,24 @@ class AppRoutes {
                     chatModel: chatModel,
                   ),
                 ));
-
+      case AppConstant.OrdersNewScreenRoute:
+        ChatModel chatModel = settings.arguments as ChatModel;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => NewOrdersCubit(),
+              child: OrdersPage(
+                chatModel: chatModel,
+              ),
+            ));
+      case AppConstant.OrdersDetialsScreenRoute:
+        ProviderOrder chatModel = settings.arguments as ProviderOrder;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => OrdersCubit(),
+              child: OrdersDetails(
+              mainOrdersModel: chatModel,
+              ),
+            ));
       //Yehiaaaaaaaaaaaaaaaa
       case AppConstant.providerNavigationBottomRoute:
         return MaterialPageRoute(
@@ -350,6 +376,10 @@ class AppRoutes {
                 BlocProvider<ControlServicesCubit>(
                   create: (context) => ControlServicesCubit(),
                   child: ControlServices(),
+                ),
+                BlocProvider(
+                  create: (context) => UserOrderCubit(),
+                  child: UserOrderPage(),
                 ),
               ],
               child: NavigationBottom(),

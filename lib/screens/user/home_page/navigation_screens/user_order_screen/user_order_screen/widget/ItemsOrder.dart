@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-import '../../../../../constants/app_constant.dart';
-import '../../../../../models/provider_order.dart';
-import '../../../../../widgets/app_widgets.dart';
-import '../cubit/orders_cubit.dart';
-import '../screens/Orders_Deatils.dart';
+import '../../../../../../../constants/app_constant.dart';
+import '../../../../../../../models/provider_order.dart';
+import '../../../../../../../widgets/app_widgets.dart';
+
+
 
 class ItemsOrders {
   Widget _buildAvatar({required double width, required double height}) {
@@ -60,8 +60,7 @@ class ItemsOrders {
                     backgroundImage: imageProvider, radius: 48.0,);
                 },
               ) : _buildAvatar(width: 48.0, height: 48.0),
-              title:
-              Text(
+              title: Text(
                 '${model.user.user.firstName + " " + model.user.user.lastName}',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,

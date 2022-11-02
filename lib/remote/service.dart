@@ -43,27 +43,24 @@ class ServiceApi {
   }
 
   Future<ProjectsDataModel> getHomeData(
-      String user_token, String type, String? date, int category_id) async {
+      ) async {
     try {
       Response response;
       BaseOptions baseOptions = dio.options;
       CancelToken cancelToken = CancelToken();
-      if (user_token.isNotEmpty) {
-        baseOptions.headers = {'Authorization': user_token};
-        dio.options = baseOptions;
-      } else {
+
         baseOptions.headers = {'Content-Type': 'application/json'};
         dio.options = baseOptions;
-      }
+
 
       response = await dio.get(
-          'api/home/index?type=${type}&date=${date}&category_id=${category_id == 0 ? "All" : category_id}',
+          'api/PostProvider/all',
           cancelToken: cancelToken);
 
       if (!cancelToken.isCancelled) {
         cancelToken.cancel();
       }
-
+print("dlldldldl${response.toString()}");
       return ProjectsDataModel.fromJson(response.data);
     } on DioError catch (e) {
       print(e.toString());
@@ -198,6 +195,9 @@ class ServiceApi {
           'phone': model.phone,
           'city_id': model.cityId,
           'birthdate': model.dateOfBirth,
+          'user_type':model.user_type,
+          'category_id': model.categoryModel,
+          'years_ex':model.years_ex,
           'image': await MultipartFile.fromFile(model.imagePath)
         });
       } else {
@@ -209,6 +209,9 @@ class ServiceApi {
           'phone': model.phone,
           'city_id': model.cityId,
           'birthdate': model.dateOfBirth,
+          'user_type':model.user_type,
+          'category_id': model.categoryModel,
+          'years_ex':model.years_ex,
         });
       }
 
@@ -290,7 +293,8 @@ class ServiceApi {
       options.headers = {'Authorization': user_token};
       dio.options = options;
       Response response = await dio.post('api/auth/insertToken', data: fields);
-      return StatusResponse.fromJson(response.data);
+  //  print("dldlldldl${response.statusCode}");
+     return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
       print('Error=>${errorMessage}');
@@ -434,22 +438,24 @@ class ServiceApi {
       throw errorMessage;
     }
   }
-  Future<StatusResponse> sendServiceRequest( String user_token,SendServiceRequestModel model) async {
+
+  Future<StatusResponse> sendServiceRequest(
+      String user_token, SendServiceRequestModel model) async {
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': user_token};
       dio.options = options;
       var fields = FormData.fromMap({
-        'user_id':model.user_id ,
+        'user_id': model.user_id,
         'sub_category_id': model.category_id,
-        'price':model.price ,
+        'price': model.price,
         'delivery_date': model.dateOfBirth,
-        'details':model.detials ,
+        'details': model.detials,
         'room_id': model.room_id
       });
 
       Response response =
-      await dio.post('api/service-request/store', data: fields);
+          await dio.post('api/service-request/store', data: fields);
       print(response.data);
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -470,6 +476,7 @@ class ServiceApi {
 
       return MessageDataModel.fromJson(response.data);
     } on DioError catch (e) {
+      print("dldldldldl${e}");
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;
     }
@@ -617,14 +624,14 @@ class ServiceApi {
     }
   }
 
-
   Future<MainOrdersModel> getProviderAcceptOrder(
       String token, String lan) async {
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token, "Accept-Language": lan};
       dio.options = options;
-      Response response = await dio.get('api/service-request/provider-accepted');
+      Response response =
+          await dio.get('api/service-request/provider-accepted');
       return MainOrdersModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -638,7 +645,8 @@ class ServiceApi {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token, "Accept-Language": lan};
       dio.options = options;
-      Response response = await dio.get('api/service-request/provider-completed');
+      Response response =
+          await dio.get('api/service-request/provider-completed');
       return MainOrdersModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -646,8 +654,7 @@ class ServiceApi {
     }
   }
 
-  Future<MainOrdersModel> getUserAcceptOrder(
-      String token, String lan) async {
+  Future<MainOrdersModel> getUserAcceptOrder(String token, String lan) async {
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token, "Accept-Language": lan};
@@ -680,7 +687,6 @@ class ServiceApi {
       print('idddddd');
       print(id);
       var fields = FormData.fromMap({
-        'id': id,
         'status': status,
       });
       BaseOptions options = dio.options;
@@ -689,7 +695,7 @@ class ServiceApi {
       };
       dio.options = options;
       Response response =
-          await dio.post('api/orders/change/status', data: fields);
+          await dio.post('api/service-request/changeStatus/$id', data: fields);
       print(response.data);
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {

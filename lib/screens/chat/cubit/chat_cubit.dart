@@ -21,12 +21,21 @@ class ChatCubit extends Cubit<ChatState> {
   XFile? imageFile;
   String imageType = '';
 
+  bool first = false;
+
   ChatCubit() : super(IsLoading()) {
     api = ServiceApi();
     imagePath = "";
     // list = [];
 
     //  getChat();
+  }
+
+  void setfirst() {
+    first = true;
+    print("dkdkdkkdk${first}");
+
+    emit(First(first));
   }
 
   void getChat(String room_id) async {
@@ -116,7 +125,7 @@ class ChatCubit extends Cubit<ChatState> {
       print(response.status!.message);
       if (response.status?.code == 200) {
         print('Error=>${list.length}');
-
+     //   list.removeAt(list.length - 1);
         list.add(response.data!);
         // list.add(new MessageModel());
         print(list.length);
