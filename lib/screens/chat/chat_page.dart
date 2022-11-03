@@ -26,6 +26,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
   late ChatCubit cubit;
   ChatModel chatModel;
   String message = "";

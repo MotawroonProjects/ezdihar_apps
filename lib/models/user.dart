@@ -1,6 +1,8 @@
 import 'package:ezdihar_apps/models/city_model.dart';
 import 'package:ezdihar_apps/models/sub_category_model.dart';
 
+import 'category_model.dart';
+
 class User {
   late int id;
   late String firstName = '';
@@ -61,8 +63,7 @@ class User {
       "wallet": user.wallet,
       'city': CityModel.toJson(user.city),
       if (user.subCategories != null)
-        'advisor_category':
-        user.subCategories!.map((v) => v.toJson(v)).toList()
+        'advisor_category': user.subCategories!.map((v) => v.toJson(v)).toList()
     };
   }
 }

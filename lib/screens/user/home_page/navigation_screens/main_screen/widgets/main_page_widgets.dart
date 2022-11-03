@@ -72,8 +72,8 @@ class MainPageWidgets {
                       fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  "dkdj",
-                //  model.time,
+
+                  lang.contains("ar")? model.provider.main_category.title_ar:model.provider.main_category.title_en,
                   style: TextStyle(
                     color: AppColors.grey1,
                     fontSize: 14.0,
@@ -154,49 +154,49 @@ class MainPageWidgets {
                       )
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 12.0),
-                    decoration: BoxDecoration(
-                        color: AppColors.grey1,
-                        borderRadius: BorderRadius.circular(24.0)),
-                    child: InkWell(
-                        onTap: () {
-                          supportSheet(context, model, index);
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 24.0,
-                              height: 24.0,
-                              child: AppWidget.svg(
-                                  'donate.svg', AppColors.white, 24.0, 24.0),
-                            ),
-                            Text(
-                              'donate'.tr(),
-                              style: const TextStyle(
-                                  fontSize: 12.0, color: AppColors.white),
-                            )
-                          ],
-                        )),
-                  )
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //       vertical: 8.0, horizontal: 12.0),
+                  //   decoration: BoxDecoration(
+                  //       color: AppColors.grey1,
+                  //       borderRadius: BorderRadius.circular(24.0)),
+                  //   child: InkWell(
+                  //       onTap: () {
+                  //         supportSheet(context, model, index);
+                  //       },
+                  //       child: Row(
+                  //         crossAxisAlignment: CrossAxisAlignment.center,
+                  //         children: [
+                  //           SizedBox(
+                  //             width: 24.0,
+                  //             height: 24.0,
+                  //             child: AppWidget.svg(
+                  //                 'donate.svg', AppColors.white, 24.0, 24.0),
+                  //           ),
+                  //           Text(
+                  //             'donate'.tr(),
+                  //             style: const TextStyle(
+                  //                 fontSize: 12.0, color: AppColors.white),
+                  //           )
+                  //         ],
+                  //       )),
+                  // )
                 ],
               ),
               const SizedBox(
                 height: 8.0,
               ),
-              Text(
-                model.description,
-                style: const TextStyle(
-                  fontSize: 14.0,
-                  color: AppColors.black,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(
-                height: 8.0,
-              ),
+              // Text(
+              //   model.description,
+              //   style: const TextStyle(
+              //     fontSize: 14.0,
+              //     color: AppColors.black,
+              //     overflow: TextOverflow.ellipsis,
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 8.0,
+              // ),
               Align(
                 alignment: Alignment.centerLeft,
                 child: RichText(
@@ -215,6 +215,32 @@ class MainPageWidgets {
               const SizedBox(
                 height: 8.0,
               ),
+   SizedBox(
+
+    child: AnimatedBuilder(
+    animation: animationController,
+    builder: (BuildContext context, _) {
+
+    return Align(
+        alignment: Alignment.topLeft,
+        child: AppWidget.svg(
+
+    'love.svg',
+   // model.isLicked
+//    ?
+    AppColors.colorPrimary,
+  //      : AppColors.grey1,
+    24.0,
+    24.0));
+    },
+    //return Container();
+
+  ),
+  ),
+  const SizedBox(
+  height: 8.0,
+  ),
+
               approved.isNotEmpty
                   ? Align(
                       alignment: Alignment.centerLeft,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
+import 'package:ezdihar_apps/models/Message_data_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/remote/notification.dart';
 import 'package:ezdihar_apps/routes/app_routes.dart';
@@ -12,8 +13,6 @@ Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
-  await PushNotificationService().initialise();
-
   runApp(EasyLocalization(
       supportedLocales: const [Locale('ar', ''), Locale('en', '')],
       path: 'assets/lang',
@@ -34,6 +33,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     PushNotificationService().initialise(context);
+
     Preferences.instance.getAppSetting().then((value) =>
         {EasyLocalization.of(context)!.setLocale(Locale(value.lang))});
 
