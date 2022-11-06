@@ -197,7 +197,7 @@ print("dlldldldl${response.toString()}");
           'birthdate': model.dateOfBirth,
           'user_type':model.user_type,
           'category_id': model.categoryModel,
-          'years_ex':model.years_ex,
+          'years_ex':20,
           'image': await MultipartFile.fromFile(model.imagePath)
         });
       } else {
@@ -211,15 +211,16 @@ print("dlldldldl${response.toString()}");
           'birthdate': model.dateOfBirth,
           'user_type':model.user_type,
           'category_id': model.categoryModel,
-          'years_ex':model.years_ex,
+          'years_ex':20,
         });
       }
-
+print("dlldldl${fields.fields}");
       Response response = await dio.post('api/auth/register', data: fields);
+    print("Flflflfl${response.toString()}");
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
-      print('Error=>${errorMessage}');
+      print('Error=>${e}');
 
       throw errorMessage;
     }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -22,6 +23,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../models/contact_us_model.dart';
 import '../models/feasibility_type.dart';
@@ -36,15 +38,17 @@ import '../models/user.dart';
 import '../models/user_model.dart';
 import '../screens/chat/chat_page.dart';
 
-class PushNotificationService {
+class PushNotificationService{
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   late AndroidNotificationChannel channel;
-  late BuildContext context;
   late ChatModel chatModel;
+  final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
+  final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
 
-  Future initialise(BuildContext context) async {
+  Future initialise() async {
+
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
@@ -52,18 +56,18 @@ class PushNotificationService {
     );
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-     AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
-        onDidReceiveLocalNotification: ondidnotification);
+        DarwinInitializationSettings(
+            onDidReceiveLocalNotification: ondidnotification);
     final LinuxInitializationSettings initializationSettingsLinux =
-    LinuxInitializationSettings(
-        defaultActionName: 'Open notification');
-    final InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS: initializationSettingsDarwin,
-        linux: initializationSettingsLinux);
+        LinuxInitializationSettings(defaultActionName: 'Open notification');
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin,
+            linux: initializationSettingsLinux);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: notificationTapBackground);
 
@@ -113,7 +117,7 @@ class PushNotificationService {
         message.data.hashCode,
         message.data['title'],
         message.data['body'],
-        payload:'chat',
+        payload: 'chat',
         NotificationDetails(
             android: AndroidNotificationDetails(channel.id, channel.name,
                 channelDescription: channel.description,
@@ -123,16 +127,17 @@ class PushNotificationService {
 
   void checkData(RemoteMessage message) {
     if (message.data['note_type'].toString().contains("chat")) {
-
-      chatModel=message.data['room'];
-      if( ModalRoute.of(context)!.settings.name!.contains(AppConstant.pageChatRoute)
-      ){
-        //Navigator.of(context).pop();
-      // context..addmessage(message.data['data']);
-      }
-      else{
-      showNotification(message);
-       }
+      chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
+      behaviorchat.add(chatModel);
+      // if (ModalRoute.of(context)!
+      //     .settings
+      //     .name!
+      //     .contains(AppConstant.pageChatRoute)) {
+      //   //Navigator.of(context).pop();
+      //   // context..addmessage(message.data['data']);
+      // } else {
+        showNotification(message);
+      //}
     } else {
       showNotification(message);
     }
@@ -140,17 +145,17 @@ class PushNotificationService {
 
   Future notificationTapBackground(NotificationResponse details) async {
     print('notification payload: ${details.payload}');
-  if(details.payload!.contains("chat")) {
-    Navigator.pushNamed(
-        context, AppConstant.pageChatRoute, arguments: chatModel);
-  }
-  }
+    if (details.payload!.contains("chat")) {
+      behaviorSubject.add(details.payload!);
 
-  void ondidnotification(int id, String? title, String? body, String? payload) async{
-    print("object");
-    if(payload!.contains("chat")) {
-      Navigator.pushNamed(
-          context, AppConstant.pageChatRoute, arguments: chatModel);
     }
   }
+
+  void ondidnotification(
+      int id, String? title, String? body, String? payload) async {
+    print("object");
+    behaviorSubject.add(payload!);
+  }
+
+
 }

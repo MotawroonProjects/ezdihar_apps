@@ -324,7 +324,8 @@ class AppRoutes {
                 ));
       case AppConstant.pageChatRoute:
         ChatModel chatModel = settings.arguments as ChatModel;
-        return MaterialPageRoute(
+        return
+          MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ChatCubit(),
                   child: ChatPage(
@@ -333,7 +334,8 @@ class AppRoutes {
                 ));
       case AppConstant.OrdersNewScreenRoute:
         ChatModel chatModel = settings.arguments as ChatModel;
-        return MaterialPageRoute(
+        return
+          MaterialPageRoute(
             builder: (context) => BlocProvider(
               create: (context) => NewOrdersCubit(),
               child: OrdersPage(

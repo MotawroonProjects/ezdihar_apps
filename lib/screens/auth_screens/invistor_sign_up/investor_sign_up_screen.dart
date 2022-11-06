@@ -18,12 +18,15 @@ import '../../../models/login_model.dart';
 import '../../../models/user.dart';
 
 class InvestorSignUpPage extends StatefulWidget {
-  InvestorSignUpPage({Key? key,  this.kindOfPage = 'new', required this.loginModel}) : super(key: key);
+  InvestorSignUpPage(
+      {Key? key, this.kindOfPage = 'new', required this.loginModel})
+      : super(key: key);
   final String kindOfPage;
   final LoginModel loginModel;
 
   @override
-  State<InvestorSignUpPage> createState() => _InvestorSignUpPageState(loginModel);
+  State<InvestorSignUpPage> createState() =>
+      _InvestorSignUpPageState(loginModel);
 }
 
 class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
@@ -31,6 +34,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   LoginModel loginModel;
 
   _InvestorSignUpPageState(this.loginModel);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,48 +59,50 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
     InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
     cubit.updatePhoneCode_Phone(loginModel.phone_code, loginModel.phone);
     return BlocListener<InvestorCubit, InvestorState>(
-      listener: (context, state) {
-        if (state is OnError) {
-          AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
+        listener: (context, state) {
+          if (state is OnError) {
+            AlertController.show(
+                'warning'.tr(), state.error, TypeAlert.warning);
+          } else if (state is OnSignUpSuccess) {
+            Navigator.of(context).pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
 
-        } else if (state is OnSignUpSuccess) {
-          Navigator.pop(context, true);
-        }
-      },
+            // Navigator.pop(context, true);
+          }
+        },
         child: ListView(
-      children: [
-        SizedBox(
-          height: 36.0,
-        ),
-        buildAvatarSection('avatar2.png'),
-        SizedBox(
-          height: 36.0,
-        ),
-        buildForm(),
-        SizedBox(
-          height: 24.0,
-        ),
-        SizedBox(
-          height: 56.0,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              buildButtonBack(),
-              SizedBox(
-                width: 8.0,
+          children: [
+            SizedBox(
+              height: 36.0,
+            ),
+            buildAvatarSection('avatar2.png'),
+            SizedBox(
+              height: 36.0,
+            ),
+            buildForm(),
+            SizedBox(
+              height: 24.0,
+            ),
+            SizedBox(
+              height: 56.0,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  buildButtonBack(),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  buildButtonStart()
+                ],
               ),
-              buildButtonStart()
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 56.0,
-        ),
-      ],
-    ));
+            ),
+            SizedBox(
+              height: 56.0,
+            ),
+          ],
+        ));
   }
 
   buildAvatarSection(String image) {
@@ -333,6 +339,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
           } else if (action == 'email') {
             cubit.model.email = data;
           }
+
           cubit.checkData();
         },
         decoration: InputDecoration(
@@ -402,10 +409,11 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
         }
         return Expanded(
             child: MaterialButton(
-          onPressed: isValid ? () {
-            cubit.signUp(context);
-
-          } : null,
+          onPressed: isValid
+              ? () {
+                  cubit.signUp(context);
+                }
+              : null,
           height: 56.0,
           color: AppColors.colorPrimary,
           disabledColor: AppColors.grey4,
@@ -436,6 +444,8 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   }
 
   buildyearcounter() {
+    InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
+
     return Container(
       decoration: BoxDecoration(
           color: AppColors.white, borderRadius: BorderRadius.circular(8)),
@@ -447,6 +457,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 //  hintText: 'hint',
+
                 labelText: currentValue.toString(),
                 contentPadding: EdgeInsets.all(5),
                 hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
@@ -478,7 +489,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
                       //     int currentValue = int.parse(_controller.text);
                       setState(() {
                         currentValue++;
-
+                        cubit.model.years_ex = currentValue as String;
                         //          _controller.text = (currentValue)
                         //    .toString(); // incrementing value
                       });
@@ -495,6 +506,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
                     setState(() {
                       print("Setting state");
                       currentValue--;
+                      cubit.model.years_ex = currentValue as String;
                       //   _controller.text =
                       //     (currentValue > 0 ? currentValue : 0)
                       //              .toString(); // decrementing value
@@ -529,7 +541,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
 
     if (date != null) {
       BlocProvider.of<InvestorCubit>(context)
-          .updateBirthDate(date: DateFormat('dd-MM-yyyy').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd').format(date));
     }
   }
 

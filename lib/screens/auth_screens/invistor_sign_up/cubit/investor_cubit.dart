@@ -97,6 +97,7 @@ class InvestorCubit extends Cubit<InvestorState> {
     AppWidget.createProgressDialog(context, 'wait'.tr());
     try {
       model.user_type='freelancer';
+
       UserDataModel response = await api.signUp(model);
       response.userModel.user.isLoggedIn = true;
       if (response.status.code == 200) {
