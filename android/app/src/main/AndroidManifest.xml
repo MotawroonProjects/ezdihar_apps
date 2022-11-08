@@ -61,7 +61,7 @@
                 android:name="firebase_analytics_collection_enabled"
                 android:value="false" />
             <intent-filter>
-                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <action android:name="NOTIFICATION_CLICK" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -69,6 +69,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
        <activity
            android:name="com.yalantis.ucrop.UCropActivity"
            android:screenOrientation="portrait"

@@ -5,7 +5,7 @@ abstract class ProviderDetailsState {}
 
 class IsLoading extends ProviderDetailsState {}
 class OnOrderSuccess extends ProviderDetailsState {
-  PaymentData model;
+  ChatModel model;
   OnOrderSuccess(this.model);
 }
 class OnDataSuccess extends ProviderDetailsState {

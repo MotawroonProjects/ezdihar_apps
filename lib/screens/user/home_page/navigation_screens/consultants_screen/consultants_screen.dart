@@ -29,11 +29,11 @@ class _ConsultantsPageState extends State<ConsultantsPage>
     super.initState();
     _screens = [
       const ServicesPage(),
-      const ConsultingPage()
+    //  const ConsultingPage()
     ];
     _tabs = [
       _buildTabBarItem(context: context, title: 'services'.tr()),
-      _buildTabBarItem(context: context, title: 'consulting'.tr())
+      //_buildTabBarItem(context: context, title: 'consulting'.tr())
     ];
     _controller = TabController(length: _tabs.length, vsync: this);
   }

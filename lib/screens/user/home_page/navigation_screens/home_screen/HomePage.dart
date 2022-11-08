@@ -32,9 +32,8 @@ class _HomePageState extends State<HomePage> {
     List<Widget> screens = [
       const MainPage(),
       const UserOrderPage(),
-       const ConsultantsPage(),
+      const ConsultantsPage(),
       const ConversationPage(),
-
       const MorePage(),
       const NotificationPage(),
     ];
@@ -79,60 +78,55 @@ class _HomePageState extends State<HomePage> {
               notchMargin: 10.0,
               shape: const CircularNotchedRectangle(),
               child: SizedBox(
-                height: 60,
+                height: 77,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Expanded(
-
-                        child:
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-
-                        _buildBottomNavigationItem(
+                    Flexible(
+                        child: _buildBottomNavigationItem(
                             context,
                             'home.svg',
                             index == 0
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
                             'home'.tr(),
-                            0),
-                        _buildBottomNavigationItem(
+                            0)),
+                    Flexible(
+                        child: _buildBottomNavigationItem(
                             context,
                             'order_icon.svg',
                             index == 1
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
                             'orders'.tr(),
-                            1),
-                        _buildBottomNavigationItem(
+                            1)),
+                    Flexible(
+                        child: _buildBottomNavigationItem(
                             context,
-                            'order_icon.svg',
+                            'consultant.png',
                             index == 2
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
-                            'orders'.tr(),
-                            2),
-                        _buildBottomNavigationItem(
+                            'consultants'.tr(),
+                            2)),
+                    Flexible(
+                        child: _buildBottomNavigationItem(
                             context,
                             'chat.svg',
                             index == 3
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
                             'conversation'.tr(),
-                            3),
-                        _buildBottomNavigationItem(
+                            3)),
+                    Flexible(
+                        child: _buildBottomNavigationItem(
                             context,
                             'squares.svg',
                             index == 4
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
                             'more'.tr(),
-                            4),
-                      ],
-                    )),
-
+                            4)),
                   ],
                 ),
               ),
@@ -232,9 +226,7 @@ class _HomePageState extends State<HomePage> {
       onPressed: () {
         AppRoutes.homePageCubit.updateIndex(index);
       },
-
-      child:
-        Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -244,7 +236,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Text(
             title,
-            style: TextStyle(color: color, fontSize: 13.0),
+            style: TextStyle(color: color, fontSize: 12.0),
           )
         ],
       ),

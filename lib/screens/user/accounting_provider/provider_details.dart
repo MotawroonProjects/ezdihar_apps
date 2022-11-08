@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/chat_model.dart';
 import 'package:ezdihar_apps/models/payment_data.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/screens/user/accounting_provider/cubit/provider_details_cubit.dart';
@@ -57,16 +58,16 @@ User  userModel;
 
 
     if (state is OnOrderSuccess) {
-      PaymentData payment=state.model;
+      ChatModel payment=state.model;
      // print(state.model.payData.transaction.url);
-      if(payment.payData!=null){
-        Navigator.pushNamed(context, AppConstant.pagePaymentRoute,arguments: payment.payData?.transaction.url);
-
-      }
-      else {
+     //  if(payment.payData!=null){
+     //    Navigator.pushNamed(context, AppConstant.pagePaymentRoute,arguments: payment.payData?.transaction.url);
+     //
+     //  }
+     //  else {
         Navigator.pushNamed(context, AppConstant.pageChatRoute,
-            arguments: payment.room);
-      }
+            arguments: payment);
+   //   }
     }},
 
       child:

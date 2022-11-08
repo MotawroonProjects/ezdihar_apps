@@ -5,7 +5,7 @@ import 'package:ezdihar_apps/models/sub_category_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PaymentData {
-  late PayData? payData;
+   PayData? payData;
   late ChatModel room;
 
 

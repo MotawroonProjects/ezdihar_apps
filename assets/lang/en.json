@@ -175,6 +175,7 @@
   "total_clients": "Total Clients ",
   "total_orders": "Total Orders ",
   "accept_btn": "Accept ",
+  "compelete_btn": "completed",
   "refused_btn": "Refuse ",
   "update_btn": "Update ",
   "delete_btn": "Delete ",

@@ -14,6 +14,7 @@ import '../../constants/app_constant.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
 import '../../preferences/preferences.dart';
+import '../../remote/notification.dart';
 import 'cubit/chat_cubit.dart';
 
 class ChatPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-
+  PushNotificationService? pushNotificationService;
   late ChatCubit cubit;
   ChatModel chatModel;
   String message = "";
@@ -494,7 +495,10 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   @override
-  void initState() {
+void initState()  {
+    pushNotificationService = PushNotificationService();
+    listenToNotificationStream();
+     pushNotificationService!.initialise();
     focusNode = new FocusNode();
 
     // listen to focus changes
@@ -508,4 +512,16 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController.dispose();
     super.dispose();
   }
+
+
+  void listenToNotificationStream() =>
+      pushNotificationService!.behaviorSubject.listen((payload) {
+        print("D;dldlldl");
+        ChatModel chatModel=pushNotificationService!.behaviorchat.value;
+        if (payload.contains("chat")&&chatModel.id==this.chatModel.id) {
+          needscroll=true;
+       cubit.list.add(pushNotificationService!.behaviormessage.value);
+        }
+      });
 }
+

@@ -16,6 +16,7 @@ import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/remote/handle_exeption.dart';
 
+import '../models/add_post_model.dart';
 import '../models/contact_us_model.dart';
 import '../models/feasibility_type.dart';
 import '../models/provider_home_page_model.dart';
@@ -26,7 +27,6 @@ import '../models/send_service_request_model.dart';
 import '../models/setting_model.dart';
 import '../models/single_Message_data_model.dart';
 import '../models/user.dart';
-import '../models/user_model.dart';
 
 class ServiceApi {
   late Dio dio;
@@ -391,7 +391,32 @@ print("dlldldl${fields.fields}");
       throw errorMessage;
     }
   }
+  Future<StatusResponse> addProviderPost(
+      String user_token, AddPostModel model) async {
+    BaseOptions baseOptions = dio.options;
 
+    baseOptions.headers = {'Authorization': user_token};
+    dio.options = baseOptions;
+
+    var fields = FormData.fromMap({});
+    try {
+      fields = FormData.fromMap({
+
+        'description': model.details,
+        'image': await MultipartFile.fromFile(model.project_photo_path)
+      });
+
+      Response response =
+      await dio.post('api/PostProvider/store', data: fields);
+      print("data=>${response.data.toString()}");
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
   Future<SliderModel> getSliders() async {
     try {
       print('slider');
@@ -695,8 +720,9 @@ print("dlldldl${fields.fields}");
         'Authorization': token,
       };
       dio.options = options;
+
       Response response =
-          await dio.post('api/service-request/changeStatus/$id', data: fields);
+          await dio.put('api/service-request/changeStatus/$id', queryParameters: { 'status': status});
       print(response.data);
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -726,7 +752,26 @@ print("dlldldl${fields.fields}");
       throw errorMessage;
     }
   }
-
+  Future<StatusResponse> rateProvider(String rate, String descEn,int provider_id, String token) async {
+    try {
+      var fields = FormData.fromMap({
+        'provider_id': provider_id,
+        'details': descEn,
+        'rate_number': rate,
+      });
+      BaseOptions options = dio.options;
+      options.headers = {
+        'Authorization': token,
+      };
+      print("dkkdk${fields.fields}");
+      dio.options = options;
+      Response response = await dio.post('api/rates/store', data: fields);
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
   Future<StatusResponse> updateMyServices(String price, String descEn,
       String descAr, int subCatId, String token) async {
     try {

@@ -30,6 +30,7 @@ class AppConstant {
   static const pageAccountingbySubCategoryConsultantsRoute = '/accountingbySubcategoryConsultantsDetails';
   static const pagePaymentRoute = '/payment';
   static const pageChatRoute = '/chat';
+  static const pageAddPostRoute = '/addpost';
   static const moreInfoScreenRoute = '/moreInfoScreen';
   static const pageControlServicesRoute = '/controlServices';
 

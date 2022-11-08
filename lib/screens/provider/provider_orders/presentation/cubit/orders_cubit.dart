@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../models/provider_order.dart';
@@ -6,6 +7,7 @@ import '../../../../../models/status_resspons.dart';
 import '../../../../../models/user_model.dart';
 import '../../../../../preferences/preferences.dart';
 import '../../../../../remote/service.dart';
+import '../../../../../widgets/app_widgets.dart';
 
 part 'orders_state.dart';
 
@@ -47,6 +49,28 @@ class OrdersCubit extends Cubit<OrdersState> {
     emit(OrderChangeStatusDone(model));
   }
 
+  Future<void> rate(context, descEn, rate, subCatId) async {
+    AppWidget.createProgressDialog(context, "wait".tr());
+    try {
+      final response = await api.rateProvider(
+          rate, descEn, subCatId, user!.access_token);
+      if (response.code == 200) {
+        updateUserData(context);
+      } else {
+        print("noooooooot dooooone");
+      }
+    } catch (e) {
+      print("error");
+      print(e);
+    }
+  }
+  updateUserData(context) async {
+
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+
+  }
 
   onUserDataSuccess() async {
     user = await Preferences.instance

@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
@@ -19,6 +21,8 @@ Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
+
+ await pushNotificationService!.initialise();
   runApp(EasyLocalization(
       supportedLocales: const [Locale('ar', ''), Locale('en', '')],
       path: 'assets/lang',
@@ -29,8 +33,10 @@ Future<void> main() async {
 
 }
 
+PushNotificationService? pushNotificationService=new PushNotificationService();
 
 class MyApp extends StatefulWidget {
+
    MyApp({Key? key}) : super(key: key);
 
   @override
@@ -39,7 +45,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
-  PushNotificationService? pushNotificationService;
+  StreamController<Map<String, dynamic>> streamController = StreamController<Map<String, dynamic>>();
 
 
 
@@ -86,9 +92,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    pushNotificationService = PushNotificationService();
     listenToNotificationStream();
-    pushNotificationService!.initialise();
+    pushNotificationService!.streamController.stream.listen((event) {
+print("fkkfkfk");
+      ChatModel chatModel=pushNotificationService!.behaviorchat.value;
+
+        Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => BlocProvider(
+                  create: (context) => ChatCubit(),
+                  child: ChatPage(
+                    chatModel: chatModel,
+                  ),
+                )));
+
+    });
+
 
   }
    void listenToNotificationStream() =>
@@ -96,7 +115,7 @@ class _MyAppState extends State<MyApp> {
          print("D;dldlldl");
          ChatModel chatModel=pushNotificationService!.behaviorchat.value;
          if (payload.contains("chat")) {
-           Navigator.push(navigatorKey.currentState!.context,
+           Navigator.of(context).push(
                MaterialPageRoute(
                    builder: (context) => BlocProvider(
                      create: (context) => ChatCubit(),

@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../models/chat_model.dart';
 import '../../../../models/payment_model.dart';
 import '../../../../models/user.dart';
 import '../../../../preferences/preferences.dart';
@@ -52,7 +53,7 @@ class ProviderDetailsCubit extends Cubit<ProviderDetailsState> {
 
       if (response.status.code == 200) {
 
-          emit(OnOrderSuccess(response.paymentData));
+          emit(OnOrderSuccess(response.room));
 
 
       } else {

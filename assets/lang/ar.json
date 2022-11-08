@@ -174,6 +174,7 @@
   "total_clients": "عدد العملاء الكلى ",
   "total_orders": "عدد الطلبات الكليه ",
   "accept_btn": "قبول ",
+  "compelete_btn": "مكتمل",
   "refused_btn": "رفض ",
   "update_btn": "تعديل ",
   "delete_btn": "حذف ",

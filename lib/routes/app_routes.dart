@@ -4,6 +4,7 @@ import 'package:ezdihar_apps/models/consultant_type_model.dart';
 import 'package:ezdihar_apps/models/login_model.dart';
 import 'package:ezdihar_apps/models/provider_order.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
+import 'package:ezdihar_apps/screens/add_post_screen/cubit/add_post_cubit.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_role_screen/cubit/user_role_cubit.dart';
 import 'package:ezdihar_apps/screens/category_screen/category_page.dart';
 import 'package:ezdihar_apps/screens/category_screen/cubit/category_cubit.dart';
@@ -56,6 +57,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/chat_model.dart';
 import '../models/user.dart';
+import '../screens/add_post_screen/add_post_screen.dart';
 import '../screens/new_orders_screen/cubit/orders_cubit.dart';
 import '../screens/payment_screen/payment_page.dart';
 import '../screens/provider/control_services/cubit/control_services_cubit.dart';
@@ -388,13 +390,57 @@ class AppRoutes {
             );
           },
         );
-
+      case AppConstant.providerNavigationBottomRoute:
+        return MaterialPageRoute(
+          builder: (context) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<ProviderHomePageCubit>(
+                  create: (context) => ProviderHomePageCubit(),
+                ),
+                BlocProvider<NavigatorBottomCubit>(
+                  create: (context) => NavigatorBottomCubit(),
+                ),
+                BlocProvider(
+                  create: (context) => SettingCubit(),
+                  // child: SettingPage(),
+                ),
+                BlocProvider(
+                  create: (context) => ChatCubit(),
+                  // child: SettingPage(),
+                ),
+                BlocProvider(
+                  create: (context) => OrdersCubit(),
+                  child: OrderScreen(),
+                ),
+                BlocProvider<ControlServicesCubit>(
+                  create: (context) => ControlServicesCubit(),
+                  child: ControlServices(),
+                ),
+                BlocProvider(
+                  create: (context) => UserOrderCubit(),
+                  child: UserOrderPage(),
+                ),
+              ],
+              child: NavigationBottom(),
+            );
+          },
+        );
       case AppConstant.pageControlServicesRoute:
         return MaterialPageRoute(
           builder: (context) {
             return BlocProvider<ControlServicesCubit>(
               create: (context) => ControlServicesCubit(),
               child: ControlServices(),
+            );
+          },
+        );
+      case AppConstant.pageAddPostRoute:
+        return MaterialPageRoute(
+          builder: (context) {
+            return BlocProvider<AddPostCubit>(
+              create: (context) => AddPostCubit(),
+              child: AddPostScreen(),
             );
           },
         );

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -25,27 +26,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../models/contact_us_model.dart';
-import '../models/feasibility_type.dart';
-import '../models/provider_home_page_model.dart';
-import '../models/provider_model.dart';
-import '../models/provider_order.dart';
-import '../models/recharge_wallet_model.dart';
-import '../models/send_service_request_model.dart';
-import '../models/setting_model.dart';
-import '../models/single_Message_data_model.dart';
-import '../models/user.dart';
-import '../models/user_model.dart';
-import '../screens/chat/chat_page.dart';
+import '../models/message_model.dart';
+
 
 class PushNotificationService{
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  StreamController<String> streamController = StreamController<String>();
 
   late AndroidNotificationChannel channel;
   late ChatModel chatModel;
+  late MessageModel messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
+  final BehaviorSubject<MessageModel> behaviormessage= BehaviorSubject();
 
   Future initialise() async {
 
@@ -60,7 +54,7 @@ class PushNotificationService{
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-            onDidReceiveLocalNotification: ondidnotification);
+            onDidReceiveLocalNotification: await ondidnotification);
     final LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
     final InitializationSettings initializationSettings =
@@ -104,11 +98,12 @@ class PushNotificationService{
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  Future<void> _firebaseMessagingBackgroundHandler(
+  Future<void> _firebaseMessagingBackgroundHandler (
       RemoteMessage message) async {
-    print("Handling a background message: ${message.data}");
-    checkData(message);
-
+    if(message.data.isNotEmpty) {
+      print("Handling a background message: ${message.data}");
+      checkData(message);
+    }
     // showNotification(message);
   }
 
@@ -128,7 +123,10 @@ class PushNotificationService{
   void checkData(RemoteMessage message) {
     if (message.data['note_type'].toString().contains("chat")) {
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
+      messageDataModel = MessageModel.fromJson(jsonDecode(message.data['data']));
       behaviorchat.add(chatModel);
+      behaviormessage.add(messageDataModel);
+      print("dldkkdk${messageDataModel.type}");
       // if (ModalRoute.of(context)!
       //     .settings
       //     .name!
@@ -151,10 +149,12 @@ class PushNotificationService{
     }
   }
 
-  void ondidnotification(
+Future ondidnotification (
       int id, String? title, String? body, String? payload) async {
     print("object");
+    streamController.add("chat");
     behaviorSubject.add(payload!);
+
   }
 
 

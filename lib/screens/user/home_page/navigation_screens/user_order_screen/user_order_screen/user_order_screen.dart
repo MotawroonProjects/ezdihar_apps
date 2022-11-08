@@ -26,12 +26,7 @@ class _UserOrderPageState extends State<UserOrderPage>
 
   @override
   Widget build(BuildContext context) {
-    _tabs = [
-      buildTab('current_order'.tr(), '', 0),
-      buildTab('completed_order'.tr(), '', 1),
-    ];
-    _screens = [buildCurrentOrderList(), buildCompleteOrderList()];
-    _controller = TabController(length: _tabs.length, vsync: this);
+
 
     return Scaffold(
       body: Container(
@@ -334,5 +329,21 @@ class _UserOrderPageState extends State<UserOrderPage>
         );
       },
     );
+  }
+  @override
+  dispose() {
+    _controller.dispose(); // you need this
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      buildTab('current_order'.tr(), '', 0),
+      buildTab('completed_order'.tr(), '', 1),
+    ];
+    _screens = [buildCurrentOrderList(), buildCompleteOrderList()];
+    _controller = TabController(length: _tabs.length, vsync: this);
   }
 }

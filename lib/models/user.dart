@@ -14,7 +14,7 @@ class User {
   late String birthdate = '';
   late String userType;
   late CityModel city;
-  late String cityId;
+  late int cityId;
   late int wallet;
   late bool isLoggedIn = false;
   late String lan;
@@ -32,7 +32,7 @@ class User {
     image = json['image'] != null ? json['image'] as String : "";
     birthdate = json['birthdate'] ?? '' as String;
     userType = json['user_type'] ?? '' as String;
-    cityId = json['city_id'] != null ? json['city_id']: "0";
+    cityId = json['city_id'] != null ? json['city_id']as int: 0 ;
     wallet = json['wallet'] != null ? json['wallet'] as int : 0;
     city = json['city'] != null
         ? CityModel.fromJson(

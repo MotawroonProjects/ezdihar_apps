@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/models/user_model.dart';
+import 'package:ezdihar_apps/screens/provider/provider_orders/presentation/widgets/rate_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../../colors/colors.dart';
 import '../../../../../constants/asset_manager.dart';
@@ -12,24 +14,33 @@ import '../../../../../widgets/app_widgets.dart';
 import '../cubit/orders_cubit.dart';
 import 'Buttom.dart';
 
-class orderDetailsBodyWidget extends StatelessWidget {
-  late int user_id=0;
+class orderDetailsBodyWidget extends StatefulWidget {
 
   orderDetailsBodyWidget({Key? key, required this.mainOrdersModel})
       : super(key: key);
   final ProviderOrder mainOrdersModel;
 
   @override
+  State<orderDetailsBodyWidget> createState() => _orderDetailsBodyWidgetState();
+}
+
+class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
+  late int user_id=0;
+
+  final BehaviorSubject<int> behaviorSubject = BehaviorSubject();
+
+  @override
   Widget build(BuildContext context) {
     _onRefresh();
+    listenToUserStream();
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
         children: [
-          user_id != mainOrdersModel.user.user.id
-              ? (mainOrdersModel.user.user.image.isNotEmpty
+          user_id != widget.mainOrdersModel.user.user.id
+              ? (widget.mainOrdersModel.user.user.image.isNotEmpty
                   ? CachedNetworkImage(
-                      imageUrl: mainOrdersModel.user.user.image,
+                      imageUrl: widget.mainOrdersModel.user.user.image,
                       width: 120,
                       height: 120,
                       fit: BoxFit.fill,
@@ -46,9 +57,9 @@ class orderDetailsBodyWidget extends StatelessWidget {
                       ),
                     )
                   : AppWidget.circleAvatar(64.0, 64.0))
-              : (mainOrdersModel.user.user.image.isNotEmpty
+              : (widget.mainOrdersModel.user.user.image.isNotEmpty
                   ? CachedNetworkImage(
-                      imageUrl: mainOrdersModel.provider.user.image,
+                      imageUrl: widget.mainOrdersModel.provider.user.image,
                       width: 120,
                       height: 120,
                       fit: BoxFit.fill,
@@ -69,13 +80,13 @@ class orderDetailsBodyWidget extends StatelessWidget {
             height: 13,
           ),
           Text(
-            user_id != mainOrdersModel.user.user.id
-                ? mainOrdersModel.user.user.firstName +
+            user_id != widget.mainOrdersModel.user.user.id
+                ? widget.mainOrdersModel.user.user.firstName +
                     " " +
-                    mainOrdersModel.user.user.lastName
-                : mainOrdersModel.provider.user.firstName +
+                    widget.mainOrdersModel.user.user.lastName
+                : widget.mainOrdersModel.provider.user.firstName +
                     " " +
-                    mainOrdersModel.provider.user.lastName,
+                    widget.mainOrdersModel.provider.user.lastName,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -94,7 +105,7 @@ class orderDetailsBodyWidget extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               Text(
-                mainOrdersModel.subCategory.titleAr!,
+                widget.mainOrdersModel.subCategory.titleAr!,
                 style: const TextStyle(fontSize: 14),
               )
             ],
@@ -153,7 +164,7 @@ class orderDetailsBodyWidget extends StatelessWidget {
                                 const SizedBox(width: 8,),
                                 RichText(
                                   text: TextSpan(
-                                      text: '${mainOrdersModel.price}',
+                                      text: '${widget.mainOrdersModel.price}',
                                       style: const TextStyle(
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.bold,
@@ -195,7 +206,7 @@ class orderDetailsBodyWidget extends StatelessWidget {
                                 const SizedBox(width: 8,),
                                 RichText(
                                   text: TextSpan(
-                                      text: mainOrdersModel.delivery_date,
+                                      text: widget.mainOrdersModel.delivery_date,
                                       style: const TextStyle(
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.bold,
@@ -218,7 +229,7 @@ class orderDetailsBodyWidget extends StatelessWidget {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
-                    mainOrdersModel.details,
+                    widget.mainOrdersModel.details,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                   ),
                 )
@@ -227,27 +238,32 @@ class orderDetailsBodyWidget extends StatelessWidget {
           ),
           const Spacer(),
           Visibility(
-              visible: user_id == mainOrdersModel.user.user ? true : false,
+              visible: user_id != widget.mainOrdersModel.user.user.id ? false : true,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
               Visibility(
-              visible: mainOrdersModel.status.contains("new") ? true : false,
+              visible: widget.mainOrdersModel.status.contains("new") ? true : false,
                  child: Bottoms(
                     color: const Color(0XFF143360),
                     namedBottom: 'refused_btn'.tr(),
                     callBack: () {
                       context.read<OrdersCubit>().changeProviderOrderStatus(
-                          mainOrdersModel.id.toString(), 'refused');
+                          widget.mainOrdersModel.id.toString(), 'refused');
                     },
                   )),
                   Bottoms(
                     color: const Color(0XFFF18F15),
-                    namedBottom: mainOrdersModel.status.contains("new") ?'accept_btn'.tr():'compelete_btn'.tr(),
+                    namedBottom: widget.mainOrdersModel.status.contains("new") ?'accept_btn'.tr():widget.mainOrdersModel.status.contains("accepted")?'compelete_btn'.tr():"rate".tr(),
                     callBack: () {
+                      if(widget.mainOrdersModel.status.contains("completed")){
+                        showMyEmptyDialog(context,widget.mainOrdersModel);
+
+                      }
+                      else{
                       context.read<OrdersCubit>().changeProviderOrderStatus(
-                          mainOrdersModel.id.toString(), mainOrdersModel.status.contains("new") ?'accepted':'completed');
-                    },
+                          widget.mainOrdersModel.id.toString(), widget.mainOrdersModel.status.contains("new") ?'accepted':'completed');
+                    }},
                   )
                 ],
               ))
@@ -259,8 +275,13 @@ class orderDetailsBodyWidget extends StatelessWidget {
   Future<void> _onRefresh() async {
     UserModel model = await Preferences.instance.getUserModel();
     user_id = model.user.id;
-    // setState(() {
-    //   user_id;
-    // });
+    behaviorSubject.add(user_id);
   }
+
+  void listenToUserStream() =>
+      behaviorSubject.listen((value) {
+
+        user_id=value;
+print("dddd${user_id}");
+      });
 }
