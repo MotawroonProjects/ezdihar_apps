@@ -39,6 +39,7 @@ class AppConstant {
   static const serviceRequestScreenRoute = '/ serviceRequestScreen';
   static const OrdersNewScreenRoute = '/newordersScreen';
   static const OrdersDetialsScreenRoute = '/orderdetialsScreen';
+  static const AddReportScreenRoute = '/AddReportScreen';
 
   //////////////////////////////////////////////
   static const following = 'following';
@@ -49,7 +50,7 @@ class AppConstant {
   static const actionSave = 'save';
   static const actionReport = 'report';
   static const actionLove = 'love';
-
+  static const actionunLove = 'unlove';
 ////////////////////////////////////////////////
   static const role_user = "user";
   static const role_consultant = "consultant";

@@ -22,7 +22,7 @@ class MainPageWidgets {
       Function navigateToDetails,
       Function showSheet,
       Function supportSheet,
-      AnimationController animationController) {
+      AnimationController animationController)  {
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
     /*Animation<double> scaleAnimation =
         TweenSequence<double>(<TweenSequenceItem<double>>[
@@ -34,6 +34,7 @@ class MainPageWidgets {
 */
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     String approved = "";
+   Future<UserModel> userModel =  Preferences.instance.getUserModel();
 
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -79,13 +80,14 @@ class MainPageWidgets {
                     fontSize: 14.0,
                   ),
                 ),
-                trailing: InkWell(
-                  onTap: () {
-                    showSheet(context, model, index);
-                  },
-                  child: AppWidget.svg(
-                      'menu_dots.svg', AppColors.color1, 20.0, 20.0),
-                ),
+        //         trailing: InkWell(
+        //           onTap: () {
+        //             showSheet(context, model, index);
+        //           },
+        //           child: AppWidget.svg(
+        //       'menu_dots.svg', AppColors.color1, 20.0, 20.0),
+        // )
+
               ),
               const SizedBox(
                 height: 8.0,
@@ -223,15 +225,28 @@ class MainPageWidgets {
 
     return Align(
         alignment: Alignment.topLeft,
-        child: AppWidget.svg(
+        child: Visibility(
+            visible:userModel!=null?true:false,
+            child:
+            InkWell(
+              onTap: () {
+                favourite();
+                //addRemoveFavorite(index, model);
+              },
+              child: SizedBox(
+                child: AppWidget.svg(
 
-    'love.svg',
-   // model.isLicked
-//    ?
-    AppColors.colorPrimary,
-  //      : AppColors.grey1,
-    24.0,
-    24.0));
+                    'love.svg',
+                    model.action_user.contains("unlove")
+                        ?
+                    AppColors.grey1
+
+                        :
+                    AppColors.colorPrimary,
+                    24.0,
+                    24.0),
+              ),
+            )));
     },
     //return Container();
 

@@ -135,7 +135,7 @@ Future<void> showMyDataDialog(context, SubCategories subCategories) async {
   String lang = EasyLocalization.of(context)!.locale.languageCode;
   final formKey = GlobalKey<FormState>();
   String? descAr;
-  priceController.text = subCategories.price!;
+  priceController.text = subCategories.price.toString()!;
   detailsController.text =
       lang == 'ar' ? subCategories.descAr! : subCategories.descEn!;
 

@@ -213,8 +213,15 @@ class _MainPageState extends State<MainPage>
   void addRemoveFavorite(int index, ProjectModel model) {
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
     cubit.updateProject(index, model);
-    cubit.love_report_follow(index, model, AppConstant.actionLove);
-  }
+
+    String type;
+    if(model.action_user.contains("unlove")){
+      type=AppConstant.actionLove;
+    }
+    else{
+      type=AppConstant.actionunLove;
+    }
+    cubit.love_report_follow(index, model, type);  }
 
   void navigateToProjectDetails(ProjectModel model, int index) {}
 

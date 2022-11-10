@@ -69,7 +69,7 @@ class _SettingPageState extends State<SettingPage> {
                   if (state.userModel.user.userType.contains('freelancer')) {
                     print("ddkkdkdk${state.userModel.user.userType}");
 
-                    return buildListView(12);
+                    return buildListView(13);
                   } else {
                     return buildListView(8);
                   }
@@ -95,7 +95,7 @@ class _SettingPageState extends State<SettingPage> {
       children: List.generate(count, (index) {
         return SettingWidgets().buildListItem(
             context: context,
-            index: count == 12 ? index : (index >= 1 ? index + 4 : index),
+            index: count == 13 ? index : (index >= 1 ? index + 4 : index),
             onTaped: _onTaped);
       }),
     );
@@ -124,10 +124,15 @@ class _SettingPageState extends State<SettingPage> {
       Navigator.of(context).pushNamed(AppConstant.pageInvestorSignUpRoleRoute,
           arguments: context.read<SettingCubit>().model.user);
     } else if (index == 3) {
-      Navigator.pushNamed(context, AppConstant.pageControlServicesRoute);
+      Navigator.of(context).pushNamed(AppConstant.pageUserProfileRoute);
+
     } else if (index == 4) {
-      Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
+      Navigator.pushNamed(context, AppConstant.pageControlServicesRoute);
+
     } else if (index == 5) {
+      Navigator.of(context).pushNamed(AppConstant.pageWalletRoute);
+
+    } else if (index == 6) {
       if (settingModel != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -142,7 +147,8 @@ class _SettingPageState extends State<SettingPage> {
           ),
         );
       }
-    } else if (index == 6) {
+
+    } else if (index == 7) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return MoreInfoScreen(
           Kind: "privacy",
@@ -151,7 +157,8 @@ class _SettingPageState extends State<SettingPage> {
               : settingModel!.data!.privacyEn!,
         );
       }));
-    } else if (index == 7) {
+
+    } else if (index == 8) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return MoreInfoScreen(
           Kind: "aboutUs",
@@ -160,12 +167,16 @@ class _SettingPageState extends State<SettingPage> {
               : settingModel!.data!.aboutEn!,
         );
       }));
-    } else if (index == 8) {
-      Navigator.of(context).pushNamed(AppConstant.pageContactUsRoute);
+
     } else if (index == 9) {
+      Navigator.of(context).pushNamed(AppConstant.pageContactUsRoute);
+
     } else if (index == 10) {
-      shareApp();
+
     } else if (index == 11) {
+      shareApp();
+    }
+    else if (index == 12) {
       SettingCubit cubit = BlocProvider.of(context);
       cubit.logout(context);
     }

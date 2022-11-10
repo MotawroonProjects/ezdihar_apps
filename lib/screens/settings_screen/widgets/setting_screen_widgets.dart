@@ -45,33 +45,37 @@ class SettingWidgets {
         title = 'edit_profile'.tr();
         break;
       case 3:
-        title = 'control_services'.tr();
+        title = 'myProfile'.tr();
         break;
       case 4:
-        title = 'wallet'.tr();
+        title = 'control_services'.tr();
         break;
       case 5:
-        title = 'terms'.tr();
+        title = 'wallet'.tr();
         break;
       case 6:
-        title = 'privacy'.tr();
+        title = 'terms'.tr();
         break;
       case 7:
-        title = 'aboutUs'.tr();
+        title = 'privacy'.tr();
         break;
       case 8:
-        title = 'contactUs'.tr();
+        title = 'aboutUs'.tr();
         break;
       case 9:
-        title = 'rateApp'.tr();
+        title = 'contactUs'.tr();
         break;
       case 10:
-        title = 'shareApp'.tr();
+        title = 'rateApp'.tr();
         break;
       case 11:
+        title = 'shareApp'.tr();
+        break;
+      case 12:
         color = AppColors.red;
         title = 'logout'.tr();
         break;
+
     }
 
     return Text(
@@ -122,6 +126,10 @@ class SettingWidgets {
       case 11:
         color = AppColors.red;
         iconName = 'logout.svg';
+        break;
+      case 12:
+        color = AppColors.red;
+        iconName = 'profile.svg';
         break;
     }
     return AppWidget.svg(iconName, color, 24.0, 24.0);

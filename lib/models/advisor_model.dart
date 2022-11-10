@@ -5,7 +5,7 @@ class AdvisorModel {
   late int years_ex;
   late dynamic consultant_price;
   late String bio;
-  late double rate;
+  late int rate;
   late int count_people;
   late ConsultantTypeModel consultant_type;
   late String graduation_rate;
@@ -18,7 +18,7 @@ class AdvisorModel {
     years_ex = json['years_ex']!=null?json['years_ex'] as int:0;
     consultant_price = json['consultant_price']!=null?json['consultant_price']:0.0;
     bio = json['bio']!=null?json['bio'] as String:"";
-    rate = json['rate'] != null ? json['rate'] as double : 0.0;
+    rate = json['rate'] != null ? json['rate'] as int : 0;
     count_people =
         json['count_people'] != null ? json['count_people'] as int : 0;
     graduation_rate = json['graduation_rate'] != null

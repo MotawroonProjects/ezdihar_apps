@@ -137,7 +137,7 @@ class _ConsultantDetailsPageState extends State<ConsultantDetailsPage> {
                       alignment: Alignment.center,
                       child: _buildRateBar(
                           rate: userModel.adviser_data != null
-                              ? userModel.adviser_data!.rate
+                              ? userModel.adviser_data!.rate.toDouble()
                               : 0)),
                   const SizedBox(
                     height: 24.0,

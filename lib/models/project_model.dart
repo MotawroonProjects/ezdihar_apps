@@ -8,7 +8,7 @@ class ProjectModel {
   late String description;
   late int status;
   late String img;
-
+  late String action_user;
 
   late ProviderDataModel provider;
   ProjectModel();
@@ -18,7 +18,7 @@ class ProjectModel {
     description = json['description'] as String;
     status = json['status'] as int;
     img = json['img'] as String;
-
+    action_user = json['action_user'] as String;
     provider = ProviderDataModel.fromJson(json['provider']);
   }
 }

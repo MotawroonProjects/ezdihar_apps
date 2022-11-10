@@ -20,6 +20,7 @@ import 'package:ezdihar_apps/models/status_resspons.dart';
 import 'package:ezdihar_apps/models/user_data_model.dart';
 import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/remote/handle_exeption.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,11 @@ import '../models/message_model.dart';
 
 
 class PushNotificationService{
+  final GlobalKey<NavigatorState> navigatorKey =
+  new GlobalKey<NavigatorState>();
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  StreamController<String> streamController = StreamController<String>();
+  // StreamController<String> streamController = StreamController<String>.broadcast();
 
   late AndroidNotificationChannel channel;
   late ChatModel chatModel;
@@ -40,7 +43,10 @@ class PushNotificationService{
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
   final BehaviorSubject<MessageModel> behaviormessage= BehaviorSubject();
+void callbackground(){
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+}
   Future initialise() async {
 
     channel = const AndroidNotificationChannel(
@@ -77,6 +83,7 @@ class PushNotificationService{
       criticalAlert: false,
       provisional: false,
       sound: true,
+
     );
 
     print('User granted permission: ${settings.authorizationStatus}');
@@ -95,11 +102,19 @@ class PushNotificationService{
 //  showNotification(message);
       checkData(message);
     });
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true, // Required to display a heads up notification
+      badge: true,
+      sound: true,
+    );
   }
 
   Future<void> _firebaseMessagingBackgroundHandler (
       RemoteMessage message) async {
+
+    await Firebase.initializeApp();
+    print("Handling a background message:");
+
     if(message.data.isNotEmpty) {
       print("Handling a background message: ${message.data}");
       checkData(message);
@@ -112,11 +127,14 @@ class PushNotificationService{
         message.data.hashCode,
         message.data['title'],
         message.data['body'],
+
         payload: 'chat',
+
         NotificationDetails(
             android: AndroidNotificationDetails(channel.id, channel.name,
                 channelDescription: channel.description,
                 importance: Importance.max,
+
                 icon: '@mipmap/ic_launcher')));
   }
 
@@ -125,6 +143,7 @@ class PushNotificationService{
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
       messageDataModel = MessageModel.fromJson(jsonDecode(message.data['data']));
       behaviorchat.add(chatModel);
+     // behaviorSubject.add("chat");
       behaviormessage.add(messageDataModel);
       print("dldkkdk${messageDataModel.type}");
       // if (ModalRoute.of(context)!
@@ -144,7 +163,9 @@ class PushNotificationService{
   Future notificationTapBackground(NotificationResponse details) async {
     print('notification payload: ${details.payload}');
     if (details.payload!.contains("chat")) {
-      behaviorSubject.add(details.payload!);
+      behaviorSubject.add("chat");
+     // streamController.add("chat");
+
 
     }
   }
@@ -152,8 +173,9 @@ class PushNotificationService{
 Future ondidnotification (
       int id, String? title, String? body, String? payload) async {
     print("object");
-    streamController.add("chat");
+ //   streamController.add("chat");
     behaviorSubject.add(payload!);
+
 
   }
 

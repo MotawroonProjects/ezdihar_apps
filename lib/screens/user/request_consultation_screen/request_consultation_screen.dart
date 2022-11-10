@@ -157,7 +157,7 @@ class _RequestConsultationPageState extends State<RequestConsultationPage> {
             ),
             _buildRateBar(
                 rate: userModel.adviser_data != null
-                    ? userModel.adviser_data!.rate
+                    ? userModel.adviser_data!.rate.toDouble()
                     : 0),
           ],
         ),

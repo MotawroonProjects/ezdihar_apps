@@ -60,7 +60,7 @@ class AccountingConsultantsWidgets {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              subtitle: _buildRateBar(rate: model.adviser_data!.rate),
+              subtitle: _buildRateBar(rate: model.adviser_data!.rate.toDouble()),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -88,20 +88,20 @@ class _UserRolePageState extends State<UserRolePage> {
                 context: context);
           },
         ),
-        BlocBuilder<UserRoleCubit, UserRoleState>(
-          builder: (context, state) {
-            UserRoleInitial initState = state as UserRoleInitial;
-
-            return buildCardData(
-                title: 'consultant'.tr(),
-                content: 'consultant_content'.tr(),
-                image: 'consultant.png',
-                borderWidth:
-                    initState.role == AppConstant.role_consultant ? 2.0 : 0.0,
-                role: AppConstant.role_consultant,
-                context: context);
-          },
-        ),
+        // BlocBuilder<UserRoleCubit, UserRoleState>(
+        //   builder: (context, state) {
+        //     UserRoleInitial initState = state as UserRoleInitial;
+        //
+        //     return buildCardData(
+        //         title: 'consultant'.tr(),
+        //         content: 'consultant_content'.tr(),
+        //         image: 'consultant.png',
+        //         borderWidth:
+        //             initState.role == AppConstant.role_consultant ? 2.0 : 0.0,
+        //         role: AppConstant.role_consultant,
+        //         context: context);
+        //   },
+        // ),
         BlocBuilder<UserRoleCubit, UserRoleState>(
           builder: (context, state) {
             UserRoleInitial initState = state as UserRoleInitial;

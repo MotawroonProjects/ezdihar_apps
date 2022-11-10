@@ -496,9 +496,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
 void initState()  {
-    pushNotificationService = PushNotificationService();
-    listenToNotificationStream();
-     pushNotificationService!.initialise();
+
     focusNode = new FocusNode();
 
     // listen to focus changes

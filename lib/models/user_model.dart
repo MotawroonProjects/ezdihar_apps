@@ -95,7 +95,7 @@ class SubCategories {
   int? id;
   String? descAr;
   String? descEn;
-  String? price;
+  int? price;
   CategoryModel? service;
 
   SubCategories({this.id, this.descAr, this.descEn, this.price, this.service});

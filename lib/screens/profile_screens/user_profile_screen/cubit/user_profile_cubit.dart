@@ -16,41 +16,27 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   int index = 0;
   late ServiceApi api;
   UserModel? userModel;
-  late List<ProjectModel> fav_posts;
-  late List<ProjectModel> my_posts;
-  late List<ProjectModel> savedPosts;
+  late List<ProjectModel> posts;
+
   UserProfileCubit() : super(UpdateIndex(0)) {
-    fav_posts =[];
-    my_posts = [];
-    savedPosts=[];
+    posts =[];
     api = ServiceApi();
     getUserData().then((value) {
       emit(OnUserDataGet(value!));
     });
-    getPosts();
+  //  getPosts();
     Future.delayed(Duration(seconds: 1)).then((value){
-      getFavoritePosts();
+      if(userModel!.user.userType.contains("client")){
+      getFavoritePosts();}
+      else{
+        getPosts();
+      }
     });
-    Future.delayed(Duration(seconds: 1)).then((value){
-      getSaved();    });
+    // Future.delayed(Duration(seconds: 1)).then((value){
+    //   getSaved();    });
 
   }
 
-  updateIndex(int index) {
-    this.index = index;
-    emit(UpdateIndex(index));
-    if(index==0){
-      emit(OnFavDataSuccess(fav_posts));
-
-    }else if(index==1){
-      emit(OnMyPostsSuccess(my_posts));
-
-    }
-    else{
-      emit(OnSavedPostsSuccess(savedPosts));
-
-    }
-  }
 
   Future<UserModel?> getUserData() async {
     userModel = await Preferences.instance.getUserModel();
@@ -63,8 +49,8 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       ProjectsDataModel response =  await api.getMyFavorites(userModel!.access_token);
 
       if(response.status.code==200){
-        fav_posts = response.data;
-        emit(OnFavDataSuccess(fav_posts));
+        posts = response.data;
+        emit(OnFavDataSuccess(posts));
       }
     }catch (e){
       emit(OnError(e.toString()));
@@ -80,8 +66,8 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       ProjectsDataModel response =  await api.getMyPosts(userModel!.access_token);
 
       if(response.status.code==200){
-        my_posts = response.data;
-        emit(OnMyPostsSuccess(my_posts));
+        posts = response.data;
+        emit(OnFavDataSuccess(posts));
       }
     }catch (e){
       emit(OnErrorPosts(e.toString()));
@@ -89,22 +75,22 @@ class UserProfileCubit extends Cubit<UserProfileState> {
 
 
   }
-  getSaved() async{
-    try{
-      getUserData().then((value) async{
-        emit(IsLoadingData());
-        ProjectsDataModel response =  await api.getSaved(value!.access_token);
-
-        if(response.status.code==200){
-          savedPosts = response.data;
-          emit(OnSavedPostsSuccess(savedPosts));
-        }
-      });
-    }catch (e){
-      emit(OnError(e.toString()));
-    }
-
-  }
+  // getSaved() async{
+  //   try{
+  //     getUserData().then((value) async{
+  //       emit(IsLoadingData());
+  //       ProjectsDataModel response =  await api.getSaved(value!.access_token);
+  //
+  //       if(response.status.code==200){
+  //         savedPosts = response.data;
+  //         emit(OnSavedPostsSuccess(savedPosts));
+  //       }
+  //     });
+  //   }catch (e){
+  //     emit(OnError(e.toString()));
+  //   }
+  //
+  // }
   void onErrorData(String error) {
     emit(OnError(error));
   }
@@ -113,16 +99,16 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     emit(OnError(error));
   }
   deleteProject(ProjectModel model,int index) async{
-    my_posts.removeAt(index);
-    emit(OnMyPostsSuccess(my_posts));
+    posts.removeAt(index);
+    emit(OnMyPostsSuccess(posts));
     try{
       StatusResponse response = await api.deleteProject(userModel!.access_token, model.id);
       if(response.code==200){
         Fluttertoast.showToast(msg: 'deleted'.tr(),fontSize: 15.0,backgroundColor: AppColors.black,gravity: ToastGravity.SNACKBAR,textColor: AppColors.white);
 
       }else{
-        my_posts[index] = model;
-        emit(OnMyPostsSuccess(my_posts));
+        posts[index] = model;
+        emit(OnMyPostsSuccess(posts));
       }
     }catch (e){
 
@@ -134,8 +120,8 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       getUserData().then((value) async{
         StatusResponse response =  await api.love_follow_report(value!.access_token, model.id, type);
         if(response.code==200){
-          fav_posts.removeAt(post_index);
-          emit(OnFavDataSuccess(fav_posts));
+          posts.removeAt(post_index);
+          emit(OnFavDataSuccess(posts));
 
           Future.delayed(Duration(seconds: 1))
               .then((value) =>emit(OnRemoveFavorite()));

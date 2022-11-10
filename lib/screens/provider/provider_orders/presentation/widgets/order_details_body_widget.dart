@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../../../colors/colors.dart';
+import '../../../../../constants/app_constant.dart';
 import '../../../../../constants/asset_manager.dart';
 import '../../../../../models/provider_order.dart';
 import '../../../../../preferences/preferences.dart';
@@ -238,21 +239,28 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
           ),
           const Spacer(),
           Visibility(
-              visible: user_id != widget.mainOrdersModel.user.user.id ? false : true,
+              visible:  true,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
               Visibility(
-              visible: widget.mainOrdersModel.status.contains("new") ? true : false,
+              visible: true,
                  child: Bottoms(
                     color: const Color(0XFF143360),
-                    namedBottom: 'refused_btn'.tr(),
+                    namedBottom: widget.mainOrdersModel.status.contains("new")&&user_id == widget.mainOrdersModel.user.user.id ? 'refused_btn'.tr():'report'.tr(),
                     callBack: () {
-                      context.read<OrdersCubit>().changeProviderOrderStatus(
-                          widget.mainOrdersModel.id.toString(), 'refused');
-                    },
+                      if(widget.mainOrdersModel.status.contains("new")&&user_id != widget.mainOrdersModel.user.user.id ){
+                        context.read<OrdersCubit>().changeProviderOrderStatus(
+                            widget.mainOrdersModel.id.toString(), 'refused');
+                      }else {
+                        Navigator.pushNamed(context, AppConstant.AddReportScreenRoute,
+                            arguments:  widget.mainOrdersModel);
+                      }},
                   )),
-                  Bottoms(
+                  SizedBox(width: 20,),
+              Visibility(
+                visible: user_id != widget.mainOrdersModel.user.user.id ? false : true,
+                  child:Bottoms(
                     color: const Color(0XFFF18F15),
                     namedBottom: widget.mainOrdersModel.status.contains("new") ?'accept_btn'.tr():widget.mainOrdersModel.status.contains("accepted")?'compelete_btn'.tr():"rate".tr(),
                     callBack: () {
@@ -264,7 +272,7 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
                       context.read<OrdersCubit>().changeProviderOrderStatus(
                           widget.mainOrdersModel.id.toString(), widget.mainOrdersModel.status.contains("new") ?'accepted':'completed');
                     }},
-                  )
+                  ))
                 ],
               ))
         ],

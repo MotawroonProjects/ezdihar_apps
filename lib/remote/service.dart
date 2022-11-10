@@ -17,6 +17,7 @@ import 'package:ezdihar_apps/models/user_sign_up_model.dart';
 import 'package:ezdihar_apps/remote/handle_exeption.dart';
 
 import '../models/add_post_model.dart';
+import '../models/add_report_model.dart';
 import '../models/contact_us_model.dart';
 import '../models/feasibility_type.dart';
 import '../models/provider_home_page_model.dart';
@@ -42,7 +43,7 @@ class ServiceApi {
     dio = Dio(baseOptions);
   }
 
-  Future<ProjectsDataModel> getHomeData(
+  Future<ProjectsDataModel> getHomeData(String user_id
       ) async {
     try {
       Response response;
@@ -55,6 +56,7 @@ class ServiceApi {
 
       response = await dio.get(
           'api/PostProvider/all',
+          queryParameters: {'user_id':user_id},
           cancelToken: cancelToken);
 
       if (!cancelToken.isCancelled) {
@@ -228,13 +230,13 @@ print("dlldldl${fields.fields}");
 
   Future<StatusResponse> love_follow_report(
       String user_token, int post_id, String type) async {
-    var fields = FormData.fromMap({'post_id': post_id, 'type': type});
+    var fields = FormData.fromMap({'post_provider_id': post_id, 'action': type});
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': user_token};
       dio.options = options;
       Response response =
-          await dio.post('api/profile/love-report-follow-post', data: fields);
+          await dio.post('api/PostProvider/action', data: fields);
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -264,7 +266,7 @@ print("dlldldl${fields.fields}");
       options.headers = {'Authorization': user_token};
       dio.options = options;
 
-      Response response = await dio.get('api/profile/likedPost');
+      Response response = await dio.get('api/PostProvider/postsLoveByUser');
       return ProjectsDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -278,7 +280,7 @@ print("dlldldl${fields.fields}");
       options.headers = {'Authorization': user_token};
       dio.options = options;
 
-      Response response = await dio.get('api/profile/myPosts');
+      Response response = await dio.get('api/allPostsFromProvider');
       return ProjectsDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -383,6 +385,87 @@ print("dlldldl${fields.fields}");
       Response response =
           await dio.post('api/project/storeProject', data: fields);
       print("data=>${response.data.toString()}");
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
+
+
+  Future<StatusResponse> addReport(
+      String user_token, AddReportModel model) async {
+    BaseOptions baseOptions = dio.options;
+
+    baseOptions.headers = {'Authorization': user_token};
+    dio.options = baseOptions;
+
+    var fields = FormData.fromMap({});
+    try {
+      if(model.photo.isNotEmpty){
+      fields = FormData.fromMap({
+        'reason': model.reason,
+        'details': model.details,
+        'order_id': model.order_id,
+        'user_id': model.user_id,
+
+        'img': await MultipartFile.fromFile(model.photo)
+
+      });}
+      else{
+        fields = FormData.fromMap({
+          'reason': model.reason,
+          'details': model.details,
+          'order_id': model.order_id,
+          'user_id': model.user_id,
+
+
+        });
+      }
+
+      Response response =
+      await dio.post('api/order-report/storeReportByProvider', data: fields);
+      print("data=>${response.data.toString()}");
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      print('Error=>${errorMessage}');
+
+      throw errorMessage;
+    }
+  }
+
+  Future<StatusResponse> addReportProvider(
+      String user_token, AddReportModel model) async {
+    BaseOptions baseOptions = dio.options;
+
+    baseOptions.headers = {'Authorization': user_token};
+    dio.options = baseOptions;
+
+    var fields = FormData.fromMap({});
+    try {
+      if(model.photo.isNotEmpty) {
+        fields = FormData.fromMap({
+          'reason': model.reason,
+          'details': model.details,
+          'order_id': model.order_id,
+          'provider_id': model.provider_id,
+          'img': await MultipartFile.fromFile(model.photo)
+        });
+      }
+      else{
+        fields = FormData.fromMap({
+          'reason': model.reason,
+          'details': model.details,
+          'order_id': model.order_id,
+          'provider_id': model.provider_id,
+        });
+      }
+      Response response =
+      await dio.post('api/order-report/storeReportByUser', data: fields);
+      print("data=>${fields.fields}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();

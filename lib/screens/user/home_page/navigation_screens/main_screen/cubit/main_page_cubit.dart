@@ -75,9 +75,9 @@ class MainPageCubit extends Cubit<MainPageState> {
       projects.clear();
       emit(IsLoadingData(type: this.filterType));
       UserModel model = await Preferences.instance.getUserModel();
-      String user_token = '';
+      String user_id = '';
       if (model.user.isLoggedIn) {
-        user_token = model.access_token;
+        user_id = model.user.id.toString();
       }
       String date = 'all';
       if (filterDate == 'الكل') {
@@ -86,6 +86,7 @@ class MainPageCubit extends Cubit<MainPageState> {
         date = filterDate;
       }
       ProjectsDataModel home = await api.getHomeData(
+        user_id
       );
       if (home.status.code == 200) {
 
