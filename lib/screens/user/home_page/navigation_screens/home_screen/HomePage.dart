@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                     Flexible(
                         child: _buildBottomNavigationItem(
                             context,
-                            'consultant.png',
+                            'feasibility.svg',
                             index == 2
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
@@ -236,7 +236,8 @@ class _HomePageState extends State<HomePage> {
           ),
           Text(
             title,
-            style: TextStyle(color: color, fontSize: 12.0),
+            maxLines: 1,
+            style: TextStyle(color: color, fontSize: 10.0),
           )
         ],
       ),

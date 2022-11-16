@@ -211,8 +211,10 @@ class AppRoutes {
           );
         });
       case AppConstant.pageLoginRoute:
-        return MaterialPageRoute(builder: (context) {
-          return BlocProvider<LoginCubit>(
+        return
+          MaterialPageRoute(builder: (context) {
+          return
+            BlocProvider<LoginCubit>(
             create: (context) {
               LoginCubit cubit = LoginCubit();
               return cubit;

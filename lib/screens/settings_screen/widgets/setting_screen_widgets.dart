@@ -98,39 +98,40 @@ class SettingWidgets {
         iconName = 'edit_profile.svg';
         break;
       case 3:
-        iconName = 'control_service.svg';
+        color = AppColors.red;
+        iconName = 'profile.svg';
         break;
       case 4:
+        iconName = 'control_service.svg';
+        break;
+      case 5:
         color=AppColors.black;
         iconName = 'wallet2.svg';
         break;
 
-      case 5:
+      case 6:
         iconName = 'terms.svg';
         break;
-      case 6:
+      case 7:
         iconName = 'privacy.svg';
         break;
-      case 7:
+      case 8:
         iconName = 'info.svg';
         break;
-      case 8:
+      case 9:
         iconName = 'contact_us.svg';
         break;
-      case 9:
+      case 10:
         iconName = 'rate.svg';
         break;
-      case 10:
-        iconName = 'share.svg';
-        break;
       case 11:
-        color = AppColors.red;
-        iconName = 'logout.svg';
+        iconName = 'share.svg';
         break;
       case 12:
         color = AppColors.red;
-        iconName = 'profile.svg';
+        iconName = 'logout.svg';
         break;
+
     }
     return AppWidget.svg(iconName, color, 24.0, 24.0);
   }

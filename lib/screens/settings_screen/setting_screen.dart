@@ -10,6 +10,8 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 
 import '../../models/setting_model.dart';
 import '../provider/navigation_bottom/cubit/navigator_bottom_cubit.dart';
@@ -24,9 +26,13 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   SettingModel? settingModel;
+   PackageInfo? packageInfo ;
+
+  bool should=false;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.white,
@@ -95,7 +101,7 @@ class _SettingPageState extends State<SettingPage> {
       children: List.generate(count, (index) {
         return SettingWidgets().buildListItem(
             context: context,
-            index: count == 13 ? index : (index >= 1 ? index + 4 : index),
+            index: count == 13 ? index : (index >= 1 ? index + 5 : index),
             onTaped: _onTaped);
       }),
     );
@@ -123,7 +129,8 @@ class _SettingPageState extends State<SettingPage> {
     else if (index == 2) {
       Navigator.of(context).pushNamed(AppConstant.pageInvestorSignUpRoleRoute,
           arguments: context.read<SettingCubit>().model.user);
-    } else if (index == 3) {
+    }
+    else if (index == 3) {
       Navigator.of(context).pushNamed(AppConstant.pageUserProfileRoute);
 
     } else if (index == 4) {
@@ -172,7 +179,7 @@ class _SettingPageState extends State<SettingPage> {
       Navigator.of(context).pushNamed(AppConstant.pageContactUsRoute);
 
     } else if (index == 10) {
-
+rateApp();
     } else if (index == 11) {
       shareApp();
     }
@@ -183,13 +190,64 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void shareApp() async {
+
     String url = '';
+    String packgename=packageInfo!.packageName;
 
     if (Platform.isAndroid) {
-      url = 'https://play.google.com/store/apps/details?id=';
+
+    //  print("Dldlldld${packageInfo.packageName}");
+      url = "https://play.google.com/store/apps/details?id=${packgename}";
     } else if (Platform.isIOS) {
-      url = 'https://apps.apple.com/us/app/';
+      url = 'https://apps.apple.com/us/app/${packgename}';
     }
-    FlutterShare.share(title: "Ezdihar", linkUrl: url);
+   await FlutterShare.share(title: "Ezdihar", linkUrl: url);
+  }
+
+  Future<void> rateApp() async {
+
+    RateMyApp rateMyApp = RateMyApp(
+      preferencesPrefix: 'rateMyApp_',
+      minDays: 0,
+      minLaunches: 10,
+      remindDays: 0,
+      remindLaunches: 10,
+
+    );
+
+   await rateMyApp.init().then((value) async =>
+       {if(rateMyApp.shouldOpenDialog) {
+      rateMyApp.showRateDialog(
+
+        context,
+        title: 'Rate this app',
+        message: 'If you like this app, please take a little bit of your time to review it !\nIt really helps us and it shouldn\'t take you more than one minute.',
+        rateButton: 'RATE',
+        noButton: 'NO THANKS',
+        laterButton: 'MAYBE LATER',
+      )
+    }
+    else{
+          should=  (await rateMyApp.isNativeReviewDialogSupported)!,
+      if(should){
+      await rateMyApp.launchNativeReviewDialog()}
+      else{
+        rateMyApp.launchStore()
+      }
+   // print("ddkdkkdkdkjfj")
+    }});
+
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+   setuppackage();
+  }
+
+  Future<void> setuppackage() async {
+  packageInfo=   await PackageInfo.fromPlatform();
+
   }
 }

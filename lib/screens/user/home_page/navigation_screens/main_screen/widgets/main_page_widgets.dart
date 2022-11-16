@@ -120,21 +120,17 @@ class MainPageWidgets {
                       InkWell(
                         onTap: () {
                           cubit.getUserData().then((value) {
-                            // if (value!.user.isLoggedIn) {
-                            //   model.isLicked = !model.isLicked;
-                            //   if (model.isLicked) {
-                            //     model.likesCount = model.likesCount + 1;
-                            //     animationController.forward();
-                            //   } else {
-                            //     model.likesCount = model.likesCount - 1;
-                            //
-                            //     animationController.reverse();
-                            //   }
-                            //
-                            //   favourite(index, model);
-                            // } else {
-                            //   cubit.loginFirst();
-                            // }
+                            if (value!.user.isLoggedIn) {
+                              if(model.action_user.contains("unlove")){
+                              cubit.love_report_follow(index, model, "love");}
+
+                              else{
+                                cubit.love_report_follow(index, model, "unlove");}
+                            }
+
+                            else {
+                              cubit.loginFirst();
+                            }
                           });
                         },
                         child: SizedBox(
@@ -230,8 +226,8 @@ class MainPageWidgets {
             child:
             InkWell(
               onTap: () {
-                favourite();
-                //addRemoveFavorite(index, model);
+              //  favourite();
+               addRemoveFavorite(index, model,context);
               },
               child: SizedBox(
                 child: AppWidget.svg(
@@ -701,4 +697,18 @@ class MainPageWidgets {
           },
         ));
   }
+  void addRemoveFavorite(int index, ProjectModel model,BuildContext context) {
+    MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
+
+    String type;
+    if(model.action_user.contains("unlove")){
+      type=AppConstant.actionLove;
+    }
+    else{
+      type=AppConstant.actionunLove;
+    }
+    cubit.love_report_follow(index, model, type);
+
+  }
+
 }

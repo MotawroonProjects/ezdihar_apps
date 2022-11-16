@@ -124,6 +124,7 @@ class MainPageCubit extends Cubit<MainPageState> {
         StatusResponse response =
             await api.love_follow_report(value!.access_token, model.id, type);
         if (response.code == 200) {
+          model.action_user=type;
           updateProject(post_index, model);
         } else {}
       });
@@ -150,7 +151,7 @@ class MainPageCubit extends Cubit<MainPageState> {
   }
 
   void updateProject(int index, ProjectModel model) {
-  //  print('data=>${model.isFollowed}');
+    print('data=>${model.action_user}');
     projects[index] = model;
     emit(OnDataSuccess(projects));
   }

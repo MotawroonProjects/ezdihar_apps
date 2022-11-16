@@ -103,6 +103,7 @@ class LoginCubit extends Cubit<LoginState> {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId!, smsCode: smsCode);
     await _mAuth.signInWithCredential(credential).then((value) {
+
       print('LoginSuccess');
       stopTimer();
     }).catchError((error) {

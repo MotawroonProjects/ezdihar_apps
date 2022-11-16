@@ -141,7 +141,8 @@ class _MainPageState extends State<MainPage>
                 ),
               ),
             );
-          } else if (state is OnError) {
+          }
+          else if (state is OnError) {
             return Expanded(
               child: Center(
                 child: InkWell(
@@ -165,7 +166,8 @@ class _MainPageState extends State<MainPage>
                 ),
               ),
             );
-          } else {
+          }
+          else {
             List<ProjectModel> list = cubit.projects;
 
             if (list.length > 0) {
