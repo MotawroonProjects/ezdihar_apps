@@ -8,17 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserRolePage extends StatefulWidget {
-  LoginModel loginModel;
- UserRolePage({Key? key, required this.loginModel}) : super(key: key);
+
+ UserRolePage({Key? key}) : super(key: key);
 
   @override
-  State<UserRolePage> createState() => _UserRolePageState(loginModel);
+  State<UserRolePage> createState() => _UserRolePageState();
 }
 
 class _UserRolePageState extends State<UserRolePage> {
-  LoginModel loginModel;
 
-  _UserRolePageState(this.loginModel);
+  _UserRolePageState();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +131,8 @@ class _UserRolePageState extends State<UserRolePage> {
                       ? () {
                           UserRoleCubit cubit =
                               BlocProvider.of<UserRoleCubit>(context);
-                          navigateToSignUp(role: cubit.role);
+navigatetologin(cubit);
+                    // navigateToSignUp(role: cubit.role);
                         }
                       : null,
                   height: 56.0,
@@ -221,22 +221,12 @@ class _UserRolePageState extends State<UserRolePage> {
     );
   }
 
-  navigateToSignUp({required String role}) async {
-    if (role == AppConstant.role_user) {
-      var result = await Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute,arguments: loginModel);
-      if(result!=null){
-        Navigator.pop(context,true);
-      }
-    } else if (role == AppConstant.role_investor) {
-      var result = await Navigator.pushNamed(context, AppConstant.pageInvestorSignUpRoleRoute,arguments: loginModel);
-      if(result!=null){
-        Navigator.pop(context,true);
-      }
-    } else if (role == AppConstant.role_consultant) {
-      var result = await Navigator.pushNamed(context, AppConstant.pageConsultantSignUpRoleRoute);
-      if(result!=null){
-        Navigator.pop(context,true);
-      }
+
+  Future<void> navigatetologin(UserRoleCubit cubit) async {
+
+    var result = await Navigator.pushNamed(context, AppConstant.pageLoginRoute,arguments: cubit.role);
+    if(result!=null){
+      Navigator.pop(context,true);
     }
   }
 }

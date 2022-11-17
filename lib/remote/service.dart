@@ -169,10 +169,10 @@ print("dlldldldl${response.toString()}");
     }
   }
 
-  Future<UserDataModel> login(LoginModel loginModel) async {
+  Future<UserDataModel> login(LoginModel loginModel,String role) async {
     try {
       var fields = FormData.fromMap(
-          {'phone_code': loginModel.phone_code, 'phone': loginModel.phone});
+          {'phone_code': loginModel.phone_code, 'phone': loginModel.phone,'user_type':role});
 
       Response response = await dio.post('api/auth/login', data: fields);
       print(response.data);

@@ -1,24 +1,29 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:ezdihar_apps/colors/colors.dart';
-import 'package:ezdihar_apps/constants/app_constant.dart';
-import 'package:ezdihar_apps/models/country_login.dart';
-import 'package:ezdihar_apps/models/login_model.dart';
-import 'package:ezdihar_apps/models/user_model.dart';
-import 'package:ezdihar_apps/screens/auth_screens/login_screen/cubit/login_cubit.dart';
-import 'package:ezdihar_apps/widgets/app_widgets.dart';
+
+import 'package:easy_localization/easy_localization.dart'as lan;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
+import '../../../colors/colors.dart';
+import '../../../constants/app_constant.dart';
+import '../../../models/country_login.dart';
+import '../../../widgets/app_widgets.dart';
+import 'cubit/login_cubit.dart';
+
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key, required this.role}) : super(key: key);
+  String role;
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState(role);
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String role;
+
+  _LoginPageState(this.role);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,16 +50,16 @@ class _LoginPageState extends State<LoginPage> {
     double height = MediaQuery.of(context).size.height;
     double spaceHeight = 0.0;
 
-
     return BlocListener<LoginCubit, LoginState>(listener: (context, state) {
       print("Status=>${state}");
-      if(state is OnSignUp){
-        navigateToUserScreen(state.loginModel);
-      }else if(state is OnLoginSuccess){
+      if (state is OnSignUp) {
+        navigateToSignUp(role: role, cubit: cubit);
+      } else if (state is OnLoginSuccess) {
         print("sssss");
-        if(state.userModel.user.userType=='freelancer'){
-          Navigator.of(context).pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
-        }else{
+        if (role == AppConstant.role_investor) {
+          Navigator.of(context)
+              .pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
+        } else {
           Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute);
         }
       }
@@ -79,14 +84,12 @@ class _LoginPageState extends State<LoginPage> {
                         isValid = false;
                       } else if (state is OnLoginVaild) {
                         isValid = true;
-                      }else if (state is OnError){
-
-                      }
+                      } else if (state is OnError) {}
                       return MaterialButton(
                         onPressed: isValid
                             ? () {
-                               // cubit.login(context);
-                                showConfirmCodeDialog();
+                                 cubit.login(context,role);
+                             //   showConfirmCodeDialog();
 
                                 //Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
                               }
@@ -186,6 +189,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
+        cubit.role=role;
         Country country = cubit.selectedCountry;
         if (state is OnCountryValueChanged) {
           country = state.country;
@@ -276,9 +280,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   showConfirmCodeDialog() {
+    String lang = lan.EasyLocalization.of(context)!.locale.languageCode;
+
     TextEditingController controller = TextEditingController();
     LoginCubit cubit = BlocProvider.of<LoginCubit>(context);
-    cubit.sendSmsCode();
+    cubit.sendSmsCode(context);
     double height = MediaQuery.of(context).size.height * .5;
     showDialog(
         context: context,
@@ -303,7 +309,11 @@ class _LoginPageState extends State<LoginPage> {
                       height: 8.0,
                     ),
                     Text(
-                      '${cubit.loginModel.phone_code + " " + cubit.loginModel.phone}',
+                      lang.contains("en")?
+                      '${cubit.loginModel.phone_code + " " + cubit.loginModel.phone}':
+                      '${cubit.loginModel.phone + " " + cubit.loginModel.phone_code}',
+
+                      textAlign: TextAlign.left,
                       style: TextStyle(color: AppColors.black, fontSize: 14.0),
                     ),
                     SizedBox(
@@ -324,19 +334,28 @@ class _LoginPageState extends State<LoginPage> {
                           smsCode = state.smsCode;
                           controller.text = smsCode;
                         }
-                        return PinCodeTextField(
+                        return
+                         Directionality(
+
+
+                          textDirection: TextDirection.ltr,
+                          child: PinCodeTextField(
                           controller: controller,
                           appContext: context,
                           length: 6,
+
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
                           ],
+
+
                           pinTheme: PinTheme(
                               activeColor: AppColors.colorPrimary,
                               inactiveColor: AppColors.grey4,
                               fieldWidth: 28,
                               fieldHeight: 28,
+
                               selectedColor: AppColors.colorPrimary),
                           onCompleted: (data) {
                             cubit.updateCanVerifySmsCode(data);
@@ -346,7 +365,7 @@ class _LoginPageState extends State<LoginPage> {
                               cubit.updateCanVerifySmsCode('');
                             }
                           },
-                        );
+                          )   );
                       },
                     ),
                     const SizedBox(
@@ -367,7 +386,9 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialButton(
                               onPressed: mySmsCode.isNotEmpty
                                   ? () {
-                                      cubit.verifySmsCode(cubit.mySmsCode);
+
+                                      cubit.verifySmsCode(
+                                          cubit.mySmsCode, context);
                                     }
                                   : null,
                               disabledColor: AppColors.grey4,
@@ -385,7 +406,7 @@ class _LoginPageState extends State<LoginPage> {
                             InkWell(
                               onTap: time.isEmpty
                                   ? () {
-                                      cubit.sendSmsCode();
+                                      cubit.sendSmsCode(context);
                                     }
                                   : null,
                               child: Text(
@@ -409,10 +430,27 @@ class _LoginPageState extends State<LoginPage> {
         });
   }
 
-  void navigateToUserScreen(LoginModel loginModel) async {
-    var result = await Navigator.pushNamed(context, AppConstant.pageUserRoleRoute,arguments: loginModel);
-    if(result!=null){
-      Navigator.pop(context,true);
+  navigateToSignUp({required String role, required LoginCubit cubit}) async {
+    if (role == AppConstant.role_user) {
+      var result = await Navigator.pushNamed(
+          context, AppConstant.pageUserSignUpRoleRoute,
+          arguments: cubit.loginModel);
+      if (result != null) {
+        Navigator.pop(context, true);
+      }
+    } else if (role == AppConstant.role_investor) {
+      var result = await Navigator.pushNamed(
+          context, AppConstant.pageInvestorSignUpRoleRoute,
+          arguments: cubit.loginModel);
+      if (result != null) {
+        Navigator.pop(context, true);
+      }
+    } else if (role == AppConstant.role_consultant) {
+      var result = await Navigator.pushNamed(
+          context, AppConstant.pageConsultantSignUpRoleRoute);
+      if (result != null) {
+        Navigator.pop(context, true);
+      }
     }
   }
 }

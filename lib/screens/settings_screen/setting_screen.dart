@@ -52,8 +52,9 @@ class _SettingPageState extends State<SettingPage> {
       body: BlocListener<SettingCubit, SettingState>(
         listener: (context, state) {
           if (state is OnLogOutSuccess) {
+            Preferences.instance.clearUserData();
             Navigator.of(context)
-                .pushReplacementNamed(AppConstant.pageLoginRoute);
+                .pushNamedAndRemoveUntil(AppConstant.pageUserRoleRoute,ModalRoute.withName(AppConstant.pageSplashRoute));
           }
         },
         child: Container(
