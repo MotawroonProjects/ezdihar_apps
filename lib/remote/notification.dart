@@ -28,13 +28,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/message_model.dart';
+import 'notificationlisten.dart';
 
-
-class PushNotificationService{
+class PushNotificationService {
   final GlobalKey<NavigatorState> navigatorKey =
-  new GlobalKey<NavigatorState>();
+      new GlobalKey<NavigatorState>();
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   // StreamController<String> streamController = StreamController<String>.broadcast();
 
   late AndroidNotificationChannel channel;
@@ -42,13 +43,13 @@ class PushNotificationService{
   late MessageModel messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
-  final BehaviorSubject<MessageModel> behaviormessage= BehaviorSubject();
-void callbackground(){
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
 
-}
+  void callbackground() {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+
   Future initialise() async {
-
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
@@ -83,7 +84,6 @@ void callbackground(){
       criticalAlert: false,
       provisional: false,
       sound: true,
-
     );
 
     print('User granted permission: ${settings.authorizationStatus}');
@@ -102,20 +102,19 @@ void callbackground(){
 //  showNotification(message);
       checkData(message);
     });
-     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, // Required to display a heads up notification
       badge: true,
       sound: true,
     );
   }
 
-  Future<void> _firebaseMessagingBackgroundHandler (
+  Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
-
     await Firebase.initializeApp();
     print("Handling a background message:");
 
-    if(message.data.isNotEmpty) {
+    if (message.data.isNotEmpty) {
       print("Handling a background message: ${message.data}");
       checkData(message);
     }
@@ -127,23 +126,25 @@ void callbackground(){
         message.data.hashCode,
         message.data['title'],
         message.data['body'],
-
         payload: 'chat',
-
         NotificationDetails(
             android: AndroidNotificationDetails(channel.id, channel.name,
                 channelDescription: channel.description,
                 importance: Importance.max,
-
                 icon: '@mipmap/ic_launcher')));
   }
 
   void checkData(RemoteMessage message) {
     if (message.data['note_type'].toString().contains("chat")) {
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
-      messageDataModel = MessageModel.fromJson(jsonDecode(message.data['data']));
+      messageDataModel =
+          MessageModel.fromJson(jsonDecode(message.data['data']));
+      final notification = LocalNotification("data", message.data['data'] as Map);
+
+      NotificationsBloc.instance.newNotification(notification);
+
       behaviorchat.add(chatModel);
-     // behaviorSubject.add("chat");
+      // behaviorSubject.add("chat");
       behaviormessage.add(messageDataModel);
       print("dldkkdk${messageDataModel.type}");
       // if (ModalRoute.of(context)!
@@ -153,7 +154,7 @@ void callbackground(){
       //   //Navigator.of(context).pop();
       //   // context..addmessage(message.data['data']);
       // } else {
-        showNotification(message);
+      showNotification(message);
       //}
     } else {
       showNotification(message);
@@ -164,20 +165,15 @@ void callbackground(){
     print('notification payload: ${details.payload}');
     if (details.payload!.contains("chat")) {
       behaviorSubject.add("chat");
-     // streamController.add("chat");
-
+      // streamController.add("chat");
 
     }
   }
 
-Future ondidnotification (
+  Future ondidnotification(
       int id, String? title, String? body, String? payload) async {
     print("object");
- //   streamController.add("chat");
+    //   streamController.add("chat");
     behaviorSubject.add(payload!);
-
-
   }
-
-
 }

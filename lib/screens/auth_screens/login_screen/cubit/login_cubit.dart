@@ -36,6 +36,8 @@ class LoginCubit extends Cubit<LoginState> {
   String smsCode = '';
   String mySmsCode = '';
 
+  String role='';
+
   LoginCubit()
       : super(LoginInitial([
           Country('+966', 'saudi_arabia'.tr(), 'saudi_arabia.png'),
@@ -77,7 +79,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(OnCanVerifySmsCode());
   }
 
-  sendSmsCode() {
+  sendSmsCode(BuildContext context) {
     startTimer();
     String phoneNumber = loginModel.phone_code + loginModel.phone;
     _mAuth.verifyPhoneNumber(
@@ -88,7 +90,7 @@ class LoginCubit extends Cubit<LoginState> {
           smsCode = credential.smsCode!;
 
           emit(OnSmsCodeSent(smsCode));
-          verifySmsCode(smsCode);
+          verifySmsCode(smsCode,context);
         },
         verificationFailed: (FirebaseAuthException e) {},
         codeSent: (String verificationId, int? resendToken) {
@@ -99,13 +101,18 @@ class LoginCubit extends Cubit<LoginState> {
         codeAutoRetrievalTimeout: (String verificationId) {});
   }
 
-  verifySmsCode(String smsCode) async {
+  verifySmsCode(String smsCode,BuildContext context) async {
+
+    AppWidget.createProgressDialog(context, 'wait'.tr());
+    print(smsCode);
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId!, smsCode: smsCode);
     await _mAuth.signInWithCredential(credential).then((value) {
-
+     // login(context);
       print('LoginSuccess');
       stopTimer();
+   login(context,role);
+
     }).catchError((error) {
       print('phone auth =>${error.toString()}');
     });
@@ -130,11 +137,17 @@ class LoginCubit extends Cubit<LoginState> {
     timer!.cancel();
   }
 
-  void login(BuildContext context) async {
-    AppWidget.createProgressDialog(context, 'wait'.tr());
+  void login(BuildContext context,String role) async {
+if(role=="user"){
+  role="client";
+}
+else{
+  role="freelancer";
+}
 
     try {
-      UserDataModel response = await api.login(loginModel);
+      UserDataModel response = await api.login(loginModel,role);
+      Navigator.pop(context);
       Navigator.pop(context);
 
       if (response.status.code == 200) {
@@ -143,14 +156,14 @@ class LoginCubit extends Cubit<LoginState> {
         Preferences.instance.setUser(response.userModel).then((value) {
           emit(OnLoginSuccess(response.userModel));
         });
-
-      } else if (response.status.code == 406) {
+      }
+      else if (response.status.code == 406) {
         emit(OnSignUp(loginModel));
       } else {
         print("errorCode=>${response.status.code}");
       }
     } catch (e) {
-      print("error${e.toString()}");
+      print("errorsssss${e.toString()}");
       Navigator.pop(context);
       emit(OnError(e.toString()));
     }

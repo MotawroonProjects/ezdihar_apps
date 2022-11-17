@@ -211,6 +211,7 @@ class AppRoutes {
           );
         });
       case AppConstant.pageLoginRoute:
+        String  role = settings.arguments as String;
         return
           MaterialPageRoute(builder: (context) {
           return
@@ -219,17 +220,18 @@ class AppRoutes {
               LoginCubit cubit = LoginCubit();
               return cubit;
             },
-            child: LoginPage(),
+            child: LoginPage(
+              role:role
+
+            ),
           );
         });
 
       case AppConstant.pageUserRoleRoute:
-        LoginModel loginModel = settings.arguments as LoginModel;
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<UserRoleCubit>(
             create: (context) => UserRoleCubit(),
             child: UserRolePage(
-              loginModel: loginModel,
             ),
           );
         });

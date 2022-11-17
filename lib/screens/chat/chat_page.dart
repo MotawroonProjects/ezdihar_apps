@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bubble/bubble.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -15,6 +16,7 @@ import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
 import '../../preferences/preferences.dart';
 import '../../remote/notification.dart';
+import '../../remote/notificationlisten.dart';
 import 'cubit/chat_cubit.dart';
 
 class ChatPage extends StatefulWidget {
@@ -31,6 +33,8 @@ class _ChatPageState extends State<ChatPage> {
   late ChatCubit cubit;
   ChatModel chatModel;
   String message = "";
+  late Stream<LocalNotification> _notificationsStream;
+
   int user_id = 0;
   late FocusNode focusNode;
 
@@ -135,9 +139,9 @@ class _ChatPageState extends State<ChatPage> {
                         color: AppColors.colorPrimary,
                       ),
                     );
-                  } else if (state is OnDataSuccess||state is First) {
+                  } else if (state is OnDataSuccess || state is First) {
                     // ChatCubit cubit = BlocProvider.of<ChatCubit>(context);
-                  //  print("fileName=>${state.data.length}");
+                    //  print("fileName=>${state.data.length}");
                     if (position < cubit.list.length) {
                       needscroll = true;
                     }
@@ -151,8 +155,7 @@ class _ChatPageState extends State<ChatPage> {
                     print('sssss${cubit.first}');
                     return Container(
                         child: Opacity(
-
-                            opacity: cubit.first?1:0,
+                            opacity: cubit.first ? 1 : 0,
                             child: ListView.builder(
                               keyboardDismissBehavior:
                                   ScrollViewKeyboardDismissBehavior.onDrag,
@@ -495,14 +498,16 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   @override
-void initState()  {
-
+  void initState() {
+    super.initState();
     focusNode = new FocusNode();
 
     // listen to focus changes
     focusNode.addListener(() => scrollToBottom(0));
-
-    super.initState();
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((event) {
+     // cubit.list.add( MessageModel.fromJson(jsonDecode(event.data)));
+      print("dlkdkdjjdjsssss${event}");    });
   }
 
   @override
@@ -511,15 +516,13 @@ void initState()  {
     super.dispose();
   }
 
-
   void listenToNotificationStream() =>
       pushNotificationService!.behaviorSubject.listen((payload) {
         print("D;dldlldl");
-        ChatModel chatModel=pushNotificationService!.behaviorchat.value;
-        if (payload.contains("chat")&&chatModel.id==this.chatModel.id) {
-          needscroll=true;
-       cubit.list.add(pushNotificationService!.behaviormessage.value);
+        ChatModel chatModel = pushNotificationService!.behaviorchat.value;
+        if (payload.contains("chat") && chatModel.id == this.chatModel.id) {
+          needscroll = true;
+          cubit.list.add(pushNotificationService!.behaviormessage.value);
         }
       });
 }
-

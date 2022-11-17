@@ -33,7 +33,7 @@ class _SplashPageState extends State<SplashPage> {
           Future.delayed(const Duration(seconds: 2)).then(
                 (value) =>
             {
-            Navigator.of(context).pushReplacementNamed(AppConstant.pageLoginRoute)          },
+            Navigator.of(context).pushReplacementNamed(AppConstant.pageUserRoleRoute)          },
           );
         }
       },

@@ -39,7 +39,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         backgroundColor: AppColors.white,
         centerTitle: true,
         title: Text(
-         'addpost'.tr(),
+         'addPost'.tr(),
           style: const TextStyle(
               color: AppColors.black,
               fontSize: 16.0,

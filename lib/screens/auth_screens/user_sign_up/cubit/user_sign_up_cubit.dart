@@ -38,6 +38,8 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
   }
 
   updatePhoneCode_Phone(String phone_code, String phone) {
+    print(phone_code);
+    print(":ldldkdk${phone}");
     model.phone_code = phone_code;
     model.phone = phone;
   }
