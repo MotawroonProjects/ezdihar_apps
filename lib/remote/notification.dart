@@ -43,7 +43,7 @@ class PushNotificationService {
   late MessageModel messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
-  final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
+  // final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
 
   void callbackground() {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -136,17 +136,24 @@ class PushNotificationService {
 
   void checkData(RemoteMessage message) {
     if (message.data['note_type'].toString().contains("chat")) {
+    //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
+
+
+
+
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
       messageDataModel =
           MessageModel.fromJson(jsonDecode(message.data['data']));
-      final notification = LocalNotification("data", message.data['data'] as Map);
+      final notification = LocalNotification("data", MessageModel.toJson(messageDataModel));
 
-      NotificationsBloc.instance.newNotification(notification);
 
       behaviorchat.add(chatModel);
       // behaviorSubject.add("chat");
-      behaviormessage.add(messageDataModel);
-      print("dldkkdk${messageDataModel.type}");
+    //  behaviormessage.add(messageDataModel);
+     // print("sslsllslsl${navigatorKey.currentState}");
+      showNotification(message);
+      NotificationsBloc.instance.newNotification(notification);
+    //  print("dldkkdk${messageDataModel.type}");
       // if (ModalRoute.of(context)!
       //     .settings
       //     .name!
@@ -154,7 +161,7 @@ class PushNotificationService {
       //   //Navigator.of(context).pop();
       //   // context..addmessage(message.data['data']);
       // } else {
-      showNotification(message);
+
       //}
     } else {
       showNotification(message);

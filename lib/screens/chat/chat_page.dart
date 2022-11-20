@@ -506,8 +506,10 @@ class _ChatPageState extends State<ChatPage> {
     focusNode.addListener(() => scrollToBottom(0));
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((event) {
-     // cubit.list.add( MessageModel.fromJson(jsonDecode(event.data)));
-      print("dlkdkdjjdjsssss${event}");    });
+      print("dlkdkdjjdjsssss${event.data}");
+      cubit.list.add( MessageModel.fromJson(event.data));
+      cubit.emit(OnDataSuccess(cubit.list));
+         });
   }
 
   @override
@@ -516,13 +518,13 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
-  void listenToNotificationStream() =>
-      pushNotificationService!.behaviorSubject.listen((payload) {
-        print("D;dldlldl");
-        ChatModel chatModel = pushNotificationService!.behaviorchat.value;
-        if (payload.contains("chat") && chatModel.id == this.chatModel.id) {
-          needscroll = true;
-          cubit.list.add(pushNotificationService!.behaviormessage.value);
-        }
-      });
+  // void listenToNotificationStream() =>
+  //     pushNotificationService!.behaviorSubject.listen((payload) {
+  //       print("D;dldlldl");
+  //       ChatModel chatModel = pushNotificationService!.behaviorchat.value;
+  //       if (payload.contains("chat") && chatModel.id == this.chatModel.id) {
+  //         needscroll = true;
+  //         cubit.list.add(pushNotificationService!.behaviormessage.value);
+  //       }
+  //     });
 }

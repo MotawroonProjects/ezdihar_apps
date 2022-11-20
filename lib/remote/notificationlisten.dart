@@ -2,7 +2,7 @@ import 'package:rxdart/rxdart.dart';
 
 class LocalNotification {
   final String type;
-  final Map data;
+  final Map<String,dynamic> data;
 
   LocalNotification(this.type, this.data);
 }
