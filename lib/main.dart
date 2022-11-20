@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
@@ -16,15 +17,21 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dropdown_alert/dropdown_alert.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rxdart/rxdart.dart';
 
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
-  pushNotificationService!.callbackground();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await EasyLocalization.ensureInitialized();
+
+  //await  pushNotificationService!.callbackground();
   //
   //NavigationService().setupLocator();
+
   await pushNotificationService!.initialise();
   await setupLocator();
 
@@ -44,7 +51,10 @@ Future setupLocator() async {
 PushNotificationService? pushNotificationService =
     new PushNotificationService();
 final locator = GetIt.instance;
-
+late ChatModel chatModel;
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+late AndroidNotificationChannel channel;
+final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
 class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -92,6 +102,7 @@ class _MyAppState extends State<MyApp> {
       navigatorKey: locator<NavigationService>().navigationKey,
     );
   }
+
 
   @override
   void initState() {
@@ -142,3 +153,68 @@ class _MyAppState extends State<MyApp> {
 //   }
 //   // showNotification(message);
 // }
+
+Future<void> _firebaseMessagingBackgroundHandler(
+    RemoteMessage message) async {
+
+  await Firebase.initializeApp();
+  print("Handling a background message:");
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  if (message.data.isNotEmpty) {
+    checkData(message);
+
+    print("Handling a background message: ${message.data}");
+  }}
+  void showNotification(RemoteMessage message) {
+    channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      importance: Importance.high,
+    );
+    flutterLocalNotificationsPlugin.show(
+        message.data.hashCode,
+        message.data['title'],
+        message.data['body'],
+        payload: 'chat',
+        NotificationDetails(
+            android: AndroidNotificationDetails(channel.id, channel.name,
+                channelDescription: channel.description,
+                importance: Importance.max,
+                icon: '@mipmap/ic_launcher')));
+  }
+
+  void checkData(RemoteMessage message) {
+    if (message.data['note_type'].toString().contains("chat")) {
+      //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
+
+
+
+
+      chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
+
+
+
+      behaviorchat.add(chatModel);
+      // behaviorSubject.add("chat");
+      //  behaviormessage.add(messageDataModel);
+      // print("sslsllslsl${navigatorKey.currentState}");
+      showNotification(message);
+     // NotificationsBloc.instance.newNotification(notification);
+      //  print("dldkkdk${messageDataModel.type}");
+      // if (ModalRoute.of(context)!
+      //     .settings
+      //     .name!
+      //     .contains(AppConstant.pageChatRoute)) {
+      //   //Navigator.of(context).pop();
+      //   // context..addmessage(message.data['data']);
+      // } else {
+
+      //}
+    } else {
+      showNotification(message);
+    }
+  }
+  // showNotification(message);
+
+

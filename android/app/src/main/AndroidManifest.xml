@@ -56,10 +56,10 @@
             <meta-data
                 android:name="firebase_messaging_auto_init_enabled"
                 android:value="false" />
-            <meta-data
-                android:name="io.flutter.embedding.android.SplashScreenDrawable"
-                android:resource="@mipmap/ic_launcher"
-                />
+<!--            <meta-data-->
+<!--                android:name="io.flutter.embedding.android.SplashScreenDrawable"-->
+<!--                android:resource="@mipmap/ic_launcher"-->
+<!--                />-->
             <meta-data
                 android:name="firebase_analytics_collection_enabled"
                 android:value="false" />
@@ -73,6 +73,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+       <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more. -->
+
+       <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+            notification message. See README(https://goo.gl/6BKBk7) for more. -->
+
        <service
            android:name="com.google.firebase.messaging.FirebaseMessagingService"
            android:exported="false">

@@ -45,7 +45,7 @@ class PushNotificationService {
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
   // final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
 
-  void callbackground() {
+  void callbackground()  {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
