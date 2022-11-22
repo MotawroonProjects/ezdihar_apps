@@ -3,13 +3,14 @@ import 'dart:convert';
 
 import 'package:bubble/bubble.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/models/message_model.dart';
 
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart%20'as gets;
 
 import '../../constants/app_constant.dart';
 import '../../models/chat_model.dart';
@@ -17,6 +18,7 @@ import '../../models/user_model.dart';
 import '../../preferences/preferences.dart';
 import '../../remote/notification.dart';
 import '../../remote/notificationlisten.dart';
+import '../../routes/app_routes.dart';
 import 'cubit/chat_cubit.dart';
 
 class ChatPage extends StatefulWidget {
@@ -55,6 +57,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     _onRefresh();
+    AppRoutes.rout=AppConstant.pageChatRoute;
+    gets.Get.addPage(gets.GetPage(name: AppConstant.pageChatRoute,page: () {
+      throw Exception();
+    }));
+
     print("d;ldkfkf${chatModel.user_id}");
     print("fkfkkfkfkfk${user_id}");
     //   WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
@@ -243,7 +250,7 @@ class _ChatPageState extends State<ChatPage> {
                               height: 8.0,
                             ),
                             Text(
-                              'reload'.tr(),
+                              local.tr( 'reload'),
                               style: TextStyle(
                                   color: AppColors.colorPrimary,
                                   fontSize: 15.0),
@@ -317,7 +324,8 @@ class _ChatPageState extends State<ChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'choose_photo'.tr(),
+                    local.tr('choose_photo'),
+
                     style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -343,7 +351,7 @@ class _ChatPageState extends State<ChatPage> {
                           context: context);
                     },
                     child: Text(
-                      'camera'.tr(),
+                      local.tr('camera'),
                       style: TextStyle(fontSize: 18.0, color: AppColors.black),
                     ),
                   ),
@@ -361,7 +369,7 @@ class _ChatPageState extends State<ChatPage> {
                           context: context);
                     },
                     child: Text(
-                      'gallery'.tr(),
+                      local.tr('gallery'),
                       style: TextStyle(fontSize: 18.0, color: AppColors.black),
                     ),
                   ),
@@ -380,7 +388,7 @@ class _ChatPageState extends State<ChatPage> {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      'cancel'.tr(),
+                      local.tr('cancel'),
                       style: TextStyle(
                           fontSize: 18.0, color: AppColors.colorPrimary),
                     ),
@@ -459,9 +467,9 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _onRefresh() async {
     UserModel model = await Preferences.instance.getUserModel();
     user_id = model.user.id;
-    // setState(() {
-    //   user_id;
-    // });
+    setState(() {
+      user_id;
+    });
   }
 
   void scrollToBottom(int index) {
@@ -515,6 +523,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    AppRoutes.rout="";
     super.dispose();
   }
 
@@ -527,4 +536,5 @@ class _ChatPageState extends State<ChatPage> {
   //         cubit.list.add(pushNotificationService!.behaviormessage.value);
   //       }
   //     });
+
 }

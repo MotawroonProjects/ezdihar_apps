@@ -77,7 +77,6 @@ import '../screens/user/home_page/navigation_screens/user_order_screen/user_orde
 import '../screens/user/home_page/navigation_screens/user_order_screen/user_order_screen/user_order_screen.dart';
 import '../screens/wallet_screen/cubit/wallet_cubit.dart';
 
-
 class AppRoutes {
   static late HomePageCubit homePageCubit;
   static late MainPageCubit mainPageCubit;
@@ -87,8 +86,10 @@ class AppRoutes {
 
   static late UserProfileCubit userProfileCubit;
   static late UserOrderCubit userOrderCubit;
+  static String rout="";
 
   static Route<dynamic>? getRoutes(RouteSettings settings) {
+  rout=settings.name!;
     print('ROUTENAME${settings.name}');
     switch (settings.name) {
       case AppConstant.pageSplashRoute:
@@ -211,19 +212,14 @@ class AppRoutes {
           );
         });
       case AppConstant.pageLoginRoute:
-        String  role = settings.arguments as String;
-        return
-          MaterialPageRoute(builder: (context) {
-          return
-            BlocProvider<LoginCubit>(
+        String role = settings.arguments as String;
+        return MaterialPageRoute(builder: (context) {
+          return BlocProvider<LoginCubit>(
             create: (context) {
               LoginCubit cubit = LoginCubit();
               return cubit;
             },
-            child: LoginPage(
-              role:role
-
-            ),
+            child: LoginPage(role: role),
           );
         });
 
@@ -231,8 +227,7 @@ class AppRoutes {
         return MaterialPageRoute(builder: (context) {
           return BlocProvider<UserRoleCubit>(
             create: (context) => UserRoleCubit(),
-            child: UserRolePage(
-            ),
+            child: UserRolePage(),
           );
         });
       case AppConstant.pageUserSignUpRoleRoute:
@@ -332,8 +327,7 @@ class AppRoutes {
                 ));
       case AppConstant.pageChatRoute:
         ChatModel chatModel = settings.arguments as ChatModel;
-        return
-          MaterialPageRoute(
+        return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ChatCubit(),
                   child: ChatPage(
@@ -342,23 +336,22 @@ class AppRoutes {
                 ));
       case AppConstant.OrdersNewScreenRoute:
         ChatModel chatModel = settings.arguments as ChatModel;
-        return
-          MaterialPageRoute(
+        return MaterialPageRoute(
             builder: (context) => BlocProvider(
-              create: (context) => NewOrdersCubit(),
-              child: OrdersPage(
-                chatModel: chatModel,
-              ),
-            ));
+                  create: (context) => NewOrdersCubit(),
+                  child: OrdersPage(
+                    chatModel: chatModel,
+                  ),
+                ));
       case AppConstant.OrdersDetialsScreenRoute:
         ProviderOrder chatModel = settings.arguments as ProviderOrder;
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
-              create: (context) => OrdersCubit(),
-              child: OrdersDetails(
-              mainOrdersModel: chatModel,
-              ),
-            ));
+                  create: (context) => OrdersCubit(),
+                  child: OrdersDetails(
+                    mainOrdersModel: chatModel,
+                  ),
+                ));
       //Yehiaaaaaaaaaaaaaaaa
       case AppConstant.providerNavigationBottomRoute:
         return MaterialPageRoute(
@@ -450,25 +443,26 @@ class AppRoutes {
             );
           },
         );
-        case AppConstant.serviceRequestScreenRoute:
-          ChatModel chatModel = settings.arguments as ChatModel;
-          return MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                create: (context) => ServiceRequestCubit(),
-                child: ServiceRequestScreen(
-                  chatModel: chatModel,
-                ),
-              ));
+      case AppConstant.serviceRequestScreenRoute:
+        ChatModel chatModel = settings.arguments as ChatModel;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => ServiceRequestCubit(),
+                  child: ServiceRequestScreen(
+                    chatModel: chatModel,
+                  ),
+                ));
 
       case AppConstant.AddReportScreenRoute:
         ProviderOrder providerOrder = settings.arguments as ProviderOrder;
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
-              create: (context) => AddReportCubit(),
-              child: AddReportScreen(
-                model:  providerOrder,
-              ),
-            ));
+                  create: (context) => AddReportCubit(),
+                  child: AddReportScreen(
+                    model: providerOrder,
+                  ),
+                ));
     }
+    return null;
   }
 }

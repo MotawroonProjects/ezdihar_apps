@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -78,7 +79,9 @@ class AppWidget {
       child: Transform.rotate(
           angle: lang == 'ar' ? (3.14) : 0,
           child: InkWell(
-            onTap: () => Navigator.of(context).pop(),
+
+            onTap: () =>{AppRoutes.rout="",
+              Navigator.of(context).pop()},
             child: AppWidget.svg('back_arrow.svg', AppColors.black, 24.0, 24.0),
           )),
     );

@@ -55,6 +55,7 @@ late ChatModel chatModel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 late AndroidNotificationChannel channel;
 final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
+
 class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -66,7 +67,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     //  WidgetsFlutterBinding.ensureInitialized();
-
+    pushNotificationService!.context = context;
     Preferences.instance.getAppSetting().then((value) =>
         {EasyLocalization.of(context)!.setLocale(Locale(value.lang))});
     return MaterialApp(
@@ -103,7 +104,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
   void listenToNotificationStream() =>
       pushNotificationService!.behaviorSubject.listen((payload) {
         print("D;dldlldl");
-        ChatModel chatModel = pushNotificationService!.behaviorchat.value;
+        //  ChatModel chatModel = pushNotificationService!.behaviorchat.value;
         if (payload.contains("chat")) {
           ChatModel chatModel = pushNotificationService!.behaviorchat.value;
           locator<NavigationService>().navigateToReplacement(chatModel);
@@ -154,9 +154,7 @@ class _MyAppState extends State<MyApp> {
 //   // showNotification(message);
 // }
 
-Future<void> _firebaseMessagingBackgroundHandler(
-    RemoteMessage message) async {
-
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message:");
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -165,56 +163,51 @@ Future<void> _firebaseMessagingBackgroundHandler(
     checkData(message);
 
     print("Handling a background message: ${message.data}");
-  }}
-  void showNotification(RemoteMessage message) {
-    channel = const AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      importance: Importance.high,
-    );
-    flutterLocalNotificationsPlugin.show(
-        message.data.hashCode,
-        message.data['title'],
-        message.data['body'],
-        payload: 'chat',
-        NotificationDetails(
-            android: AndroidNotificationDetails(channel.id, channel.name,
-                channelDescription: channel.description,
-                importance: Importance.max,
-                icon: '@mipmap/ic_launcher')));
   }
+}
 
-  void checkData(RemoteMessage message) {
-    if (message.data['note_type'].toString().contains("chat")) {
-      //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
+void showNotification(RemoteMessage message) {
+  channel = const AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    importance: Importance.high,
+  );
+  flutterLocalNotificationsPlugin.show(
+      message.data.hashCode,
+      message.data['title'],
+      message.data['body'],
+      payload: 'chat',
+      NotificationDetails(
+          android: AndroidNotificationDetails(channel.id, channel.name,
+              channelDescription: channel.description,
+              importance: Importance.max,
+              icon: '@mipmap/ic_launcher')));
+}
 
+void checkData(RemoteMessage message) {
+  if (message.data['note_type'].toString().contains("chat")) {
+    //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
 
+    chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
 
+    behaviorchat.add(chatModel);
+    // behaviorSubject.add("chat");
+    //  behaviormessage.add(messageDataModel);
+    // print("sslsllslsl${navigatorKey.currentState}");
+    showNotification(message);
+    // NotificationsBloc.instance.newNotification(notification);
+    //  print("dldkkdk${messageDataModel.type}");
+    // if (ModalRoute.of(context)!
+    //     .settings
+    //     .name!
+    //     .contains(AppConstant.pageChatRoute)) {
+    //   //Navigator.of(context).pop();
+    //   // context..addmessage(message.data['data']);
+    // } else {
 
-      chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
-
-
-
-      behaviorchat.add(chatModel);
-      // behaviorSubject.add("chat");
-      //  behaviormessage.add(messageDataModel);
-      // print("sslsllslsl${navigatorKey.currentState}");
-      showNotification(message);
-     // NotificationsBloc.instance.newNotification(notification);
-      //  print("dldkkdk${messageDataModel.type}");
-      // if (ModalRoute.of(context)!
-      //     .settings
-      //     .name!
-      //     .contains(AppConstant.pageChatRoute)) {
-      //   //Navigator.of(context).pop();
-      //   // context..addmessage(message.data['data']);
-      // } else {
-
-      //}
-    } else {
-      showNotification(message);
-    }
+    //}
+  } else {
+    showNotification(message);
   }
-  // showNotification(message);
-
-
+}
+// showNotification(message);

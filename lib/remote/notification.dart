@@ -25,9 +25,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart%20';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/message_model.dart';
+import '../routes/app_routes.dart';
 import 'notificationlisten.dart';
 
 class PushNotificationService {
@@ -43,9 +45,12 @@ class PushNotificationService {
   late MessageModel messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
+
+  late BuildContext context;
+
   // final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
 
-  void callbackground()  {
+  void callbackground() {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
@@ -136,24 +141,30 @@ class PushNotificationService {
 
   void checkData(RemoteMessage message) {
     if (message.data['note_type'].toString().contains("chat")) {
-    //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
-
-
-
+      //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
 
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
       messageDataModel =
           MessageModel.fromJson(jsonDecode(message.data['data']));
-      final notification = LocalNotification("data", MessageModel.toJson(messageDataModel));
-
+      final notification =
+          LocalNotification("data", MessageModel.toJson(messageDataModel));
 
       behaviorchat.add(chatModel);
       // behaviorSubject.add("chat");
-    //  behaviormessage.add(messageDataModel);
-     // print("sslsllslsl${navigatorKey.currentState}");
-      showNotification(message);
-      NotificationsBloc.instance.newNotification(notification);
-    //  print("dldkkdk${messageDataModel.type}");
+      //  behaviormessage.add(messageDataModel);
+      // print("sslsllslsl${navigatorKey.currentState}");
+      //  var route = ModalRoute.of(context!);
+      //
+      //  if(route!=null){
+      //
+      //  }
+      //print("sssuuuurus${AppRoutes.rout}");
+      if (AppRoutes.rout == AppConstant.pageChatRoute) {
+        NotificationsBloc.instance.newNotification(notification);
+      } else {
+        showNotification(message);
+      }
+      //  print("dldkkdk${messageDataModel.type}");
       // if (ModalRoute.of(context)!
       //     .settings
       //     .name!

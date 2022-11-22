@@ -51,6 +51,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   buildBodySection() {
+
     return BlocProvider(
       create: (context) {
         ConversationPageCubit cubit =  ConversationPageCubit();

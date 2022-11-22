@@ -88,8 +88,8 @@ class _LoginPageState extends State<LoginPage> {
                       return MaterialButton(
                         onPressed: isValid
                             ? () {
-                                 cubit.login(context,role);
-//                                showConfirmCodeDialog();
+                                cubit.login(context,role);
+                                //showConfirmCodeDialog();
 
                                 //Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
                               }

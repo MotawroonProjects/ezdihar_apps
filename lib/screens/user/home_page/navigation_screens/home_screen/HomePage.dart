@@ -190,13 +190,13 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Positioned(
                         child: AppWidget.svg(
-                            "notification.svg", AppColors.color1, 32, 32)),
+                            "notifications.svg", AppColors.color1, 32, 32)),
                     Positioned(
                         child: Container(
                       width: 20,
                       height: 20,
                       decoration: BoxDecoration(
-                          color: AppColors.colorPrimary,
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(10.0)),
                       child: const Align(
                         alignment: Alignment.center,

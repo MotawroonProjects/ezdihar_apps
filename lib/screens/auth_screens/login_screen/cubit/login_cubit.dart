@@ -36,7 +36,7 @@ class LoginCubit extends Cubit<LoginState> {
   String smsCode = '';
   String mySmsCode = '';
 
-  String role='';
+  String role = '';
 
   LoginCubit()
       : super(LoginInitial([
@@ -79,40 +79,56 @@ class LoginCubit extends Cubit<LoginState> {
     emit(OnCanVerifySmsCode());
   }
 
-  sendSmsCode(BuildContext context) {
+  sendSmsCode(BuildContext context) async {
     startTimer();
+    _mAuth.setSettings(forceRecaptchaFlow: true);
     String phoneNumber = loginModel.phone_code + loginModel.phone;
+
     _mAuth.verifyPhoneNumber(
         forceResendingToken: this.resendToken,
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 1),
         verificationCompleted: (PhoneAuthCredential credential) {
           smsCode = credential.smsCode!;
-
+          this.verificationId = credential.verificationId;
+          print("verificationId=>${verificationId}");
           emit(OnSmsCodeSent(smsCode));
-          verifySmsCode(smsCode,context);
+          verifySmsCode(smsCode, context);
         },
-        verificationFailed: (FirebaseAuthException e) {},
+        verificationFailed: (FirebaseAuthException e) {
+          print(",kkkk${e}");
+
+        },
         codeSent: (String verificationId, int? resendToken) {
           this.resendToken = resendToken;
           this.verificationId = verificationId;
           print("verificationId=>${verificationId}");
         },
-        codeAutoRetrievalTimeout: (String verificationId) {});
+        codeAutoRetrievalTimeout: (String verificationId) {
+          this.verificationId=verificationId;
+        },
+
+
+    )
+
+    ;
+
   }
 
-  verifySmsCode(String smsCode,BuildContext context) async {
-
+  verifySmsCode(String smsCode, BuildContext context) async {
     AppWidget.createProgressDialog(context, 'wait'.tr());
     print(smsCode);
+    print(verificationId);
+
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId!, smsCode: smsCode);
     await _mAuth.signInWithCredential(credential).then((value) {
-     // login(context);
+      // login(context);
       print('LoginSuccess');
+      Navigator.pop(context);
+      Navigator.pop(context);
       stopTimer();
-   login(context,role);
-
+      login(context, role);
     }).catchError((error) {
       print('phone auth =>${error.toString()}');
     });
@@ -137,27 +153,28 @@ class LoginCubit extends Cubit<LoginState> {
     timer!.cancel();
   }
 
-  void login(BuildContext context,String role) async {
-if(role=="user"){
-  role="client";
-}
-else{
-  role="freelancer";
-}
+  void login(BuildContext context, String role) async {
+
+    AppWidget.createProgressDialog(context, 'wait'.tr());
+
+    if (role == "user") {
+      role = "client";
+    } else {
+      role = "freelancer";
+    }
 
     try {
-      UserDataModel response = await api.login(loginModel,role);
+      UserDataModel response = await api.login(loginModel, role);
       Navigator.pop(context);
       Navigator.pop(context);
-
+      print("resss${response.status.code}");
       if (response.status.code == 200) {
         print("oooooooooooooooooo");
         response.userModel.user.isLoggedIn = true;
         Preferences.instance.setUser(response.userModel).then((value) {
           emit(OnLoginSuccess(response.userModel));
         });
-      }
-      else if (response.status.code == 406) {
+      } else if (response.status.code == 406) {
         emit(OnSignUp(loginModel));
       } else {
         print("errorCode=>${response.status.code}");

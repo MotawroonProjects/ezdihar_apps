@@ -72,6 +72,8 @@ dependencies {
     implementation "androidx.multidex:multidex:2.0.1"
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
+    implementation 'androidx.browser:browser:1.2.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
 flutter {

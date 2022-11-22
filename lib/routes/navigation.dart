@@ -1,6 +1,7 @@
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 
 import '../models/chat_model.dart';
@@ -18,6 +19,7 @@ class NavigationService {
   }
 
   Future<dynamic> navigateToReplacement(ChatModel chatModel) {
+
     return navigationKey.currentState!.push(MaterialPageRoute(
         builder: (context) => BlocProvider(
               create: (context) => ChatCubit(),
