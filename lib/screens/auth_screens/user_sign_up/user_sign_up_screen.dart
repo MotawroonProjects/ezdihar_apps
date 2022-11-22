@@ -60,7 +60,9 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
 
         } else if (state is OnSignUpSuccess) {
-          Navigator.pop(context, true);
+          Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute);
+
+          //Navigator.pop(context, true);
         }
       },
       child: ListView(
