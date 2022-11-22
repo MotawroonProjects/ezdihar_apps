@@ -89,7 +89,7 @@ class InvestorCubit extends Cubit<InvestorState> {
   }
   updateSelectedCategory(CategoryModel categoryModel) {
     this.categoryModel = categoryModel;
-    model.categoryModel = categoryModel.id;
+    model.categoryModel = categoryModel.id.toString();
     checkData();
     emit(OnCategorySelected(categoryModel));
   }
