@@ -60,8 +60,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
 
         } else if (state is OnSignUpSuccess) {
-          Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute);
-
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppConstant.pageHomeRoute,ModalRoute.withName(AppConstant.pageSplashRoute));
           //Navigator.pop(context, true);
         }
       },
@@ -550,7 +550,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
 
     if (date != null) {
       BlocProvider.of<UserSignUpCubit>(context)
-          .updateBirthDate(date: DateFormat('yyyy-MM-dd').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd','en').format(date));
     }
   }
 

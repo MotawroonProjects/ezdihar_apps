@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                             index == 2
                                 ? AppColors.colorPrimary
                                 : AppColors.grey1,
-                            'consultants'.tr(),
+                            'services'.tr(),
                             2)),
                     Flexible(
                         child: _buildBottomNavigationItem(

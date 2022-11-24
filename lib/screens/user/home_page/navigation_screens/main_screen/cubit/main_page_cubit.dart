@@ -61,7 +61,7 @@ class MainPageCubit extends Cubit<MainPageState> {
   }
 
   void OnDateSelected(DateTime selectedDate) {
-    filterDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    filterDate = DateFormat('yyyy-MM-dd','en').format(selectedDate);
     emit(CalenderOnDateSelected(selectedDate));
   }
 

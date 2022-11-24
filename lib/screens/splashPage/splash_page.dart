@@ -1,8 +1,12 @@
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../colors/colors.dart';
 import 'cubit/splash_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -14,6 +18,10 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      // add your condition if any
+
+      });
     return BlocConsumer<SplashCubit, SplashState>(
       listener: (context, state) {
         if (state is OnUserModelGet) {

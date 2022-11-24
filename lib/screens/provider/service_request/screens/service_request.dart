@@ -210,7 +210,7 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
 
     if (date != null) {
       BlocProvider.of<ServiceRequestCubit>(context)
-          .updateBirthDate(date: DateFormat('yyyy-MM-dd').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd','en').format(date));
     }
   }
 

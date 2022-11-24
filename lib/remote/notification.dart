@@ -26,10 +26,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart%20';
+import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/message_model.dart';
 import '../routes/app_routes.dart';
+import '../routes/navigation.dart';
 import 'notificationlisten.dart';
 
 class PushNotificationService {
@@ -39,28 +41,36 @@ class PushNotificationService {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   // StreamController<String> streamController = StreamController<String>.broadcast();
-
+  final locator = GetIt.instance;
   late AndroidNotificationChannel channel;
-  late ChatModel chatModel;
+   ChatModel? chatModel;
   late MessageModel messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
-
+  RemoteMessage? initialMessage ;
   late BuildContext context;
 
   // final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
 
-  void callbackground() {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  }
+
+
 
   Future initialise() async {
-    channel = const AndroidNotificationChannel(
+    initialMessage= await FirebaseMessaging.instance.getInitialMessage().then((value) {
+      if(value!=null){
+        chatModel = ChatModel.fromJson(jsonDecode(value.data['room']));
+
+
+        locator<NavigationService>().navigateToReplacement(chatModel!);}
+    }
+    );
+      channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
       importance: Importance.high,
     );
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
 
     AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -107,11 +117,14 @@ class PushNotificationService {
 //  showNotification(message);
       checkData(message);
     });
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, // Required to display a heads up notification
       badge: true,
       sound: true,
     );
+
   }
 
   Future<void> _firebaseMessagingBackgroundHandler(
@@ -126,17 +139,25 @@ class PushNotificationService {
     // showNotification(message);
   }
 
-  void showNotification(RemoteMessage message) {
+  Future<void> showNotification(RemoteMessage message) async {
+    //chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
+String paylod=message.data['room']+message.data['note_type'];
+    behaviorchat.add(chatModel!);
     flutterLocalNotificationsPlugin.show(
         message.data.hashCode,
         message.data['title'],
         message.data['body'],
-        payload: 'chat',
+        payload: paylod,
         NotificationDetails(
             android: AndroidNotificationDetails(channel.id, channel.name,
                 channelDescription: channel.description,
                 importance: Importance.max,
                 icon: '@mipmap/ic_launcher')));
+final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+final didNotificationLaunchApp =
+    notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+print("dldldk${didNotificationLaunchApp}");
   }
 
   void checkData(RemoteMessage message) {
@@ -149,7 +170,7 @@ class PushNotificationService {
       final notification =
           LocalNotification("data", MessageModel.toJson(messageDataModel));
 
-      behaviorchat.add(chatModel);
+      behaviorchat.add(chatModel!);
       // behaviorSubject.add("chat");
       //  behaviormessage.add(messageDataModel);
       // print("sslsllslsl${navigatorKey.currentState}");
@@ -182,6 +203,9 @@ class PushNotificationService {
   Future notificationTapBackground(NotificationResponse details) async {
     print('notification payload: ${details.payload}');
     if (details.payload!.contains("chat")) {
+      chatModel = ChatModel.fromJson(jsonDecode(details.payload!.replaceAll("chat", "").replaceAll("room", "")));
+
+      behaviorchat.add(chatModel!);
       behaviorSubject.add("chat");
       // streamController.add("chat");
 
@@ -191,7 +215,18 @@ class PushNotificationService {
   Future ondidnotification(
       int id, String? title, String? body, String? payload) async {
     print("object");
-    //   streamController.add("chat");
-    behaviorSubject.add(payload!);
+    print('notification payload: ${payload}');
+    if (payload!.contains("chat")) {
+      chatModel = ChatModel.fromJson(jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
+
+      behaviorchat.add(chatModel!);
+      behaviorSubject.add("chat");
+      // streamController.add("chat");
+
+    }
+    //   streamControllerstreamController.add("chat");
+    // behaviorchat.add(chatModel!);
+    // behaviorSubject.add(payload!);
+
   }
 }

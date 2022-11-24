@@ -64,7 +64,9 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
             AlertController.show(
                 'warning'.tr(), state.error, TypeAlert.warning);
           } else if (state is OnSignUpSuccess) {
-            Navigator.of(context).pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(AppConstant.providerNavigationBottomRoute,ModalRoute.withName(AppConstant.pageSplashRoute));
+            // Navigator.of(context).pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
 
             // Navigator.pop(context, true);
           }
@@ -541,7 +543,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
 
     if (date != null) {
       BlocProvider.of<InvestorCubit>(context)
-          .updateBirthDate(date: DateFormat('yyyy-MM-dd').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd','en').format(date));
     }
   }
 

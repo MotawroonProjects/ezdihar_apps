@@ -373,7 +373,7 @@ class MainPageWidgets {
         child: BlocBuilder<MainPageCubit, MainPageState>(
           builder: (context, state) {
             if (state is CalenderOnDateSelected) {
-              date = DateFormat('dd-MM-yyyy').format(state.selectedDate);
+              date = DateFormat('dd-MM-yyyy','en').format(state.selectedDate);
             }
             return Container(
               padding: const EdgeInsets.all(16.0),
