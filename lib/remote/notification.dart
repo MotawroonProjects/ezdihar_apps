@@ -30,6 +30,8 @@ import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/message_model.dart';
+import '../models/user_model.dart';
+import '../preferences/preferences.dart';
 import '../routes/app_routes.dart';
 import '../routes/navigation.dart';
 import 'notificationlisten.dart';
@@ -145,7 +147,10 @@ class PushNotificationService {
     //chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
 String paylod=message.data['room']+message.data['note_type'];
     behaviorchat.add(chatModel!);
-    flutterLocalNotificationsPlugin.show(
+UserModel userModel=await Preferences.instance.getUserModel();
+
+if( userModel.user.isLoggedIn) {
+   flutterLocalNotificationsPlugin.show(
         message.data.hashCode,
         message.data['title'],
         message.data['body'],
@@ -154,7 +159,7 @@ String paylod=message.data['room']+message.data['note_type'];
             android: AndroidNotificationDetails(channel.id, channel.name,
                 channelDescription: channel.description,
                 importance: Importance.max,
-                icon: '@mipmap/ic_launcher')));
+                icon: '@mipmap/ic_launcher')));}
 final NotificationAppLaunchDetails? notificationAppLaunchDetails =
     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 final didNotificationLaunchApp =

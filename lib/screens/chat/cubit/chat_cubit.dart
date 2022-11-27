@@ -92,7 +92,7 @@ class ChatCubit extends Cubit<ChatState> {
       if (response.status?.code == 200) {
         list.add(response.data!);
         //   list.add(new MessageModel());
-        print(list.length);
+      //  print(list.length);
         emit(OnDataSuccess(list));
       } else {
         //  Navigator.pop(context);

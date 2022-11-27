@@ -6,6 +6,7 @@ import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
 import 'package:ezdihar_apps/models/Message_data_model.dart';
 import 'package:ezdihar_apps/models/chat_model.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/preferences/preferences.dart';
 import 'package:ezdihar_apps/remote/notification.dart';
 import 'package:ezdihar_apps/routes/app_routes.dart';
@@ -26,21 +27,27 @@ RemoteMessage? initialMessage;
 
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
+  UserModel userModel=await Preferences.instance.getUserModel();
   await Firebase.initializeApp();
+  if( userModel.user.isLoggedIn) {
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    await pushNotificationService!.initialise();
+  }
   await EasyLocalization.ensureInitialized();
 
   //await  pushNotificationService!.callbackground();
   //
   //NavigationService().setupLocator();
 
-  await pushNotificationService!.initialise();
+
   await setupLocator();
 
   runApp(EasyLocalization(
@@ -224,6 +231,9 @@ void showNotification(RemoteMessage message) async {
     'High Importance Notifications', // title
     importance: Importance.high,
   );
+  UserModel userModel=await Preferences.instance.getUserModel();
+
+  if( userModel.user.isLoggedIn) {
   await flutterLocalNotificationsPlugin.show(
       message.data.hashCode,
       message.data['title'],
@@ -233,7 +243,7 @@ void showNotification(RemoteMessage message) async {
           android: AndroidNotificationDetails(channel.id, channel.name,
               channelDescription: channel.description,
               importance: Importance.max,
-              icon: '@mipmap/ic_launcher')));
+              icon: '@mipmap/ic_launcher')));}
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails =
 //  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 }
