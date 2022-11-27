@@ -185,6 +185,8 @@
   "serviceRequest": "تقديم طلب خدمه",
   "delivery_date": "تاريخ التسليم",
   "service_type": "نوع الخدمه",
-  "customer_name": "اسم العميل"
-
+  "customer_name": "اسم العميل",
+"wallet_not_enough": "رصيد المحفظه لا يكفى",
+  "Add Request":"اضافة طلب",
+  "Show Request":"شاهد الطلبات"
 }

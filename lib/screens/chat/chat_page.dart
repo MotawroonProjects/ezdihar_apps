@@ -95,7 +95,10 @@ class _ChatPageState extends State<ChatPage> {
             child: Center(
                 child: Row(
               children: [
+                SizedBox(width: 10.0),
+
                 AppWidget.buildBackArrow(context: context),
+
                 Container(
                     child: InkWell(
                         onTap: () {
@@ -115,8 +118,8 @@ class _ChatPageState extends State<ChatPage> {
                             SizedBox(width: 2.0),
                             Text(
                               chatModel.user_id != user_id
-                                  ? "Add Request"
-                                  : "Show Request",
+                                  ? local.tr("Add Request")
+                                  : local.tr("Show Request"),
                               style: TextStyle(
                                 fontSize: 10.0,
                               ),

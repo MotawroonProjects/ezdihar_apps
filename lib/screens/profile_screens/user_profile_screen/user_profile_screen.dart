@@ -193,45 +193,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                     )),
               ],
             ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '3,9852',
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.colorPrimary),
-                ),
-                SizedBox(
-                  width: 8.0,
-                ),
-                Text(
-                  'followers'.tr(),
-                  style: TextStyle(fontSize: 12.0, color: AppColors.black),
-                ),
-                SizedBox(
-                  width: 24.0,
-                ),
-                Text(
-                  '480',
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.colorPrimary),
-                ),
-                SizedBox(
-                  width: 8.0,
-                ),
-                Text(
-                  'following_users'.tr(),
-                  style: TextStyle(fontSize: 12.0, color: AppColors.black),
-                ),
-              ],
-            ),
+        
+
             SizedBox(height: 16),
           ],
         ),

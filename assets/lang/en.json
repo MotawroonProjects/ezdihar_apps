@@ -186,6 +186,9 @@
   "serviceRequest": "Service Request",
   "delivery_date": "Delivery Date",
   "service_type": "Service Type",
-  "customer_name": "Customer Name"
+  "customer_name": "Customer Name",
+  "wallet_not_enough": "Wallet not Enough",
+  "Add Request":"Add Request",
+  "Show Request":"Show Request"
 
 }
