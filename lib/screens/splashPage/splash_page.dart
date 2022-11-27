@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/routes/app_routes.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../colors/colors.dart';
+import '../../models/chat_model.dart';
 import 'cubit/splash_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -18,30 +24,45 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      // add your condition if any
-
-      });
     return BlocConsumer<SplashCubit, SplashState>(
       listener: (context, state) {
         if (state is OnUserModelGet) {
           print("state.userModel.user.userType");
           print(state.userModel.user.userType);
           Future.delayed(const Duration(seconds: 2)).then(
-                (value) =>
-            {
-              if(state.userModel.user.userType=='freelancer'){
-                Navigator.of(context).pushReplacementNamed(AppConstant.providerNavigationBottomRoute)
-              }else{
-                Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute)
+            (value) => {
+              if(AppRoutes.chatmodel != null){
+                Navigator.of(context).pushNamed(AppConstant.pageChatRoute,arguments: AppRoutes.chatmodel).then((value) =>
+                {   if (state.userModel.user.userType == 'freelancer')
+                  {
+                    Navigator.of(context).pushReplacementNamed(
+                        AppConstant.providerNavigationBottomRoute)
+                  }
+                else
+                  {
+                    Navigator.of(context)
+                        .pushReplacementNamed(AppConstant.pageHomeRoute)
+                  }})
               }
-            },
+              else{
+              if (state.userModel.user.userType == 'freelancer')
+                {
+                  Navigator.of(context).pushReplacementNamed(
+                      AppConstant.providerNavigationBottomRoute)
+                }
+              else
+                {
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppConstant.pageHomeRoute)
+                }
+            }},
           );
         } else if (state is NoUserFound) {
           Future.delayed(const Duration(seconds: 2)).then(
-                (value) =>
-            {
-            Navigator.of(context).pushReplacementNamed(AppConstant.pageUserRoleRoute)          },
+            (value) => {
+              Navigator.of(context)
+                  .pushReplacementNamed(AppConstant.pageUserRoleRoute)
+            },
           );
         }
       },
@@ -51,14 +72,14 @@ class _SplashPageState extends State<SplashPage> {
             color: AppColors.grey2,
             child: Center(
                 child: Container(
-                  width: 225.0,
-                  height: 80.0,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              '${AppConstant.localImagePath}logo.png'),
-                          fit: BoxFit.cover)),
-                )),
+              width: 225.0,
+              height: 80.0,
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image:
+                          AssetImage('${AppConstant.localImagePath}logo.png'),
+                      fit: BoxFit.cover)),
+            )),
           ),
         );
       },
@@ -74,5 +95,6 @@ class _SplashPageState extends State<SplashPage> {
     //     Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute)
     //   },
     // );
+
   }
 }

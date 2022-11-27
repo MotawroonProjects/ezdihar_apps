@@ -10,7 +10,7 @@ import 'package:ezdihar_apps/models/message_model.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart%20'as gets;
+import 'package:get/get.dart%20' as gets;
 
 import '../../constants/app_constant.dart';
 import '../../models/chat_model.dart';
@@ -57,10 +57,13 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     _onRefresh();
-    AppRoutes.rout=AppConstant.pageChatRoute;
-    gets.Get.addPage(gets.GetPage(name: AppConstant.pageChatRoute,page: () {
-      throw Exception();
-    }));
+    AppRoutes.rout = AppConstant.pageChatRoute;
+    AppRoutes.chatmodel = null;
+    gets.Get.addPage(gets.GetPage(
+        name: AppConstant.pageChatRoute,
+        page: () {
+          throw Exception();
+        }));
 
     print("d;ldkfkf${chatModel.user_id}");
     print("fkfkkfkfkfk${user_id}");
@@ -250,7 +253,7 @@ class _ChatPageState extends State<ChatPage> {
                               height: 8.0,
                             ),
                             Text(
-                              local.tr( 'reload'),
+                              local.tr('reload'),
                               style: TextStyle(
                                   color: AppColors.colorPrimary,
                                   fontSize: 15.0),
@@ -325,7 +328,6 @@ class _ChatPageState extends State<ChatPage> {
                 children: [
                   Text(
                     local.tr('choose_photo'),
-
                     style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -515,26 +517,26 @@ class _ChatPageState extends State<ChatPage> {
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((event) {
       print("dlkdkdjjdjsssss${event.data}");
-      cubit.list.add( MessageModel.fromJson(event.data));
+      cubit.list.add(MessageModel.fromJson(event.data));
       cubit.emit(OnDataSuccess(cubit.list));
-         });
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
-    AppRoutes.rout="";
+    AppRoutes.rout = "";
     super.dispose();
   }
 
-  // void listenToNotificationStream() =>
-  //     pushNotificationService!.behaviorSubject.listen((payload) {
-  //       print("D;dldlldl");
-  //       ChatModel chatModel = pushNotificationService!.behaviorchat.value;
-  //       if (payload.contains("chat") && chatModel.id == this.chatModel.id) {
-  //         needscroll = true;
-  //         cubit.list.add(pushNotificationService!.behaviormessage.value);
-  //       }
-  //     });
+// void listenToNotificationStream() =>
+//     pushNotificationService!.behaviorSubject.listen((payload) {
+//       print("D;dldlldl");
+//       ChatModel chatModel = pushNotificationService!.behaviorchat.value;
+//       if (payload.contains("chat") && chatModel.id == this.chatModel.id) {
+//         needscroll = true;
+//         cubit.list.add(pushNotificationService!.behaviormessage.value);
+//       }
+//     });
 
 }

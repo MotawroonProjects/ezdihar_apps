@@ -18,21 +18,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dropdown_alert/dropdown_alert.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
-RemoteMessage? initialMessage ;
+
+RemoteMessage? initialMessage;
+
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
- initialMessage= await FirebaseMessaging.instance.getInitialMessage().then((value) {
-   if(value!=null){
-     chatModel = ChatModel.fromJson(jsonDecode(value.data['room']));
-
-
-     locator<NavigationService>().navigateToReplacement(chatModel);}
- }
-   );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -48,7 +42,6 @@ Future<void> main() async {
 
   await pushNotificationService!.initialise();
   await setupLocator();
-
 
   runApp(EasyLocalization(
       supportedLocales: const [Locale('ar', ''), Locale('en', '')],
@@ -67,7 +60,9 @@ PushNotificationService? pushNotificationService =
     new PushNotificationService();
 final locator = GetIt.instance;
 late ChatModel chatModel;
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 late AndroidNotificationChannel channel;
 final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
 
@@ -86,7 +81,6 @@ class _MyAppState extends State<MyApp> {
     pushNotificationService!.context = context;
     Preferences.instance.getAppSetting().then((value) =>
         {EasyLocalization.of(context)!.setLocale(Locale(value.lang))});
-
 
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,
@@ -123,12 +117,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
+    _runWhileAppIsTerminated();
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Got a message whilstt in the foreground!');
+      Fluttertoast.showToast(
+          msg: message.data.toString() + "lkkfkfk", // message
+          toastLength: Toast.LENGTH_SHORT, // length
+          gravity: ToastGravity.BOTTOM, // location
+          timeInSecForIosWeb: 1 // duration
+          );
 
+//  showNotification(message);
+      //   checkData(message);
+    });
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
-
 
     listenToNotificationStream();
 
@@ -155,10 +160,9 @@ class _MyAppState extends State<MyApp> {
         print(payload);
         //  ChatModel chatModel = pushNotificationService!.behaviorchat.value;
         if (payload.contains("chat")) {
-          if(pushNotificationService!.behaviorchat.hasValue){
+          if (pushNotificationService!.behaviorchat.hasValue) {
             chatModel = pushNotificationService!.behaviorchat.value;
             locator<NavigationService>().navigateToReplacement(chatModel);
-
           }
           // Navigator.of(context).push(
           //     MaterialPageRoute(
@@ -185,22 +189,23 @@ class _MyAppState extends State<MyApp> {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message:");
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+      AndroidInitializationSettings('@mipmap/ic_launcher');
   final DarwinInitializationSettings initializationSettingsDarwin =
-  DarwinInitializationSettings(
-      onDidReceiveLocalNotification: await ondidnotification);
+      DarwinInitializationSettings(
+          onDidReceiveLocalNotification: await ondidnotification);
   final LinuxInitializationSettings initializationSettingsLinux =
-  LinuxInitializationSettings(defaultActionName: 'Open notification');
-  final InitializationSettings initializationSettings =
-  InitializationSettings(
+      LinuxInitializationSettings(defaultActionName: 'Open notification');
+  final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
       linux: initializationSettingsLinux);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onDidReceiveNotificationResponse: notificationTapBackground);
+  flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: notificationTapBackground,
+  );
+
   if (message.data.isNotEmpty) {
     checkData(message);
 
@@ -208,34 +213,29 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-void showNotification(RemoteMessage message) async{
+void showNotification(RemoteMessage message) async {
   chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
 
   behaviorchat.add(chatModel);
-  String paylod=message.data['room']+message.data['note_type'];
+  String paylod = message.data['room'] + message.data['note_type'];
 
   channel = const AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
     importance: Importance.high,
   );
-await  flutterLocalNotificationsPlugin.show(
+  await flutterLocalNotificationsPlugin.show(
       message.data.hashCode,
       message.data['title'],
       message.data['body'],
       payload: paylod,
-
-
       NotificationDetails(
-          android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
+          android: AndroidNotificationDetails(channel.id, channel.name,
               channelDescription: channel.description,
               importance: Importance.max,
               icon: '@mipmap/ic_launcher')));
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-
+  // final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+//  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 }
 
 void checkData(RemoteMessage message) {
@@ -244,7 +244,7 @@ void checkData(RemoteMessage message) {
 
     chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
 
-   behaviorchat.add(chatModel);
+    behaviorchat.add(chatModel);
     // behaviorSubject.add("chat");
     //  behaviormessage.add(messageDataModel);
     // print("sslsllslsl${navigatorKey.currentState}");
@@ -263,17 +263,16 @@ void checkData(RemoteMessage message) {
   } else {
     showNotification(message);
   }
-
-
 }
+
 // showNotification(message);
 Future ondidnotification(
     int id, String? title, String? body, String? payload) async {
   print("object");
   if (payload!.contains("chat")) {
     // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
-    chatModel = ChatModel.fromJson(jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
-
+    chatModel = ChatModel.fromJson(
+        jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
 
     locator<NavigationService>().navigateToReplacement(chatModel);
     // streamController.add("chat");
@@ -281,19 +280,68 @@ Future ondidnotification(
   }
 
   //   streamController.add("chat");
-
 }
+
 Future notificationTapBackground(NotificationResponse details) async {
   print('notification payload: ${details.payload}');
 
   if (details.payload!.contains("chat")) {
-   // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
-    chatModel = ChatModel.fromJson(jsonDecode(details.payload!.replaceAll("chat", "").replaceAll("room", "")));
-
+    // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
+    chatModel = ChatModel.fromJson(jsonDecode(
+        details.payload!.replaceAll("chat", "").replaceAll("room", "")));
 
     locator<NavigationService>().navigateToReplacement(chatModel);
     // streamController.add("chat");
 
   }
+}
 
+Future onNotification(String payload) async {
+  print(payload);
+  if (payload!.contains("chat")) {
+    // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
+    chatModel = ChatModel.fromJson(
+        jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
+
+    locator<NavigationService>().navigateToReplacement(chatModel);
+  }
+}
+
+void _runWhileAppIsTerminated() async {
+  await flutterLocalNotificationsPlugin
+      .getNotificationAppLaunchDetails()
+      .then((value) => {
+            // Fluttertoast.showToast(
+            //   msg: value!.notificationResponse!.payload.toString(),
+            //   // message
+            //   toastLength: Toast.LENGTH_SHORT,
+            //   // length
+            //   gravity: ToastGravity.BOTTOM,
+            //   fontSize: 7,
+            //   // location
+            //   timeInSecForIosWeb: 60,
+            //   // duration
+            // ),
+    if(value!=null&&value.notificationResponse!=null&&value.notificationResponse!.payload!.isNotEmpty){
+            chatModel = ChatModel.fromJson(jsonDecode(value!
+                .notificationResponse!.payload
+                .toString()
+                .replaceAll("chat", "")
+                .replaceAll("room", ""))),
+            // Fluttertoast.showToast(
+            //   msg: chatModel.id.toString(), // message
+            //   toastLength: Toast.LENGTH_SHORT, // length
+            //   gravity: ToastGravity.BOTTOM, // location
+            //   timeInSecForIosWeb: 60,
+            //   // duration
+            // ),
+            AppRoutes.chatmodel = chatModel
+          }});
+  // Fluttertoast.showToast(
+  //     msg: details!.notificationResponse!.payload! + "kkfkfjj", // message
+  //     toastLength: Toast.LENGTH_SHORT, // length
+  //     gravity: ToastGravity.CENTER, // location
+  //     timeInSecForIosWeb: 60,
+  //   // duration
+  // );
 }

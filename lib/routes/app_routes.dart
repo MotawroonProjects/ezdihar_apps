@@ -78,6 +78,7 @@ import '../screens/user/home_page/navigation_screens/user_order_screen/user_orde
 import '../screens/wallet_screen/cubit/wallet_cubit.dart';
 
 class AppRoutes {
+  static  ChatModel? chatmodel;
   static late HomePageCubit homePageCubit;
   static late MainPageCubit mainPageCubit;
   static late ConsultingCubit consultingCubit;

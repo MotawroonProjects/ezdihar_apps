@@ -85,7 +85,9 @@ class PushNotificationService {
             iOS: initializationSettingsDarwin,
             linux: initializationSettingsLinux);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: notificationTapBackground);
+        onDidReceiveNotificationResponse: notificationTapBackground,
+
+    );
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -161,6 +163,7 @@ print("dldldk${didNotificationLaunchApp}");
   }
 
   void checkData(RemoteMessage message) {
+
     if (message.data['note_type'].toString().contains("chat")) {
       //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
 
