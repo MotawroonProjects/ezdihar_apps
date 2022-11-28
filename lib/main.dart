@@ -32,6 +32,7 @@ Future<void> main() async {
   if( userModel.user.isLoggedIn) {
 
 
+
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
