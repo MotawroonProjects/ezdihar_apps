@@ -12,9 +12,12 @@ class OnCategorySelected extends InvestorState {
 
   OnCategorySelected(this.categoryModel);
 }
+class OnUserDataGet extends InvestorState {
+
+}
 class InvestorInitial extends InvestorState {}
 class InvestorPhotoPicked extends InvestorState {
-  XFile file;
+  String  file;
   InvestorPhotoPicked(this.file);
 }
 class InvestorBirthDateSelected extends InvestorState {

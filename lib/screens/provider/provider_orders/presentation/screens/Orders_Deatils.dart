@@ -45,21 +45,18 @@ class OrdersDetails extends StatelessWidget {
         create: (context) => OrdersCubit(),
         child: BlocBuilder<OrdersCubit, OrdersState>(
           builder: (context, state) {
-            if (state is OrderChangeStatusLoading) {
-              // AppWidget.createProgressDialog(context, "wait".tr());
-              print("تحمييييييل اقسم بالله ");
-              // snackBar("wait".tr(),context,color: AppColors.success);
-              return Center(child: CircularProgressIndicator());
-            }
+
             if (state is OrderChangeStatusDone) {
               Navigator.of(context).pop();
+              Navigator.of(context).pop();
               // snackBar("Done",context,color: AppColors.success);
-              print("تم يا باااااااااااااشاااااااااااا");
-              print("state.statusResponse.message");
-              print(state.statusResponse.message);
-              print("state.statusResponse.code");
-              print(state.statusResponse.code);
+              // print("تم يا باااااااااااااشاااااااااااا");
+              // print("state.statusResponse.message");
+              // print(state.statusResponse.message);
+              // print("state.statusResponse.code");
+              // print(state.statusResponse.code);
             }
+
             return orderDetailsBodyWidget(mainOrdersModel: mainOrdersModel);
           },
         ),

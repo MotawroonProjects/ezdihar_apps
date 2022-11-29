@@ -39,7 +39,7 @@ class ChooseServiceWidget extends StatelessWidget {
                       context
                           .read<ControlServicesCubit>()
                           .model
-                          .subCategories!
+                          .advisor_category!
                           .forEach((element) {
                         if (element.service!.id == categoryModel.id) {
                           showMyDataDialog(context, element);

@@ -35,6 +35,7 @@ class _ChatPageState extends State<ChatPage> {
   late ChatCubit cubit;
   ChatModel chatModel;
   String message = "";
+
   late Stream<LocalNotification> _notificationsStream;
 
   int user_id = 0;
@@ -56,7 +57,6 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    _onRefresh();
     AppRoutes.rout = AppConstant.pageChatRoute;
     AppRoutes.chatmodel = null;
     gets.Get.addPage(gets.GetPage(
@@ -74,63 +74,97 @@ class _ChatPageState extends State<ChatPage> {
     wid = size.width;
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-          backgroundColor: AppColors.white,
-          centerTitle: true,
-          title: Text(
-            chatModel.user.id == user_id
-                ? chatModel.provider.firstName +
-                    " " +
-                    chatModel.provider.lastName
-                : chatModel.user.firstName + " " + chatModel.user.lastName,
-            style: const TextStyle(
-                color: AppColors.black,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold),
-          ),
-          flexibleSpace: SafeArea(
-            right: true,
-            bottom: true,
-            top: true,
-            child: Center(
-                child: Row(
-              children: [
-                SizedBox(width: 10.0),
 
-                AppWidget.buildBackArrow(context: context),
-
-                Container(
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context,
-                              chatModel.user.id != user_id
-                                  ? AppConstant.serviceRequestScreenRoute
-                                  : AppConstant.OrdersNewScreenRoute,
-                              arguments: chatModel);
-                          // Add what you want to do on tap
-                        },
-                        child: Row(
-                          children: <Widget>[
-                            Icon(chatModel.user_id == user_id
-                                ? Icons.data_usage
-                                : Icons.add),
-                            SizedBox(width: 2.0),
-                            Text(
-                              chatModel.user_id != user_id
-                                  ? local.tr("Add Request")
-                                  : local.tr("Show Request"),
-                              style: TextStyle(
-                                fontSize: 10.0,
-                              ),
-                            ),
-                          ],
-                        ))),
-              ],
-            )),
-          )),
       backgroundColor: AppColors.grey2,
-      body: buildBodySection(),
+      body:
+    SafeArea(
+    child: Column(
+    mainAxisSize: MainAxisSize.max,
+    children: [
+    Container(
+    width: wid,
+    height: 56.0,
+    decoration: BoxDecoration(color: AppColors.white, boxShadow: [
+    BoxShadow(
+    color: AppColors.black.withOpacity(.2),
+    offset: const Offset(0.0, 1.0),
+    blurRadius: 8)
+    ]),
+    child: Row(
+    mainAxisSize: MainAxisSize.max,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      AppWidget.buildBackArrow(context: context),
+      Text(
+        chatModel.user.id == user_id
+            ? chatModel.provider.firstName +
+            " " +
+            chatModel.provider.lastName
+            : chatModel.user.firstName + " " + chatModel.user.lastName,
+        style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold),
+      ),
+      SizedBox(width: 10.0),
+      Container(
+          child: InkWell(
+              onTap: () {
+                Navigator.pushNamed(
+                    context,
+                    chatModel.user.id != user_id
+                        ? AppConstant.serviceRequestScreenRoute
+                        : AppConstant.OrdersNewScreenRoute,
+                    arguments: chatModel);
+                // Add what you want to do on tap
+              },
+              child: Row(
+                children: <Widget>[
+                  Icon(chatModel.user_id == user_id
+                      ? Icons.data_usage
+                      : Icons.add),
+                  SizedBox(width: 2.0),
+                  Text(
+                    chatModel.user_id != user_id
+                        ? local.tr("Add Request")
+                        : local.tr("Show Request"),
+                    style: TextStyle(
+                      fontSize: 10.0,
+                    ),
+                  ),
+                ],
+              ))),
+      Visibility(child:  Container(
+          child: InkWell(
+              onTap: () {
+                Navigator.pushNamed(
+                    context,
+
+                    AppConstant.OrdersNewScreenRoute,
+                    arguments: chatModel);
+                // Add what you want to do on tap
+              },
+              child: Row(
+                children: <Widget>[
+                  Icon( Icons.data_usage
+                  ),
+                  SizedBox(width: 2.0),
+                  Text(
+
+                    local.tr("Show Request"),
+                    style: TextStyle(
+                      fontSize: 10.0,
+                    ),
+                  ),
+                ],
+              ))),
+      visible: user_id!=chatModel.user_id,),
+      SizedBox(width: 10.0)
+
+    ])),
+        Expanded(
+       child: buildBodySection()),])),
     );
   }
 
@@ -141,7 +175,8 @@ class _ChatPageState extends State<ChatPage> {
           cubit.getChat(chatModel.id.toString());
           return cubit;
         },
-        child: Column(mainAxisSize: MainAxisSize.min,
+        child: Column(
+
             // mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Expanded(child: BlocBuilder<ChatCubit, ChatState>(
@@ -176,7 +211,8 @@ class _ChatPageState extends State<ChatPage> {
                               shrinkWrap: true,
                               itemCount: cubit.list.length + 1,
                               itemBuilder: (context, index) {
-                                print("dlkdkdk${index.toString()}");
+                            //    print("
+                                //    dlkdkdk${index.toString()}");
                                 if (index < cubit.list.length &&
                                     cubit.list[index].from_user_id != 0) {
                                   MessageModel model = cubit.list[index];
@@ -513,6 +549,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    _onRefresh();
+
     focusNode = new FocusNode();
 
     // listen to focus changes

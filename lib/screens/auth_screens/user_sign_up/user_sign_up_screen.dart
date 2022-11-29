@@ -126,7 +126,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                     child: BlocProvider.of<UserSignUpCubit>(context)
                             .imageType
                             .isEmpty
-                        ? imagePath.startsWith('http')
+                        ?
+                    imagePath.startsWith('http')
                             ? CachedNetworkImage(
                                 imageUrl: imagePath,
                                 imageBuilder: (context,imageProvider){

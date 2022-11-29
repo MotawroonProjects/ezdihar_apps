@@ -11,6 +11,7 @@ import 'package:ezdihar_apps/remote/service.dart';
 import 'package:ezdihar_apps/screens/auth_screens/user_sign_up/cubit/user_sign_up_state.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserSignUpCubit extends Cubit<UserSignUpState> {
@@ -48,8 +49,19 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
     imageFile = await ImagePicker().pickImage(
         source: type == 'camera' ? ImageSource.camera : ImageSource.gallery);
     imageType = 'file';
-
-    model.imagePath = imageFile!.path;
+    CroppedFile? croppedFile = await ImageCropper.platform.cropImage(
+        sourcePath: imageFile!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        cropStyle: CropStyle.rectangle,
+        compressFormat: ImageCompressFormat.png,
+        compressQuality: 90);
+    model.imagePath = croppedFile!.path;
+   // model.imagePath = imageFile!.path;
     imagePath = model.imagePath;
     emit(UserPhotoPicked(model.imagePath));
   }
@@ -105,6 +117,7 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
     try {
       UserDataModel response = await api.updateProfile(model, user_token);
       response.userModel.user.isLoggedIn = true;
+print("Dkdkdkdk"+response.status.code.toString());
       if (response.status.code == 200) {
         Preferences.instance.setUser(response.userModel).then((value) {
           Navigator.pop(context);

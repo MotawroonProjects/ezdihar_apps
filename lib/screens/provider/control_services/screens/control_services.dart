@@ -45,7 +45,7 @@ class ControlServices extends StatelessWidget {
                             imageUrl: context
                                 .read<ControlServicesCubit>()
                                 .model
-                                .subCategory!
+                                .main_category!
                                 .image!,
                             width: 50,
                             height: 50,
@@ -69,12 +69,12 @@ class ControlServices extends StatelessWidget {
                             context
                                 .read<ControlServicesCubit>()
                                 .model
-                                .subCategory!
-                                .titleAr!:context
+                                .main_category!
+                                .title_ar!:context
                               .read<ControlServicesCubit>()
                               .model
-                              .subCategory!
-                              .titleEn!,
+                              .main_category!
+                              .title_en!,
                           )
                         ],
                       ),

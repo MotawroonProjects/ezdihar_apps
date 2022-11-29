@@ -43,10 +43,15 @@ class OrdersCubit extends Cubit<OrdersState> {
     emit(OrdersLoaded(model));
   }
 
-  Future<void> changeProviderOrderStatus(String id,String status) async {
-    emit(OrderChangeStatusLoading());
-    var model = await api.changeProviderOrderStatus(user!.access_token,id,status);
-    emit(OrderChangeStatusDone(model));
+  Future<void> changeProviderOrderStatus(BuildContext context,String id,String status) async {
+    AppWidget.createProgressDialog(context, "wait".tr());
+
+    final response = await api.changeProviderOrderStatus(user!.access_token,id,status);
+    if (response.code == 200||response.code == 201) {
+      updateUserData(context);
+    } else {
+      print("noooooooot dooooone");
+    }
   }
 
   Future<void> rate(context, descEn, rate, subCatId) async {

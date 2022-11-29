@@ -10,8 +10,10 @@ class UserModel {
   late String access_token;
   late String firebase_token = '';
    SubCategoryModel? sub_category;
+  CategoryModel? main_category;
   SubCategory? subCategory;
-  List<SubCategories>? subCategories;
+  List<SubCategories>? advisor_category;
+  List<SubCategories>? sub_categories;
 
   UserModel() {
     user = User();
@@ -28,14 +30,22 @@ class UserModel {
     sub_category = json['sub_category'] != null
         ? SubCategoryModel.fromJson(json['sub_category'])
         : null;
-
+    main_category = json['main_category'] != null
+        ? CategoryModel.fromJson(json['main_category'])
+        : null;
     subCategory = json['sub_category'] != null
         ? new SubCategory.fromJson(json['sub_category'])
         : null;
+    if (json['advisor_category'] != null) {
+      advisor_category = <SubCategories>[];
+      json['advisor_category'].forEach((v) {
+        advisor_category!.add(new SubCategories.fromJson(v));
+      });
+    }
     if (json['sub_categories'] != null) {
-      subCategories = <SubCategories>[];
+      sub_categories = <SubCategories>[];
       json['sub_categories'].forEach((v) {
-        subCategories!.add(new SubCategories.fromJson(v));
+        sub_categories!.add(new SubCategories.fromJson(v));
       });
     }
   }
@@ -48,15 +58,18 @@ class UserModel {
           : null,
       'access_token': user.access_token,
       'firebase_token': user.firebase_token,
-      // 'sub_category': user.sub_category != null
-      //     ? SubCategoryModel.toJson(user.sub_category)
-      //     : null,
+      'main_category': user.main_category != null
+          ? CategoryModel.toJson(user.main_category!)
+          : null,
     if (user.subCategory != null)
       'sub_category' : user.subCategory!.toJson(),
 
-    if (user.subCategories != null)
-      'sub_categories':
-          user.subCategories!.map((v) => v.toJson()).toList(),
+    if (user.advisor_category != null)
+      'advisor_category':
+          user.advisor_category!.map((v) => v.toJson()).toList(),
+      if (user.sub_categories != null)
+        'sub_categories':
+        user.sub_categories!.map((v) => v.toJson()).toList()
 
     };
   }

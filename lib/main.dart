@@ -27,12 +27,9 @@ RemoteMessage? initialMessage;
 
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
-  UserModel userModel=await Preferences.instance.getUserModel();
+  UserModel userModel = await Preferences.instance.getUserModel();
   await Firebase.initializeApp();
-  if( userModel.user.isLoggedIn) {
-
-
-
+  if (userModel.user.isLoggedIn) {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
@@ -47,7 +44,6 @@ Future<void> main() async {
   //await  pushNotificationService!.callbackground();
   //
   //NavigationService().setupLocator();
-
 
   await setupLocator();
 
@@ -232,19 +228,20 @@ void showNotification(RemoteMessage message) async {
     'High Importance Notifications', // title
     importance: Importance.high,
   );
-  UserModel userModel=await Preferences.instance.getUserModel();
+  UserModel userModel = await Preferences.instance.getUserModel();
 
-  if( userModel.user.isLoggedIn) {
-  await flutterLocalNotificationsPlugin.show(
-      message.data.hashCode,
-      message.data['title'],
-      message.data['body'],
-      payload: paylod,
-      NotificationDetails(
-          android: AndroidNotificationDetails(channel.id, channel.name,
-              channelDescription: channel.description,
-              importance: Importance.max,
-              icon: '@mipmap/ic_launcher')));}
+  if (userModel.user.isLoggedIn) {
+    await flutterLocalNotificationsPlugin.show(
+        message.data.hashCode,
+        message.data['title'],
+        message.data['body'],
+        payload: paylod,
+        NotificationDetails(
+            android: AndroidNotificationDetails(channel.id, channel.name,
+                channelDescription: channel.description,
+                importance: Importance.max,
+                icon: '@mipmap/ic_launcher')));
+  }
   // final NotificationAppLaunchDetails? notificationAppLaunchDetails =
 //  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 }
@@ -333,21 +330,25 @@ void _runWhileAppIsTerminated() async {
             //   timeInSecForIosWeb: 60,
             //   // duration
             // ),
-    if(value!=null&&value.notificationResponse!=null&&value.notificationResponse!.payload!.isNotEmpty){
-            chatModel = ChatModel.fromJson(jsonDecode(value!
-                .notificationResponse!.payload
-                .toString()
-                .replaceAll("chat", "")
-                .replaceAll("room", ""))),
-            // Fluttertoast.showToast(
-            //   msg: chatModel.id.toString(), // message
-            //   toastLength: Toast.LENGTH_SHORT, // length
-            //   gravity: ToastGravity.BOTTOM, // location
-            //   timeInSecForIosWeb: 60,
-            //   // duration
-            // ),
-            AppRoutes.chatmodel = chatModel
-          }});
+            if (value != null &&
+                value.notificationResponse != null &&
+                value.notificationResponse!.payload!.isNotEmpty)
+              {
+                chatModel = ChatModel.fromJson(jsonDecode(value!
+                    .notificationResponse!.payload
+                    .toString()
+                    .replaceAll("chat", "")
+                    .replaceAll("room", ""))),
+                // Fluttertoast.showToast(
+                //   msg: chatModel.id.toString(), // message
+                //   toastLength: Toast.LENGTH_SHORT, // length
+                //   gravity: ToastGravity.BOTTOM, // location
+                //   timeInSecForIosWeb: 60,
+                //   // duration
+                // ),
+                AppRoutes.chatmodel = chatModel
+              }
+          });
   // Fluttertoast.showToast(
   //     msg: details!.notificationResponse!.payload! + "kkfkfjj", // message
   //     toastLength: Toast.LENGTH_SHORT, // length

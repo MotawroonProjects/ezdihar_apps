@@ -26,9 +26,9 @@ class ControlServicesCubit extends Cubit<ControlServicesState> {
   onUserDataSuccess() async {
     model = await Preferences.instance.getUserModel().then((value) {
       print("value.subCategory!.id");
-      print(value.access_token);
-      print(value.subCategory!.id);
-      getMySubSubCategories(value.subCategory!.id!);
+     // print(value.access_token);
+    //  print(value.subCategory!.id);
+      getMySubSubCategories(value.main_category!.id!);
       return value;
     });
   }
@@ -41,7 +41,7 @@ class ControlServicesCubit extends Cubit<ControlServicesState> {
 
   bool Checked(CategoryModel categoryModel) {
     bool checked = false;
-    model.subCategories!.forEach((element) {
+    model.advisor_category!.forEach((element) {
       if (element.service!.id == categoryModel.id) {
         checked = true;
       }
@@ -110,6 +110,16 @@ class ControlServicesCubit extends Cubit<ControlServicesState> {
             Navigator.pop(context);
             Navigator.pop(context);
           }),
+
+    ).then((value) async => {
+    model = await Preferences.instance.getUserModel().then((value) {
+    print("value.subCategory!.id");
+    // print(value.access_token);
+    //  print(value.subCategory!.id);
+    getMySubSubCategories(value.main_category!.id!);
+    return value;
+    }
+    )}
     );
   }
 

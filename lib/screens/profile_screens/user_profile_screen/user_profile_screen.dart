@@ -10,6 +10,10 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../models/login_model.dart';
+import '../../../preferences/preferences.dart';
+import '../../user/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
+
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
 
@@ -53,29 +57,13 @@ class _UserProfilePageState extends State<UserProfilePage>
                     'myProfile'.tr(),
                     style: TextStyle(color: AppColors.black, fontSize: 16.0),
                   ),
-                  expandedHeight: 320,
+                  expandedHeight: 330,
                   pinned: true,
                   centerTitle: true,
                   backgroundColor: AppColors.white,
                   flexibleSpace: FlexibleSpaceBar(
                     collapseMode: CollapseMode.parallax,
                     background: header(),
-                  ),
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(60),
-                    child: Container(
-                        color: AppColors.white,
-                        height: 60,
-                        // child: TabBar(
-                        //   tabs: _tabs,
-                        //   indicatorColor: AppColors.transparent,
-                        //   controller: _controller,
-                        //   onTap: (index) {
-                        //     UserProfileCubit cubit = BlocProvider.of(context);
-                        //     cubit.updateIndex(index);
-                        //   },
-                        // )
-                    ),
                   ),
                 )
               ];
@@ -151,7 +139,10 @@ class _UserProfilePageState extends State<UserProfilePage>
                       height: 12.0,
                     ),
                     MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        navigateToUserSignUpActivity();
+
+                      },
                       elevation: 3,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24.0),
@@ -162,7 +153,31 @@ class _UserProfilePageState extends State<UserProfilePage>
                         'edit_profile'.tr(),
                         style: TextStyle(fontSize: 14.0, color: AppColors.color1),
                       ),
-                    )
+                    ),
+                    SizedBox(
+                      height: 12.0,
+                    ),
+                    Visibility(
+                      visible:cubit.userModel!.user.userType.contains("client")?false:true,
+                      child:
+                    MaterialButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(AppConstant.pageAddPostRoute  ).then((value) => {
+                          cubit.getPosts()
+                        });
+
+                      },
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.0),
+                          side: BorderSide(width: 1.0, color: AppColors.color1)),
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                      child: Text(
+                        'addPost'.tr(),
+                        style: TextStyle(fontSize: 14.0, color: AppColors.color1),
+                      ),
+                    ))
                   ],
                 )
               ],
@@ -195,11 +210,12 @@ class _UserProfilePageState extends State<UserProfilePage>
             ),
         
 
-            SizedBox(height: 16),
+            SizedBox(height: 7),
           ],
         ),
       );
-    }else{
+    }
+    else{
       return Container();
     }
 
@@ -1048,4 +1064,26 @@ class _UserProfilePageState extends State<UserProfilePage>
       },
     );
   }
+  void navigateToUserSignUpActivity() async {
+    UserModel model = await Preferences.instance.getUserModel();
+    LoginModel loginModel = LoginModel();
+    loginModel.phone_code = model.user.phoneCode;
+    loginModel.phone = model.user.phone;
+
+    var result;
+    if(model.user.userType=="client") {
+      result = await Navigator.of(context).pushNamed(
+          AppConstant.pageUserSignUpRoleRoute, arguments: loginModel);
+    }
+    else{
+      result = await Navigator.of(context).pushNamed(
+          AppConstant.pageInvestorSignUpRoleRoute, arguments: loginModel);
+    }
+    if (result != null) {
+      UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
+      cubit.getUserData();
+
+    }
+  }
+
 }

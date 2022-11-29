@@ -105,7 +105,7 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
               const SizedBox(height: 6),
               Flexible(
                   child: buildTextFormField(
-                      hint: 'detials'.tr(),
+                      hint: 'details'.tr(),
                       inputType: TextInputType.text,
                       action: 'detials')),
               const SizedBox(

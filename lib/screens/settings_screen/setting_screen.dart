@@ -13,7 +13,10 @@ import 'package:flutter_share/flutter_share.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
+import '../../models/login_model.dart';
 import '../../models/setting_model.dart';
+import '../../models/user_model.dart';
+import '../profile_screens/user_profile_screen/cubit/user_profile_cubit.dart';
 import '../provider/navigation_bottom/cubit/navigator_bottom_cubit.dart';
 import '../user/privacy_about _us_terms_screen/more_info_screen.dart';
 
@@ -128,8 +131,10 @@ class _SettingPageState extends State<SettingPage> {
     }
 
     else if (index == 2) {
-      Navigator.of(context).pushNamed(AppConstant.pageInvestorSignUpRoleRoute,
-          arguments: context.read<SettingCubit>().model.user);
+
+        navigateToUserSignUpActivity();
+
+
     }
     else if (index == 3) {
       Navigator.of(context).pushNamed(AppConstant.pageUserProfileRoute);
@@ -251,4 +256,22 @@ rateApp();
   packageInfo=   await PackageInfo.fromPlatform();
 
   }
+  void navigateToUserSignUpActivity() async {
+    UserModel model = await Preferences.instance.getUserModel();
+    LoginModel loginModel = LoginModel();
+    loginModel.phone_code = model.user.phoneCode;
+    loginModel.phone = model.user.phone;
+
+    var result;
+    if(model.user.userType=="client") {
+      result = await Navigator.of(context).pushNamed(
+          AppConstant.pageUserSignUpRoleRoute, arguments: loginModel);
+    }
+    else{
+      result = await Navigator.of(context).pushNamed(
+          AppConstant.pageInvestorSignUpRoleRoute, arguments: loginModel);
+    }
+
+  }
+
 }

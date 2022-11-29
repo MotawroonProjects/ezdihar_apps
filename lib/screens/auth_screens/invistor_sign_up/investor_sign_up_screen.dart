@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/colors/colors.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
@@ -16,6 +17,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../models/login_model.dart';
 import '../../../models/user.dart';
+import '../../../models/user_model.dart';
+import '../../../preferences/preferences.dart';
 
 class InvestorSignUpPage extends StatefulWidget {
   InvestorSignUpPage(
@@ -33,7 +36,15 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   int currentValue = 0;
   LoginModel loginModel;
 
+   UserModel model=UserModel();
+
   _InvestorSignUpPageState(this.loginModel);
+
+  @override
+  void initState() {
+    super.initState();
+    getuser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +75,9 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
             AlertController.show(
                 'warning'.tr(), state.error, TypeAlert.warning);
           } else if (state is OnSignUpSuccess) {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil(AppConstant.providerNavigationBottomRoute,ModalRoute.withName(AppConstant.pageSplashRoute));
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                AppConstant.providerNavigationBottomRoute,
+                ModalRoute.withName(AppConstant.pageSplashRoute));
             // Navigator.of(context).pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
 
             // Navigator.pop(context, true);
@@ -108,34 +120,71 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   }
 
   buildAvatarSection(String image) {
+    InvestorCubit cubit = BlocProvider.of(context);
+
     return BlocProvider.value(
       value: BlocProvider.of<InvestorCubit>(context),
       child: InkWell(
         onTap: () => buildAlertDialog(),
         child: BlocBuilder<InvestorCubit, InvestorState>(
           builder: (context, state) {
-            XFile? file = BlocProvider.of<InvestorCubit>(context).imageFile;
-            if (state is InvestorPhotoPicked) {
-              file = state.file;
+            String imagePath = cubit.model.imagePath;
+            if (state is InvestorFilePicked) {
+              imagePath = state.fileName;
+            } else if (state is OnUserDataGet) {
+              imagePath = cubit.model.imagePath;
             }
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(147.0),
-                  child:
-                      BlocProvider.of<InvestorCubit>(context).imageType.isEmpty
-                          ? Image.asset(
+                  child: BlocProvider.of<InvestorCubit>(context)
+                          .imageType
+                          .isEmpty
+                      ? imagePath.startsWith('http')
+                          ? CachedNetworkImage(
+                              imageUrl: imagePath,
+                              imageBuilder: (context, imageProvider) {
+                                return CircleAvatar(
+                                  backgroundImage: imageProvider,
+                                );
+                              },
+                              width: 147.0,
+                              height: 147.0,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) {
+                                return CircleAvatar(
+                                  child: Image.asset(
+                                    AppConstant.localImagePath + 'avatar2.png',
+                                    width: 147.0,
+                                    height: 147.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                              errorWidget: (context, url, error) {
+                                return CircleAvatar(
+                                  child: Image.asset(
+                                    AppConstant.localImagePath + 'avatar2.png',
+                                    width: 147.0,
+                                    height: 147.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                            )
+                          : Image.asset(
                               AppConstant.localImagePath + image,
                               width: 147.0,
                               height: 147.0,
                             )
-                          : Image.file(
-                              File(file!.path),
-                              width: 147.0,
-                              height: 147.0,
-                              fit: BoxFit.cover,
-                            ),
+                      : Image.file(
+                          File(cubit.model.imagePath),
+                          width: 147.0,
+                          height: 147.0,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ],
             );
@@ -277,11 +326,18 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
             SizedBox(
               height: 24.0,
             ),
-            buildRow(icon: 'category.svg', title: 'category'.tr()),
-            SizedBox(
-              height: 8.0,
+            Visibility(
+              visible: model.user.isLoggedIn ? false : true,
+              child: buildRow(icon: 'category.svg', title: 'category'.tr()),
             ),
-            buildCategoryField(),
+            Visibility(
+                visible: model.user.isLoggedIn ? false : true,
+                child: SizedBox(
+                  height: 8.0,
+                )),
+            Visibility(
+                visible: model.user.isLoggedIn ? false : true,
+                child: buildCategoryField()),
             SizedBox(
               height: 24.0,
             ),
@@ -319,10 +375,11 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
     );
   }
 
-  buildTextFormField(
-      {required String hint,
-      required TextInputType inputType,
-      required action}) {
+  buildTextFormField({
+    required String hint,
+    required TextInputType inputType,
+    required action,
+  }) {
     InvestorCubit cubit = BlocProvider.of<InvestorCubit>(context);
 
     return Container(
@@ -331,6 +388,11 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
       decoration: BoxDecoration(
           color: AppColors.white, borderRadius: BorderRadius.circular(8)),
       child: TextFormField(
+        controller: action == 'firstName'
+            ? cubit.controllerFirstName
+            : action == 'lastName'
+                ? cubit.controllerLastName
+                : cubit.controllerEmail,
         keyboardType: inputType,
         style: TextStyle(color: AppColors.black, fontSize: 14.0),
         onChanged: (data) {
@@ -412,8 +474,13 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
         return Expanded(
             child: MaterialButton(
           onPressed: isValid
-              ? () {
-                  cubit.signUp(context);
+              ? () async {
+                  UserModel model = await Preferences.instance.getUserModel();
+                  if (model.user.isLoggedIn) {
+                    cubit.updateProfile(context, model.access_token);
+                  } else {
+                    cubit.signUp(context);
+                  }
                 }
               : null,
           height: 56.0,
@@ -456,11 +523,12 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
           Expanded(
             flex: 1,
             child: TextFormField(
+              onChanged: (value) => {cubit.model.years_ex = value.toString()},
+              controller: cubit.controlleryear,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 //  hintText: 'hint',
 
-                labelText: currentValue.toString(),
                 contentPadding: EdgeInsets.all(5),
                 hintStyle: TextStyle(fontSize: 14.0, color: AppColors.grey6),
               ),
@@ -472,49 +540,6 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
               ),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly
-              ],
-            ),
-          ),
-          Container(
-            height: 38.0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  child: InkWell(
-                    child: Icon(
-                      Icons.arrow_drop_up,
-                      size: 18.0,
-                    ),
-                    onTap: () {
-                      //     int currentValue = int.parse(_controller.text);
-                      setState(() {
-                        currentValue++;
-                        cubit.model.years_ex = currentValue as String;
-                        //          _controller.text = (currentValue)
-                        //    .toString(); // incrementing value
-                      });
-                    },
-                  ),
-                ),
-                InkWell(
-                  child: Icon(
-                    Icons.arrow_drop_down,
-                    size: 18.0,
-                  ),
-                  onTap: () {
-                    //     int currentValue = int.parse(_controller.text);
-                    setState(() {
-                      print("Setting state");
-                      currentValue--;
-                      cubit.model.years_ex = currentValue as String;
-                      //   _controller.text =
-                      //     (currentValue > 0 ? currentValue : 0)
-                      //              .toString(); // decrementing value
-                    });
-                  },
-                ),
               ],
             ),
           ),
@@ -543,7 +568,7 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
 
     if (date != null) {
       BlocProvider.of<InvestorCubit>(context)
-          .updateBirthDate(date: DateFormat('yyyy-MM-dd','en').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd', 'en').format(date));
     }
   }
 
@@ -619,5 +644,12 @@ class _InvestorSignUpPageState extends State<InvestorSignUpPage> {
   void setState(VoidCallback fn) {
     // TODO: implement setState
     super.setState(fn);
+  }
+
+  Future<void> getuser() async {
+    model = await Preferences.instance.getUserModel();
+    setState(() {
+      model;
+    });
   }
 }

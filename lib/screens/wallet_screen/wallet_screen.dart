@@ -214,8 +214,8 @@ class _WalletPageState extends State<WalletPage> {
                                           overflow: TextOverflow.ellipsis,
                                           text: TextSpan(
                                               text: lang == 'ar'
-                                                  ? "${replaceToArabicNumber("2,000")} "
-                                                  : " 2,000 ",
+                                                  ? "${replaceToArabicNumber(user.wallet.toString())} "
+                                                  : user.wallet.toString(),
                                               style: const TextStyle(
                                                   fontSize: 24.0,
                                                   fontWeight: FontWeight.bold,
@@ -230,9 +230,7 @@ class _WalletPageState extends State<WalletPage> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        context
-                                            .read<WalletCubit>()
-                                            .onRechargeWallet(2000);
+                               //    _showTextInputDialog(context);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
@@ -283,8 +281,14 @@ class _WalletPageState extends State<WalletPage> {
               ),
             ),
             ElevatedButton.icon(
-                onPressed: () {
-                  context.read<WalletCubit>().onGetProfileData();
+                onPressed: () async {
+                  var resultLabel =  await _showTextInputDialog(context);
+                  if (resultLabel != null) {
+                    context
+                        .read<WalletCubit>()
+                        .onRechargeWallet(int.parse(resultLabel));
+                  }
+                  // context.read<WalletCubit>().onGetProfileData();
                 },
                 style: ButtonStyle(
                     elevation: MaterialStateProperty.all(5.0),
@@ -304,5 +308,28 @@ class _WalletPageState extends State<WalletPage> {
         ),
       ],
     );
+  }
+  final _textFieldController = TextEditingController();
+  Future<String?> _showTextInputDialog(BuildContext context1) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title:  Text('addBalance'.tr()),
+            content: TextField(
+              controller: _textFieldController,
+              decoration:  InputDecoration(hintText: 'Balance'.tr()),
+            ),
+            actions: <Widget>[
+
+              ElevatedButton(
+                child:  Text('addBalance'.tr()),
+                onPressed: () =>
+          Navigator.pop(context, _textFieldController.text)
+                  ,
+              ),
+            ],
+          );
+        });
   }
 }

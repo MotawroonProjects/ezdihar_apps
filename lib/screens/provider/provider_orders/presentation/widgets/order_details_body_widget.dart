@@ -250,7 +250,7 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
                     namedBottom: widget.mainOrdersModel.status.contains("new")&&user_id == widget.mainOrdersModel.user.user.id ? 'refused_btn'.tr():'report'.tr(),
                     callBack: () {
                       if(widget.mainOrdersModel.status.contains("new")&&user_id != widget.mainOrdersModel.user.user.id ){
-                        context.read<OrdersCubit>().changeProviderOrderStatus(
+                        context.read<OrdersCubit>().changeProviderOrderStatus(context,
                             widget.mainOrdersModel.id.toString(), 'refused');
                       }else {
                         Navigator.pushNamed(context, AppConstant.AddReportScreenRoute,
@@ -270,6 +270,7 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
                       }
                       else{
                       context.read<OrdersCubit>().changeProviderOrderStatus(
+                        context,
                           widget.mainOrdersModel.id.toString(), widget.mainOrdersModel.status.contains("new") ?'accepted':'completed');
                     }},
                   ))

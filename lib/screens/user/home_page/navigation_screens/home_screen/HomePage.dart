@@ -27,23 +27,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Widget> screens = [
+    const MainPage(),
+    UserOrderPage(),
+    const ConsultantsPage(),
+    const ConversationPage(),
+    const MorePage(),
+    const NotificationPage(),
+  ];
   @override
   Widget build(BuildContext context) {
-    List<Widget> screens = [
-      const MainPage(),
-      const UserOrderPage(),
-      const ConsultantsPage(),
-      const ConversationPage(),
-      const MorePage(),
-      const NotificationPage(),
-    ];
+
     return BlocBuilder<HomePageCubit, HomePageState>(
       builder: (context, state) {
         int index = 0;
         if (state is MainPageInitial) {
           index = (state).index;
         } else if (state is MainPageIndexUpdated) {
+
           index = state.index;
+
         }
 
         return WillPopScope(
@@ -139,7 +142,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAppBar(BuildContext context, String notificationCount) {
     double width = MediaQuery.of(context).size.width;
-    return Container(
+    return
+      Container(
       width: width,
       height: 56.0,
       decoration: BoxDecoration(color: AppColors.white, boxShadow: [
@@ -224,6 +228,7 @@ class _HomePageState extends State<HomePage> {
       BuildContext context, imageName, Color color, String title, int index) {
     return MaterialButton(
       onPressed: () {
+
         AppRoutes.homePageCubit.updateIndex(index);
       },
       child: Column(

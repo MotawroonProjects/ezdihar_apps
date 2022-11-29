@@ -4,7 +4,7 @@ import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/conversat
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/conversation_screen/widget/accounting_chat_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:auto_reload/auto_reload.dart';
 import '../../../../../colors/colors.dart';
 import '../../../../../constants/app_constant.dart';
 import '../../../../../models/user_model.dart';
@@ -22,9 +22,11 @@ class _ConversationPageState extends State<ConversationPage> {
   var hei,wid;
 
   int user_id=0;
+
+  late ConversationPageCubit cubit;
   @override
   Widget build(BuildContext context) {
-    _onRefresh();
+
     Size size = MediaQuery.of(context).size;
     hei = size.height;
     wid = size.width;
@@ -50,11 +52,23 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
+  @override
+  void initState() {
+    refreshCurrent();
+    super.initState();
+    _onRefresh();
+
+
+  }
+
+
+
+
   buildBodySection() {
 
     return BlocProvider(
       create: (context) {
-        ConversationPageCubit cubit =  ConversationPageCubit();
+         cubit =  ConversationPageCubit();
         cubit.getData();
         return cubit;
       },
@@ -95,7 +109,10 @@ class _ConversationPageState extends State<ConversationPage> {
             List<ChatModel> list = cubit.chatmodelList;
             print(list.length);
             if (list.length > 0) {
-              return ListView.builder(
+              return RefreshIndicator(
+                  color: AppColors.colorPrimary,
+                  onRefresh: refreshCurrent,
+                  child: ListView.builder(
                   itemCount: list.length,
                   scrollDirection: Axis.vertical,
                   itemBuilder: ((context, index) {
@@ -105,13 +122,16 @@ class _ConversationPageState extends State<ConversationPage> {
                       child: AccountingChatWidgets().buildListItem(
                           context: context, model: model,user_id: user_id, index: index),
                     );
-                  }));
+                  })));
              }else {
-              return Center(
+              return RefreshIndicator(
+                  color: AppColors.colorPrimary,
+                  onRefresh: refreshCurrent,
+               child: Center(
                   child: Text(
                     'no_consultants'.tr(),
                     style: TextStyle(color: AppColors.black, fontSize: 15.0),
-                  ));
+                  )));
             }
           }
         },
@@ -134,4 +154,7 @@ class _ConversationPageState extends State<ConversationPage> {
       user_id;
     });
   }
+  Future<void> refreshCurrent() async {
+  cubit.getData();
+}
 }

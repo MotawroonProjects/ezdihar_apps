@@ -12,7 +12,7 @@ import '../../../../../new_orders_screen/widget/ItemsOrder.dart';
 import 'cubit/user_order_cubit.dart';
 
 class UserOrderPage extends StatefulWidget {
-  const UserOrderPage({Key? key}) : super(key: key);
+   UserOrderPage({Key? key}) : super(key: key);
 
   @override
   State<UserOrderPage> createState() => _UserOrderPageState();
@@ -181,7 +181,8 @@ class _UserOrderPageState extends State<UserOrderPage>
               onTap: () {
                 Navigator.pushNamed(
                     context, AppConstant.OrdersDetialsScreenRoute,
-                    arguments: model);
+                    arguments: model).then((value) => {refreshCurrent}).whenComplete(() =>
+                {refreshData()});
               },
               child: ItemsOrders()
                   .buildListItem(context: context, model: model, index: index),
@@ -257,7 +258,7 @@ class _UserOrderPageState extends State<UserOrderPage>
     String lang = EasyLocalization.of(context)!.locale.languageCode;
     return RefreshIndicator(
       color: AppColors.colorPrimary,
-      onRefresh: refreshCurrent,
+      onRefresh: refreshData,
       child: ListView.builder(
           itemCount: list.length,
           scrollDirection: Axis.vertical,
@@ -345,5 +346,7 @@ class _UserOrderPageState extends State<UserOrderPage>
     ];
     _screens = [buildCurrentOrderList(), buildCompleteOrderList()];
     _controller = TabController(length: _tabs.length, vsync: this);
+  refreshCurrent();
+    refreshData();
   }
 }

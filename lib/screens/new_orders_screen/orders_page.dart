@@ -118,7 +118,7 @@ print("ssss66677s${chatModel.id.toString()}");
                 Navigator.pushNamed(
 
                     context,AppConstant.OrdersDetialsScreenRoute,
-                    arguments: model);                },
+                    arguments: model).then((value) => {refreshCurrent()});                },
               child: ItemsOrders().buildListItem(
                   context: context, model: model, index: index),
 
@@ -129,6 +129,7 @@ print("ssss66677s${chatModel.id.toString()}");
     );
   }
   Future<void> refreshCurrent() async {
+    print("fkfkfkfk");
     NewOrdersCubit cubit = BlocProvider.of<NewOrdersCubit>(context);
     cubit.getChat(chatModel.id.toString());
   }

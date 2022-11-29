@@ -189,6 +189,14 @@
   "customer_name": "Customer Name",
   "wallet_not_enough": "Wallet not Enough",
   "Add Request":"Add Request",
-  "Show Request":"Show Request"
+  "Show Request":"Show Request",
+  "rate":"Rate",
+  "price":"Price",
+  "attachment": "attachment",
+  "no_orders": "No Orders",
+  "Balance": "Balance",
+  "providerDetails":"providerDetails"
+
+
 
 }

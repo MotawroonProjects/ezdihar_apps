@@ -188,5 +188,11 @@
   "customer_name": "اسم العميل",
 "wallet_not_enough": "رصيد المحفظه لا يكفى",
   "Add Request":"اضافة طلب",
-  "Show Request":"شاهد الطلبات"
+  "Show Request":"شاهد الطلبات",
+  "rate":"تقييم",
+  "price":"السعر",
+  "attachment": "مرفق",
+  "no_orders": "لا يوجد طلبات",
+  "Balance": "الرصيد",
+  "providerDetails":"تفاصيل مقدم الخدمه"
 }

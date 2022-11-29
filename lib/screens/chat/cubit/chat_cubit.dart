@@ -124,7 +124,7 @@ class ChatCubit extends Cubit<ChatState> {
           user_token);
       print(response.status!.message);
       if (response.status?.code == 200) {
-        print('Error=>${list.length}');
+      //  print('Error=>${list.length}');
      //   list.removeAt(list.length - 1);
         list.add(response.data!);
         // list.add(new MessageModel());

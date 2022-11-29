@@ -35,34 +35,27 @@ class ServiceApi {
   ServiceApi() {
     BaseOptions baseOptions = BaseOptions(
         baseUrl: AppConstant.baseUrl,
-        connectTimeout: 1000 * 60 * 2,
-        receiveTimeout: 1000 * 60 * 2,
-        receiveDataWhenStatusError: true,
-        contentType: "application/json",
-        headers: {'Content-Type': 'application/json'});
+        contentType: "application/x-www-form-urlencoded",
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'});
     dio = Dio(baseOptions);
   }
 
-  Future<ProjectsDataModel> getHomeData(String user_id
-      ) async {
+  Future<ProjectsDataModel> getHomeData(String user_id) async {
     try {
       Response response;
       BaseOptions baseOptions = dio.options;
       CancelToken cancelToken = CancelToken();
 
-        baseOptions.headers = {'Content-Type': 'application/json'};
-        dio.options = baseOptions;
+      baseOptions.headers = {'Content-Type': 'application/json'};
+      dio.options = baseOptions;
 
-
-      response = await dio.get(
-          'api/PostProvider/all',
-          queryParameters: {'user_id':user_id},
-          cancelToken: cancelToken);
+      response = await dio.get('api/PostProvider/all',
+          queryParameters: {'user_id': user_id}, cancelToken: cancelToken);
 
       if (!cancelToken.isCancelled) {
         cancelToken.cancel();
       }
-print("dlldldldl${response.toString()}");
+      print("dlldldldl${response.toString()}");
       return ProjectsDataModel.fromJson(response.data);
     } on DioError catch (e) {
       print(e.toString());
@@ -169,10 +162,13 @@ print("dlldldldl${response.toString()}");
     }
   }
 
-  Future<UserDataModel> login(LoginModel loginModel,String role) async {
+  Future<UserDataModel> login(LoginModel loginModel, String role) async {
     try {
-      var fields = FormData.fromMap(
-          {'phone_code': loginModel.phone_code, 'phone': loginModel.phone,'user_type':role});
+      var fields = FormData.fromMap({
+        'phone_code': loginModel.phone_code,
+        'phone': loginModel.phone,
+        'user_type': role
+      });
 
       Response response = await dio.post('api/auth/login', data: fields);
       print(response.data);
@@ -197,9 +193,9 @@ print("dlldldldl${response.toString()}");
           'phone': model.phone,
           'city_id': model.cityId,
           'birthdate': model.dateOfBirth,
-          'user_type':model.user_type,
+          'user_type': model.user_type,
           'category_id': model.categoryModel,
-          'years_ex':20,
+          'years_ex': model.years_ex,
           'image': await MultipartFile.fromFile(model.imagePath)
         });
       } else {
@@ -211,14 +207,14 @@ print("dlldldldl${response.toString()}");
           'phone': model.phone,
           'city_id': model.cityId,
           'birthdate': model.dateOfBirth,
-          'user_type':model.user_type,
+          'user_type': model.user_type,
           'category_id': model.categoryModel,
-          'years_ex':20,
+          'years_ex': model.years_ex,
         });
       }
-print("dlldldl${fields.fields}");
+      print("dlldldl${fields.fields}");
       Response response = await dio.post('api/auth/register', data: fields);
-    print("Flflflfl${response.toString()}");
+      print("Flflflfl${response.toString()}");
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -230,7 +226,8 @@ print("dlldldl${fields.fields}");
 
   Future<StatusResponse> love_follow_report(
       String user_token, int post_id, String type) async {
-    var fields = FormData.fromMap({'post_provider_id': post_id, 'action': type});
+    var fields =
+        FormData.fromMap({'post_provider_id': post_id, 'action': type});
     try {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': user_token};
@@ -296,8 +293,8 @@ print("dlldldl${fields.fields}");
       options.headers = {'Authorization': user_token};
       dio.options = options;
       Response response = await dio.post('api/auth/insertToken', data: fields);
-  //  print("dldlldldl${response.statusCode}");
-     return StatusResponse.fromJson(response.data);
+      //  print("dldlldldl${response.statusCode}");
+      return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
       print('Error=>${errorMessage}');
@@ -335,10 +332,12 @@ print("dlldldl${fields.fields}");
           'first_name': model.firstName,
           'last_name': model.lastName,
           'email': model.email,
-          'phone_code': model.phone_code,
-          'phone': model.phone,
+          // 'phone_code': model.phone_code,
+          // 'phone': model.phone,
           'city_id': model.cityId,
           'birthdate': model.dateOfBirth,
+          'category_id': model.categoryModel,
+          'years_ex': model.years_ex,
           'image': await MultipartFile.fromFile(model.imagePath)
         });
       } else {
@@ -346,10 +345,12 @@ print("dlldldl${fields.fields}");
           'first_name': model.firstName,
           'last_name': model.lastName,
           'email': model.email,
-          'phone_code': model.phone_code,
-          'phone': model.phone,
+          // 'phone_code': model.phone_code,
+          // 'phone': model.phone,
           'city_id': model.cityId,
           'birthdate': model.dateOfBirth,
+          'category_id': model.categoryModel,
+          'years_ex': model.years_ex,
         });
       }
 
@@ -394,7 +395,6 @@ print("dlldldl${fields.fields}");
     }
   }
 
-
   Future<StatusResponse> addReport(
       String user_token, AddReportModel model) async {
     BaseOptions baseOptions = dio.options;
@@ -404,29 +404,25 @@ print("dlldldl${fields.fields}");
 
     var fields = FormData.fromMap({});
     try {
-      if(model.photo.isNotEmpty){
-      fields = FormData.fromMap({
-        'reason': model.reason,
-        'details': model.details,
-        'order_id': model.order_id,
-        'user_id': model.user_id,
-
-        'img': await MultipartFile.fromFile(model.photo)
-
-      });}
-      else{
+      if (model.photo.isNotEmpty) {
         fields = FormData.fromMap({
           'reason': model.reason,
           'details': model.details,
           'order_id': model.order_id,
           'user_id': model.user_id,
-
-
+          'img': await MultipartFile.fromFile(model.photo)
+        });
+      } else {
+        fields = FormData.fromMap({
+          'reason': model.reason,
+          'details': model.details,
+          'order_id': model.order_id,
+          'user_id': model.user_id,
         });
       }
 
-      Response response =
-      await dio.post('api/order-report/storeReportByProvider', data: fields);
+      Response response = await dio
+          .post('api/order-report/storeReportByProvider', data: fields);
       print("data=>${response.data.toString()}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -446,7 +442,7 @@ print("dlldldl${fields.fields}");
 
     var fields = FormData.fromMap({});
     try {
-      if(model.photo.isNotEmpty) {
+      if (model.photo.isNotEmpty) {
         fields = FormData.fromMap({
           'reason': model.reason,
           'details': model.details,
@@ -454,8 +450,7 @@ print("dlldldl${fields.fields}");
           'provider_id': model.provider_id,
           'img': await MultipartFile.fromFile(model.photo)
         });
-      }
-      else{
+      } else {
         fields = FormData.fromMap({
           'reason': model.reason,
           'details': model.details,
@@ -464,7 +459,7 @@ print("dlldldl${fields.fields}");
         });
       }
       Response response =
-      await dio.post('api/order-report/storeReportByUser', data: fields);
+          await dio.post('api/order-report/storeReportByUser', data: fields);
       print("data=>${fields.fields}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -474,6 +469,7 @@ print("dlldldl${fields.fields}");
       throw errorMessage;
     }
   }
+
   Future<StatusResponse> addProviderPost(
       String user_token, AddPostModel model) async {
     BaseOptions baseOptions = dio.options;
@@ -484,13 +480,12 @@ print("dlldldl${fields.fields}");
     var fields = FormData.fromMap({});
     try {
       fields = FormData.fromMap({
-
         'description': model.details,
         'image': await MultipartFile.fromFile(model.project_photo_path)
       });
 
       Response response =
-      await dio.post('api/PostProvider/store', data: fields);
+          await dio.post('api/PostProvider/store', data: fields);
       print("data=>${response.data.toString()}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -500,6 +495,7 @@ print("dlldldl${fields.fields}");
       throw errorMessage;
     }
   }
+
   Future<SliderModel> getSliders() async {
     try {
       print('slider');
@@ -804,8 +800,8 @@ print("dlldldl${fields.fields}");
       };
       dio.options = options;
 
-      Response response =
-          await dio.put('api/service-request/changeStatus/$id', queryParameters: { 'status': status});
+      Response response = await dio.put('api/service-request/changeStatus/$id',
+          queryParameters: {'status': status});
       print(response.data);
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -835,7 +831,9 @@ print("dlldldl${fields.fields}");
       throw errorMessage;
     }
   }
-  Future<StatusResponse> rateProvider(String rate, String descEn,int provider_id, String token) async {
+
+  Future<StatusResponse> rateProvider(
+      String rate, String descEn, int provider_id, String token) async {
     try {
       var fields = FormData.fromMap({
         'provider_id': provider_id,
@@ -855,6 +853,7 @@ print("dlldldl${fields.fields}");
       throw errorMessage;
     }
   }
+
   Future<StatusResponse> updateMyServices(String price, String descEn,
       String descAr, int subCatId, String token) async {
     try {

@@ -226,7 +226,7 @@ User  userModel;
                                   svgName: 'offers.svg',
                                   title: 'servicePrice'.tr(),
                                   count:
-                                  '${userModel.subCategories!=null ? userModel.subCategories!.elementAt(0).price : "0.0"}',
+                                  '${userModel.sub_categories!=null ? userModel.sub_categories!.elementAt(0).price : "0.0"}',
                                   content: 'sar'.tr()),
                               _buildDetailsSection(
                                   svgName: 'users.svg',
@@ -265,9 +265,9 @@ User  userModel;
 
                           '${lang == 'ar'
                               ? userModel
-                              .subCategories!.elementAt(0).descAr
+                              .sub_categories!.elementAt(0).descAr
                               : userModel
-                              .subCategories!.elementAt(0).descEn}',
+                              .sub_categories!.elementAt(0).descEn}',
                           style: const TextStyle(
                               fontSize: 14.0, color: AppColors.grey1),
                         ))
