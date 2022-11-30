@@ -45,34 +45,31 @@ class PushNotificationService {
   // StreamController<String> streamController = StreamController<String>.broadcast();
   final locator = GetIt.instance;
   late AndroidNotificationChannel channel;
-   ChatModel? chatModel;
+  ChatModel? chatModel;
   late MessageModel messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
-  RemoteMessage? initialMessage ;
+  RemoteMessage? initialMessage;
+
   late BuildContext context;
 
   // final BehaviorSubject<MessageModel> behaviormessage = BehaviorSubject();
 
-
-
-
   Future initialise() async {
-    initialMessage= await FirebaseMessaging.instance.getInitialMessage().then((value) {
-      if(value!=null){
+    initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage().then((value) {
+      if (value != null) {
         chatModel = ChatModel.fromJson(jsonDecode(value.data['room']));
 
-
-        locator<NavigationService>().navigateToReplacement(chatModel!);}
-    }
-    );
-      channel = const AndroidNotificationChannel(
+        locator<NavigationService>().navigateToReplacement(chatModel!);
+      }
+    });
+    channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
       importance: Importance.high,
     );
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
 
     AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -86,9 +83,9 @@ class PushNotificationService {
             android: initializationSettingsAndroid,
             iOS: initializationSettingsDarwin,
             linux: initializationSettingsLinux);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: notificationTapBackground,
-
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: notificationTapBackground,
     );
 
     await flutterLocalNotificationsPlugin
@@ -128,7 +125,6 @@ class PushNotificationService {
       badge: true,
       sound: true,
     );
-
   }
 
   Future<void> _firebaseMessagingBackgroundHandler(
@@ -145,52 +141,56 @@ class PushNotificationService {
 
   Future<void> showNotification(RemoteMessage message) async {
     //chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
-String paylod=message.data['room']+message.data['note_type'];
+    String paylod = message.data['room'] + message.data['note_type'];
     behaviorchat.add(chatModel!);
-UserModel userModel=await Preferences.instance.getUserModel();
+    UserModel userModel = await Preferences.instance.getUserModel();
 
-if( userModel.user.isLoggedIn) {
-   flutterLocalNotificationsPlugin.show(
-        message.data.hashCode,
-        message.data['title'],
-        message.data['body'],
-        payload: paylod,
-        NotificationDetails(
-            android: AndroidNotificationDetails(channel.id, channel.name,
-                channelDescription: channel.description,
-                importance: Importance.max,
-                icon: '@mipmap/ic_launcher')));}
-final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-final didNotificationLaunchApp =
-    notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
-print("dldldk${didNotificationLaunchApp}");
+    if (userModel.user.isLoggedIn) {
+      flutterLocalNotificationsPlugin.show(
+          message.data.hashCode,
+          message.data['title'],
+          message.data['body'],
+          payload: paylod,
+          NotificationDetails(
+              android: AndroidNotificationDetails(channel.id, channel.name,
+                  channelDescription: channel.description,
+                  importance: Importance.max,
+                  icon: '@mipmap/ic_launcher')));
+    }
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    final didNotificationLaunchApp =
+        notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+    print("dldldk${didNotificationLaunchApp}");
   }
 
   void checkData(RemoteMessage message) {
-
     if (message.data['note_type'].toString().contains("chat")) {
       //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
 
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
-      messageDataModel =
-          MessageModel.fromJson(jsonDecode(message.data['data']));
-      final notification =
-          LocalNotification("data", MessageModel.toJson(messageDataModel));
+      var notification;
+      if (message.data['data'] != null) {
+        messageDataModel =
+            MessageModel.fromJson(jsonDecode(message.data['data']));
 
+        notification =
+            LocalNotification("data", MessageModel.toJson(messageDataModel));
+      } else {
+        notification = LocalNotification("data", message.data);
+      }
       behaviorchat.add(chatModel!);
-      // behaviorSubject.add("chat");
-      //  behaviormessage.add(messageDataModel);
-      // print("sslsllslsl${navigatorKey.currentState}");
-      //  var route = ModalRoute.of(context!);
-      //
-      //  if(route!=null){
-      //
-      //  }
-      //print("sssuuuurus${AppRoutes.rout}");
-      if (AppRoutes.rout == AppConstant.pageChatRoute) {
+
+      if ((AppRoutes.rout == AppConstant.pageChatRoute ||
+          AppRoutes.rout == "conversation")) {
         NotificationsBloc.instance.newNotification(notification);
       } else {
+        if (AppRoutes.rout == "conversation") {
+          NotificationsBloc.instance.newNotification(notification);
+        }
+        // if(message.data['note_type']==""){
+        //
+        // }
         showNotification(message);
       }
       //  print("dldkkdk${messageDataModel.type}");
@@ -204,6 +204,9 @@ print("dldldk${didNotificationLaunchApp}");
 
       //}
     } else {
+      var notification = LocalNotification("data", message.data);
+      NotificationsBloc.instance.newNotification(notification);
+
       showNotification(message);
     }
   }
@@ -211,7 +214,8 @@ print("dldldk${didNotificationLaunchApp}");
   Future notificationTapBackground(NotificationResponse details) async {
     print('notification payload: ${details.payload}');
     if (details.payload!.contains("chat")) {
-      chatModel = ChatModel.fromJson(jsonDecode(details.payload!.replaceAll("chat", "").replaceAll("room", "")));
+      chatModel = ChatModel.fromJson(jsonDecode(
+          details.payload!.replaceAll("chat", "").replaceAll("room", "")));
 
       behaviorchat.add(chatModel!);
       behaviorSubject.add("chat");
@@ -225,7 +229,8 @@ print("dldldk${didNotificationLaunchApp}");
     print("object");
     print('notification payload: ${payload}');
     if (payload!.contains("chat")) {
-      chatModel = ChatModel.fromJson(jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
+      chatModel = ChatModel.fromJson(
+          jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
 
       behaviorchat.add(chatModel!);
       behaviorSubject.add("chat");
@@ -235,6 +240,5 @@ print("dldldk${didNotificationLaunchApp}");
     //   streamControllerstreamController.add("chat");
     // behaviorchat.add(chatModel!);
     // behaviorSubject.add(payload!);
-
   }
 }

@@ -35,7 +35,14 @@ class WalletCubit extends Cubit<WalletState> {
       ),
     );
   }
-
+  onchargeWallet(int amount) async {
+    emit(WalletLoading());
+    emit(
+      GetWalletModel(
+        await api.walletcharge(amount, model.access_token),
+      ),
+    );
+  }
   onGetProfileData() async {
     onRechargeDone(await api.getProfileByToken(model.access_token));
   }

@@ -218,11 +218,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void showNotification(RemoteMessage message) async {
-  chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
+  String paylod="";
+  if(message.data["note_type"]=="chat") {
+   chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
 
-  behaviorchat.add(chatModel);
-  String paylod = message.data['room'] + message.data['note_type'];
-
+   behaviorchat.add(chatModel);
+  paylod = message.data['room'] + message.data['note_type'];
+ }
+  else{
+    message.data['note_type'];
+  }
   channel = const AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
@@ -268,7 +273,8 @@ void checkData(RemoteMessage message) {
     // } else {
 
     //}
-  } else {
+  }
+  else {
     showNotification(message);
   }
 }
@@ -284,6 +290,9 @@ Future ondidnotification(
 
     locator<NavigationService>().navigateToReplacement(chatModel);
     // streamController.add("chat");
+
+  }
+  else if(payload=="service_request"){
 
   }
 

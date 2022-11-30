@@ -293,7 +293,7 @@ class ServiceApi {
       options.headers = {'Authorization': user_token};
       dio.options = options;
       Response response = await dio.post('api/auth/insertToken', data: fields);
-      //  print("dldlldldl${response.statusCode}");
+        print("dldlldldl${firebaseToken}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
@@ -676,7 +676,21 @@ class ServiceApi {
       throw errorMessage;
     }
   }
-
+  Future<RechargeWalletModel> walletcharge(
+      int amount, String user_token) async {
+    try {
+      BaseOptions options = dio.options;
+      options.headers = {'Authorization': user_token};
+      dio.options = options;
+      var fields = FormData.fromMap({'amount': amount});
+      Response response =
+      await dio.post('api/profile/addToMyVisa', data: fields);
+      return RechargeWalletModel.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
   Future<ContactUsModel> contactUsData(ContactModel model) async {
     try {
       var fields = FormData.fromMap({

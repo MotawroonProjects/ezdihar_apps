@@ -231,6 +231,9 @@ class _WalletPageState extends State<WalletPage> {
                                     InkWell(
                                       onTap: () {
                                //    _showTextInputDialog(context);
+                                        context
+                                            .read<WalletCubit>()
+                                            .onchargeWallet(user.wallet);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(

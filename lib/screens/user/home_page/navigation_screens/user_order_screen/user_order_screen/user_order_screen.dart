@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../constants/app_constant.dart';
+import '../../../../../../remote/notificationlisten.dart';
 import '../../../../../new_orders_screen/widget/ItemsOrder.dart';
 import 'cubit/user_order_cubit.dart';
 
 class UserOrderPage extends StatefulWidget {
-   UserOrderPage({Key? key}) : super(key: key);
+  UserOrderPage({Key? key}) : super(key: key);
 
   @override
   State<UserOrderPage> createState() => _UserOrderPageState();
@@ -23,11 +24,10 @@ class _UserOrderPageState extends State<UserOrderPage>
   List<Widget> _tabs = [];
   List<Widget> _screens = [];
   late TabController _controller;
+  late Stream<LocalNotification> _notificationsStream;
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       body: Container(
         color: AppColors.grey3,
@@ -180,9 +180,10 @@ class _UserOrderPageState extends State<UserOrderPage>
             return InkWell(
               onTap: () {
                 Navigator.pushNamed(
-                    context, AppConstant.OrdersDetialsScreenRoute,
-                    arguments: model).then((value) => {refreshCurrent}).whenComplete(() =>
-                {refreshData()});
+                        context, AppConstant.OrdersDetialsScreenRoute,
+                        arguments: model)
+                    .then((value) => {refreshCurrent})
+                    .whenComplete(() => {refreshData()});
               },
               child: ItemsOrders()
                   .buildListItem(context: context, model: model, index: index),
@@ -331,6 +332,7 @@ class _UserOrderPageState extends State<UserOrderPage>
       },
     );
   }
+
   @override
   dispose() {
     _controller.dispose(); // you need this
@@ -346,7 +348,12 @@ class _UserOrderPageState extends State<UserOrderPage>
     ];
     _screens = [buildCurrentOrderList(), buildCompleteOrderList()];
     _controller = TabController(length: _tabs.length, vsync: this);
-  refreshCurrent();
-    refreshData();
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((event) {
+      if (!event.data.keys.contains("data")) {
+        refreshCurrent();
+        refreshData();
+      }
+    });
   }
 }

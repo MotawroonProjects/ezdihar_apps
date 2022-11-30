@@ -9,6 +9,8 @@ import '../../../../../colors/colors.dart';
 import '../../../../../constants/app_constant.dart';
 import '../../../../../models/user_model.dart';
 import '../../../../../preferences/preferences.dart';
+import '../../../../../remote/notificationlisten.dart';
+import '../../../../../routes/app_routes.dart';
 import '../../../../../widgets/app_widgets.dart';
 import '../../../../provider/navigation_bottom/cubit/navigator_bottom_cubit.dart';
 
@@ -22,6 +24,7 @@ class _ConversationPageState extends State<ConversationPage> {
   var hei,wid;
 
   int user_id=0;
+  late Stream<LocalNotification> _notificationsStream;
 
   late ConversationPageCubit cubit;
   @override
@@ -51,13 +54,23 @@ class _ConversationPageState extends State<ConversationPage> {
       body: buildBodySection(),
     );
   }
+  @override
+  void dispose() {
 
+    super.dispose();
+   // AppRoutes.rout = "";
+  }
   @override
   void initState() {
-    refreshCurrent();
+    AppRoutes.rout ="conversation";
+   // refreshCurrent();
     super.initState();
     _onRefresh();
-
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((event) {
+      print("dlkdkdjjdjsssss${event.data}");
+     refreshCurrent();
+    });
 
   }
 

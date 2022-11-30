@@ -558,6 +558,8 @@ class _ChatPageState extends State<ChatPage> {
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((event) {
       print("dlkdkdjjdjsssss${event.data}");
+      MessageModel messageModel=MessageModel.fromJson(event.data);
+      if((messageModel.from_user_id==chatModel.user_id&&messageModel.to_user_id==chatModel.provider.id)||(messageModel.to_user_id==chatModel.user_id&&messageModel.from_user_id==chatModel.provider.id))
       cubit.list.add(MessageModel.fromJson(event.data));
       cubit.emit(OnDataSuccess(cubit.list));
     });

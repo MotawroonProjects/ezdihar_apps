@@ -113,5 +113,7 @@ class CompletedOrdersWidget extends StatelessWidget {
         );
       },
     );
+
   }
+
 }
