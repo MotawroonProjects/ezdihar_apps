@@ -5,12 +5,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../colors/colors.dart';
 import '../../../../../constants/app_constant.dart';
 import '../../../../../models/provider_order.dart';
+import '../../../../../remote/notificationlisten.dart';
 import '../../../../../widgets/app_widgets.dart';
 import '../cubit/orders_cubit.dart';
 import 'ItemsOrder.dart';
 
-class CurrentOrdersWidget extends StatelessWidget {
+class CurrentOrdersWidget extends StatefulWidget {
   const CurrentOrdersWidget({Key? key}) : super(key: key);
+
+  @override
+  State<CurrentOrdersWidget> createState() => _CurrentOrdersWidgetState();
+}
+
+class _CurrentOrdersWidgetState extends State<CurrentOrdersWidget> {
+  late Stream<LocalNotification> _notificationsStream;
 
   @override
   Widget build(BuildContext context) {
@@ -80,5 +88,16 @@ class CurrentOrdersWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((event) {
+      if (!event.data.keys.contains("chat")) {
+        context.read<OrdersCubit>().getProviderAcceptOrder();
+      }
+    });
   }
 }

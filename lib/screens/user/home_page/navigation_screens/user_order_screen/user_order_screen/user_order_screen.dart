@@ -24,7 +24,6 @@ class _UserOrderPageState extends State<UserOrderPage>
   List<Widget> _tabs = [];
   List<Widget> _screens = [];
   late TabController _controller;
-  late Stream<LocalNotification> _notificationsStream;
 
   @override
   Widget build(BuildContext context) {
@@ -348,12 +347,6 @@ class _UserOrderPageState extends State<UserOrderPage>
     ];
     _screens = [buildCurrentOrderList(), buildCompleteOrderList()];
     _controller = TabController(length: _tabs.length, vsync: this);
-    _notificationsStream = NotificationsBloc.instance.notificationsStream;
-    _notificationsStream.listen((event) {
-      if (!event.data.keys.contains("data")) {
-        refreshCurrent();
-        refreshData();
-      }
-    });
+
   }
 }

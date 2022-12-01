@@ -567,9 +567,10 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
+    super.dispose();
+
     _scrollController.dispose();
     AppRoutes.rout = "";
-    super.dispose();
   }
 
 // void listenToNotificationStream() =>

@@ -22,6 +22,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String role;
 
+  LoginCubit cubit=LoginCubit();
+
   _LoginPageState(this.role);
 
   @override
@@ -45,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   buildBodySection() {
-    LoginCubit cubit = BlocProvider.of<LoginCubit>(context);
+     cubit = BlocProvider.of<LoginCubit>(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     double spaceHeight = 0.0;
@@ -88,8 +90,10 @@ class _LoginPageState extends State<LoginPage> {
                       return MaterialButton(
                         onPressed: isValid
                             ? () {
-                                cubit.login(context,role);
-                                //showConfirmCodeDialog();
+                               // cubit.login(context,role);
+
+                                cubit.sendSmsCode(context);
+                                showConfirmCodeDialog();
 
                                 //Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
                               }
@@ -185,7 +189,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _buildDropDownButton() {
-    LoginCubit cubit = BlocProvider.of<LoginCubit>(context);
 
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
@@ -230,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _buildForm() {
-    LoginCubit cubit = BlocProvider.of<LoginCubit>(context);
+     cubit = BlocProvider.of<LoginCubit>(context);
     return Form(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -283,8 +286,7 @@ class _LoginPageState extends State<LoginPage> {
     String lang = lan.EasyLocalization.of(context)!.locale.languageCode;
 
     TextEditingController controller = TextEditingController();
-    LoginCubit cubit = BlocProvider.of<LoginCubit>(context);
-    cubit.sendSmsCode(context);
+//    cubit.sendSmsCode(context);
     double height = MediaQuery.of(context).size.height * .5;
     showDialog(
         context: context,

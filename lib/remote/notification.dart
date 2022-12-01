@@ -46,7 +46,7 @@ class PushNotificationService {
   final locator = GetIt.instance;
   late AndroidNotificationChannel channel;
   ChatModel? chatModel;
-  late MessageModel messageDataModel;
+   MessageModel? messageDataModel;
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
   final BehaviorSubject<ChatModel> behaviorchat = BehaviorSubject();
   RemoteMessage? initialMessage;
@@ -170,7 +170,8 @@ class PushNotificationService {
 
       chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
       var notification;
-      if (message.data['data'] != null) {
+      if (message.data['data'].toString().isNotEmpty) {
+        print("Flflflflssss");
         messageDataModel =
             MessageModel.fromJson(jsonDecode(message.data['data']));
 
@@ -181,28 +182,16 @@ class PushNotificationService {
       }
       behaviorchat.add(chatModel!);
 
-      if ((AppRoutes.rout == AppConstant.pageChatRoute ||
-          AppRoutes.rout == "conversation")) {
+      if ((AppRoutes.rout == AppConstant.pageChatRoute )&&messageDataModel!=null) {
         NotificationsBloc.instance.newNotification(notification);
       } else {
-        if (AppRoutes.rout == "conversation") {
+
           NotificationsBloc.instance.newNotification(notification);
-        }
-        // if(message.data['note_type']==""){
-        //
-        // }
+
+
         showNotification(message);
       }
-      //  print("dldkkdk${messageDataModel.type}");
-      // if (ModalRoute.of(context)!
-      //     .settings
-      //     .name!
-      //     .contains(AppConstant.pageChatRoute)) {
-      //   //Navigator.of(context).pop();
-      //   // context..addmessage(message.data['data']);
-      // } else {
 
-      //}
     } else {
       var notification = LocalNotification("data", message.data);
       NotificationsBloc.instance.newNotification(notification);

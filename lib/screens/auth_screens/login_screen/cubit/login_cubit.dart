@@ -102,11 +102,14 @@ class LoginCubit extends Cubit<LoginState> {
         codeSent: (String verificationId, int? resendToken) {
           this.resendToken = resendToken;
           this.verificationId = verificationId;
+          emit(OnSmsCodeSent(''));
           print("verificationId=>${verificationId}");
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           this.verificationId=verificationId;
+          emit(OnSmsCodeSent(''));
         },
+
 
 
     )
@@ -119,19 +122,25 @@ class LoginCubit extends Cubit<LoginState> {
     AppWidget.createProgressDialog(context, 'wait'.tr());
     print(smsCode);
     print(verificationId);
-
+try{
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId!, smsCode: smsCode);
     await _mAuth.signInWithCredential(credential).then((value) {
       // login(context);
       print('LoginSuccess');
       Navigator.pop(context);
-      Navigator.pop(context);
+    //  Navigator.pop(context);
       stopTimer();
       login(context, role);
     }).catchError((error) {
       print('phone auth =>${error.toString()}');
-    });
+    });}
+    on FirebaseAuthException catch (e){
+      Navigator.pop(context);
+      //  Navigator.pop(context);
+      stopTimer();
+      login(context, role);
+    }
   }
 
   startTimer() {
@@ -165,7 +174,7 @@ class LoginCubit extends Cubit<LoginState> {
 
     try {
       UserDataModel response = await api.login(loginModel, role);
-      Navigator.pop(context);
+     // Navigator.pop(context);
       Navigator.pop(context);
       print("resss${response.status.code}");
       if (response.status.code == 200) {
