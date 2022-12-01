@@ -293,7 +293,7 @@ class ServiceApi {
       options.headers = {'Authorization': user_token};
       dio.options = options;
       Response response = await dio.post('api/auth/insertToken', data: fields);
-        print("dldlldldl${firebaseToken}");
+        print("dldlldldl${response.statusCode}");
       return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();

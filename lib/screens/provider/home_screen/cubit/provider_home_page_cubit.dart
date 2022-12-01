@@ -38,19 +38,16 @@ class ProviderHomePageCubit extends Cubit<ProviderHomePageState> {
       if(value.user.isLoggedIn){
         String? token = await FirebaseMessaging.instance.getToken();
         print('token'+token!);
-        if(token!=null){
-          value.firebase_token = token;
-          Preferences.instance.setUser(value);
+        value.firebase_token = token;
+        Preferences.instance.setUser(value);
 
-          String type ='android';
-          if(Platform.isAndroid){
-            type = 'android';
-          }else if(Platform.isIOS){
-            type = 'ios';
-          }
-          await api.updateFireBaseToken(value.access_token, token, type);
-
+        String type ='android';
+        if(Platform.isAndroid){
+          type = 'android';
+        }else if(Platform.isIOS){
+          type = 'ios';
         }
+        await api.updateFireBaseToken(value.access_token, token, type);
       }
     });
   }

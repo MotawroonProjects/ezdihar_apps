@@ -135,7 +135,7 @@ try{
     }).catchError((error) {
       print('phone auth =>${error.toString()}');
     });}
-    on FirebaseAuthException catch (e){
+    on Exception {
       Navigator.pop(context);
       //  Navigator.pop(context);
       stopTimer();
