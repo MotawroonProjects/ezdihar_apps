@@ -80,19 +80,19 @@ class ChatCubit extends Cubit<ChatState> {
         user_token = model.access_token;
       }
       //   print(chatModel.provider.id);
-
+      String id = "";
+      if (model.user.id == chatModel.user.id) {
+        id = chatModel.provider.id.toString();
+      } else {
+        id = chatModel.user.id.toString();
+      }
       SingleMessageDataModel response = await api.sendMessage(
-          imagepath,
-          "",
-          "file",
-          chatModel.id.toString(),
-          chatModel.provider.id.toString(),
-          user_token);
+          imagepath, "", "file", chatModel.id.toString(), id, user_token);
       print("sssss${response.status!.code}");
       if (response.status?.code == 200) {
         list.add(response.data!);
         //   list.add(new MessageModel());
-      //  print(list.length);
+        //  print(list.length);
         emit(OnDataSuccess(list));
       } else {
         //  Navigator.pop(context);
@@ -114,18 +114,23 @@ class ChatCubit extends Cubit<ChatState> {
         user_token = model.access_token;
       }
       //   print(chatModel.provider.id);
-
+      String id = "";
+      if (model.user.id == chatModel.user.id) {
+        id = chatModel.provider.id.toString();
+      } else {
+        id = chatModel.user.id.toString();
+      }
       SingleMessageDataModel response = await api.sendMessage(
           "",
           message,
           "text",
           chatModel.id.toString(),
-          chatModel.provider.id.toString(),
+          id,
           user_token);
       print(response.status!.message);
       if (response.status?.code == 200) {
-      //  print('Error=>${list.length}');
-     //   list.removeAt(list.length - 1);
+        //  print('Error=>${list.length}');
+        //   list.removeAt(list.length - 1);
         list.add(response.data!);
         // list.add(new MessageModel());
         print(list.length);
