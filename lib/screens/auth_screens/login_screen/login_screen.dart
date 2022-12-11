@@ -90,10 +90,10 @@ class _LoginPageState extends State<LoginPage> {
                       return MaterialButton(
                         onPressed: isValid
                             ? () {
-                               cubit.login(context,role);
+                              // cubit.login(context,role);
 
                                 //cubit.sendSmsCode(context);
-                                //showConfirmCodeDialog();
+                                showConfirmCodeDialog();
 
                                 //Navigator.pushNamed(context, AppConstant.pageUserSignUpRoleRoute);
                               }
@@ -286,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
     String lang = lan.EasyLocalization.of(context)!.locale.languageCode;
 
     TextEditingController controller = TextEditingController();
-//    cubit.sendSmsCode(context);
+    cubit.sendSmsCode(context);
     double height = MediaQuery.of(context).size.height * .5;
     showDialog(
         context: context,
