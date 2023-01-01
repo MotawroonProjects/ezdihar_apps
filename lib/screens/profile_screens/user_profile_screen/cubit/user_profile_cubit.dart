@@ -24,7 +24,6 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     getUserData().then((value) {
       emit(OnUserDataGet(value!));
     });
-  //  getPosts();
     Future.delayed(Duration(seconds: 1)).then((value){
       if(userModel!.user.userType.contains("client")){
       getFavoritePosts();}
@@ -32,9 +31,6 @@ class UserProfileCubit extends Cubit<UserProfileState> {
         getPosts();
       }
     });
-    // Future.delayed(Duration(seconds: 1)).then((value){
-    //   getSaved();    });
-
   }
 
 
@@ -43,11 +39,25 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     return userModel;
   }
 
+
+  deleteUserAccount() async {
+    try{
+      emit(IsDeleteAccountLoading());
+      StatusResponse response =  await api.deleteProfile(userModel!.user.id.toString());
+      if(response.code==200){
+        emit(IsDeleteAccountLoaded());
+      }else if(response.code==404){
+        emit(IsDeleteAccountNotFound());
+      }
+    }catch (e){
+      emit(IsDeleteAccountError());
+    }
+
+  }
   getFavoritePosts() async{
     try{
       emit(IsLoadingData());
       ProjectsDataModel response =  await api.getMyFavorites(userModel!.access_token);
-
       if(response.status.code==200){
         posts = response.data;
         emit(OnFavDataSuccess(posts));
@@ -57,8 +67,6 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     }
 
   }
-
-
   getPosts() async{
 
     try{
@@ -75,26 +83,9 @@ class UserProfileCubit extends Cubit<UserProfileState> {
 
 
   }
-  // getSaved() async{
-  //   try{
-  //     getUserData().then((value) async{
-  //       emit(IsLoadingData());
-  //       ProjectsDataModel response =  await api.getSaved(value!.access_token);
-  //
-  //       if(response.status.code==200){
-  //         savedPosts = response.data;
-  //         emit(OnSavedPostsSuccess(savedPosts));
-  //       }
-  //     });
-  //   }catch (e){
-  //     emit(OnError(e.toString()));
-  //   }
-  //
-  // }
   void onErrorData(String error) {
     emit(OnError(error));
   }
-
   void onErrorPosts(String error) {
     emit(OnError(error));
   }

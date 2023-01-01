@@ -11,6 +11,10 @@
   "servicenum": "عدد الخدمات",
   "servicePrice": "سعر الخدمه",
   "requestserviceNow": "طلب خدمه الان",
+  "delete_profile": "حذف الحساب",
+  "delete_profile_successfully": "تم حذف المستخدم بنجاح",
+  "error_occurred_try_again_later": "حدث خطأ حاول مرة أخرى في وقت لاحق",
+
   "donate": "دعم",
   "seeMore": "  المزيد",
   "follow": "متابعة",

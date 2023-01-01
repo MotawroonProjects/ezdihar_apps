@@ -23,12 +23,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'firebase_options.dart';
+
 RemoteMessage? initialMessage;
 
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   UserModel userModel = await Preferences.instance.getUserModel();
-  await Firebase.initializeApp();
+
+await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   if (userModel.user.isLoggedIn) {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await FirebaseMessaging.instance
@@ -191,7 +196,10 @@ class _MyAppState extends State<MyApp> {
 // }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+
+await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   print("Handling a background message:");
 
   AndroidInitializationSettings initializationSettingsAndroid =

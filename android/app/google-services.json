@@ -14,6 +14,38 @@
       },
       "oauth_client": [
         {
+          "client_id": "628624317094-1buo3fuj18fb4eu9rpj5bakfmn99s30b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.ezdihar_apps",
+            "certificate_hash": "b96d62847912df656bba917f831439418841feb1"
+          }
+        },
+        {
+          "client_id": "628624317094-9vsdtuehib1blaru8ssa4te4h0c9b2b5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.ezdihar_apps",
+            "certificate_hash": "ef10d39f28ab4ea23e970b3015653d974b4aff8a"
+          }
+        },
+        {
+          "client_id": "628624317094-adihia1k0nuuuhlfr2cju8uc7m3trfuc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.ezdihar_apps",
+            "certificate_hash": "6d39e57f3c880ad5ec12fe731d3e4a908fca8758"
+          }
+        },
+        {
+          "client_id": "628624317094-b8mr7tnjorku8j1o4n0d6k4oh6d9k32v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.ezdihar_apps",
+            "certificate_hash": "31bc59fd3f206d81760b7affc5f5c8fccbdffbcb"
+          }
+        },
+        {
           "client_id": "628624317094-a15sd1ml7168k1taoh4t0d0k7ipogg6r.apps.googleusercontent.com",
           "client_type": 3
         }

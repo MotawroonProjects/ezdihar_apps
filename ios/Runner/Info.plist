@@ -2,16 +2,27 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Ezdihar</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>NSCameraUsageDescription</key>
+    <string>access your camera to able to take photo</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string> access your photos to able to send photos</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>ar</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>ezdihar_apps</string>
 	<key>CFBundlePackageType</key>
@@ -20,10 +31,40 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string></string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-628624317094-ios-f369e755ea203e7a83b267</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+		<string>http</string>
+		<string>https</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription </key>
+	<string>To take user profile photo</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To capture audio for pick image plugin</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To take user profile photo</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -43,28 +84,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleLocalizations</key>
-        <array>
-        	<string>en</string>
-        	<string>ar</string>
-        </array>
-        <key>LSApplicationQueriesSchemes</key>
-        <array>
-          <string>sms</string>
-          <string>tel</string>
-          <string>http</string>
-          <string>https</string>
-
-        </array>
-
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>To take user profile photo</string>
-    <key>NSCameraUsageDescription </key>
-    <string>To take user profile photo</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>To capture audio for pick image plugin</string>
-
 </dict>
 </plist>
