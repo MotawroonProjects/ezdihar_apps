@@ -108,7 +108,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           String imagePath = cubit.model.imagePath;
           if (state is UserPhotoPicked) {
             imagePath = state.imagePath;
-          }else if(state is OnUserDataGet){
+          }
+          else if(state is OnUserDataGet){
             imagePath = cubit.imagePath;
           }
           return Row(

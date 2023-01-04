@@ -190,7 +190,11 @@ class MoreWidgets {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               InkWell(
-                  onTap: () => onTaped(url: 'httpsssdf://www.facebook.com'),
+                  onTap: () => onTaped(url:
+
+
+
+                  'httpsssdf://www.facebook.com'),
                   child: Image.asset(
                     '${AppConstant.localImagePath}facebook.png',
                     width: 40.0,

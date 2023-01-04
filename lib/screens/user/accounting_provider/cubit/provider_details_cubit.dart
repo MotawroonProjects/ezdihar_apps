@@ -48,7 +48,7 @@ class ProviderDetailsCubit extends Cubit<ProviderDetailsState> {
       user_token = model.access_token;
     }
     try {
-      PaymentDataModel response = await api.sendOrder(userModel!,user_token);
+      PaymentDataModel response = await api.sendOrder(userModel,user_token);
       Navigator.pop(context);
 
       if (response.status.code == 200) {

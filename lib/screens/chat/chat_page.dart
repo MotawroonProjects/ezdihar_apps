@@ -246,7 +246,8 @@ class _ChatPageState extends State<ChatPage> {
                                                     const EdgeInsets.all(0),
                                                 child: (model.type
                                                         .contains("file")
-                                                    ? CachedNetworkImage(
+                                                    ?
+                                                CachedNetworkImage(
                                                         height: 290,
                                                         imageUrl: model.file,
                                                         placeholder: (context,
