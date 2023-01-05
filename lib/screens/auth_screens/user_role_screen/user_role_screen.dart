@@ -31,7 +31,6 @@ class _UserRolePageState extends State<UserRolePage> {
               fontSize: 16.0,
               fontWeight: FontWeight.bold),
         ),
-        leading: AppWidget.buildBackArrow(context: context),
       ),
       backgroundColor: AppColors.grey2,
       body: BlocProvider<UserRoleCubit>(

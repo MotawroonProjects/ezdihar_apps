@@ -13,6 +13,9 @@
   "birthdate":"BirthDate" ,
   "servicePrice": "Service Price",
   "requestserviceNow": "Request Service Now",
+  "delete_profile": "Delete Profile",
+  "delete_profile_successfully": "Delete Profile Successfully",
+  "error_occurred_try_again_later": "Error Occurred Try Again Later",
 
   "donate": "Support",
   "seeMore": "  See More",

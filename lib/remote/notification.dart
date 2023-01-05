@@ -25,10 +25,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart%20';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../firebase_options.dart';
 import '../models/message_model.dart';
 import '../models/user_model.dart';
 import '../preferences/preferences.dart';
@@ -129,7 +130,10 @@ class PushNotificationService {
 
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
-    await Firebase.initializeApp();
+
+await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
     print("Handling a background message:");
 
     if (message.data.isNotEmpty) {

@@ -719,6 +719,18 @@ class ServiceApi {
       throw errorMessage;
     }
   }
+///////////////////////////////////////////////////////////////////////////
+  Future<StatusResponse> deleteProfile(String userId) async {
+    try {
+      Response response = await dio.delete('api/profile/delete/$userId');
+      return StatusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+
+///////////////////////////////////////////////////////////////////////////
 
   Future<FeasibilityTypeModel> getFeasibilityType() async {
     try {

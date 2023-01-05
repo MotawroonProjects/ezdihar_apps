@@ -10,7 +10,7 @@ import 'package:ezdihar_apps/models/message_model.dart';
 import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart%20' as gets;
+import 'package:get/get.dart' as gets;
 
 import '../../constants/app_constant.dart';
 import '../../models/chat_model.dart';

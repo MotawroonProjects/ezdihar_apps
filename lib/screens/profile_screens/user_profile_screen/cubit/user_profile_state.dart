@@ -8,8 +8,14 @@ class UpdateIndex extends UserProfileState {
   UpdateIndex(this.index);
 }
 
-class IsLoadingData extends UserProfileState {
-}
+class IsDeleteAccountLoading extends UserProfileState {}
+class IsDeleteAccountLoaded extends UserProfileState {}
+class IsDeleteAccountError extends UserProfileState {}
+class IsDeleteAccountNotFound extends UserProfileState {}
+
+
+
+class IsLoadingData extends UserProfileState {}
 class IsLoadingPosts extends UserProfileState {
 }
 

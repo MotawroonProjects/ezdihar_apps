@@ -10,6 +10,7 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../constants/snackbar_method.dart';
 import '../../../models/login_model.dart';
 import '../../../preferences/preferences.dart';
 import '../../user/home_page/navigation_screens/more_screen/cubit/more_cubit.dart';
@@ -23,228 +24,306 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage>
     with SingleTickerProviderStateMixin {
- // List<Widget> _tabs = [];
+  // List<Widget> _tabs = [];
   List<Widget> _screens = [];
 
   late UserProfileCubit cubit;
 
   @override
   Widget build(BuildContext context) {
-   //  _tabs = [
-   //   // buildTab('my_posts'.tr(), 'post.svg', 0),
-   //    buildTab('love'.tr(), 'empty_love.svg', 0),
-   // //   buildTab('saved'.tr(), 'empty_love.svg', 2)
-   //  ];
+    //  _tabs = [
+    //   // buildTab('my_posts'.tr(), 'post.svg', 0),
+    //    buildTab('love'.tr(), 'empty_love.svg', 0),
+    // //   buildTab('saved'.tr(), 'empty_love.svg', 2)
+    //  ];
     _screens = [
       //buildMyPostList(),
 
       buildMyFavoriteList(),
-    //  buildSavedPostList()
-
+      //  buildSavedPostList()
     ];
     //_controller = TabController(length: _tabs.length, vsync: this);
 
     return Scaffold(
-      body: Container(
-        color: AppColors.grey3,
-        child: SafeArea(
-          child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  leading: AppWidget.buildBackArrow(context: context),
-                  title: Text(
-                    'myProfile'.tr(),
-                    style: TextStyle(color: AppColors.black, fontSize: 16.0),
-                  ),
-                  expandedHeight: 330,
-                  pinned: true,
-                  centerTitle: true,
-                  backgroundColor: AppColors.white,
-                  flexibleSpace: FlexibleSpaceBar(
-                    collapseMode: CollapseMode.parallax,
-                    background: header(),
-                  ),
-                )
-              ];
-            },
-            body: body(),
-          ),
-        ),
+      body: BlocBuilder<UserProfileCubit, UserProfileState>(
+        builder: (context, state) {
+
+          if (state is IsDeleteAccountNotFound) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              snackBar('user_not_found'.tr(), context, color: AppColors.red);
+            });
+          }
+          if (state is IsDeleteAccountLoading) {
+            return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.colorPrimary,
+                ));
+          }
+          if (state is IsDeleteAccountError) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              snackBar('error_occurred_try_again_later'.tr(), context,
+                  color: AppColors.red);
+            });
+          }
+          if (state is IsDeleteAccountLoaded) {
+            Future.delayed(Duration(milliseconds: 300), () {
+              snackBar('delete_profile_successfully'.tr(), context,
+                  color: AppColors.red);
+            });
+            Future.delayed(Duration(milliseconds: 600), () {
+              Preferences.instance.clearUserData();
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppConstant.pageUserRoleRoute,
+                  ModalRoute.withName(AppConstant.pageSplashRoute));
+            });
+            return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.colorPrimary,
+                ));
+          }
+
+          return Container(
+            color: AppColors.grey3,
+            child: SafeArea(
+              child: NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return [
+                    SliverAppBar(
+                      leading: AppWidget.buildBackArrow(context: context),
+                      title: Text(
+                        'myProfile'.tr(),
+                        style:
+                        TextStyle(color: AppColors.black, fontSize: 16.0),
+                      ),
+                      expandedHeight: 330,
+                      pinned: true,
+                      centerTitle: true,
+                      backgroundColor: AppColors.white,
+                      flexibleSpace: FlexibleSpaceBar(
+                        collapseMode: CollapseMode.parallax,
+                        background: header(),
+                      ),
+                    )
+                  ];
+                },
+                body: body(),
+              ),
+            ),
+          );
+        },
       ),
     );
+
   }
 
   header() {
-     cubit = BlocProvider.of(context);
+    cubit = BlocProvider.of(context);
     String lang = EasyLocalization.of(context)!.locale.languageCode;
 
     return BlocBuilder<UserProfileCubit, UserProfileState>(
-  builder: (context, state) {
-    UserModel userModel = UserModel();
-    if(state is OnUserDataGet){
-      userModel = state.userModel;
-    }
-    if(cubit.userModel!=null){
-      userModel = cubit.userModel!;
-      return Container(
-        color: AppColors.grey5,
-        margin: EdgeInsets.only(top: 60),
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                userModel.user.image.isNotEmpty?
-                CachedNetworkImage(
-                  imageBuilder: (context,imageProvider){
-                    return Container(
-                      width: 96.0,
-                      height: 96.0,
-                      decoration:  BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.colorPrimary,width: 1),
+      builder: (context, state) {
+        UserModel userModel = UserModel();
+        if (state is OnUserDataGet) {
+          userModel = state.userModel;
+        }
 
-                      ),
-                      child: CircleAvatar(
-                        radius: 96.0,
-                        backgroundImage: imageProvider,
-                      ),
-                    );
-                  },
-                  imageUrl:userModel.user.image,
-                  width: 96.0,
-                  height: 96.0,
-                  placeholder: (context,url){
-                    return AppWidget.circleAvatarWithBorder(96.0, 96.0);
-                  },
-                  errorWidget: (context,url,error){
-                    return AppWidget.circleAvatarWithBorder(96.0, 96.0);
-                  },
-                )
-                    :AppWidget.circleAvatarWithBorder(96.0, 96.0),
-                SizedBox(
-                  width: 16.0,
-                ),
-                Column(
+        if (cubit.userModel != null) {
+          userModel = cubit.userModel!;
+          return Container(
+            color: AppColors.grey5,
+            margin: EdgeInsets.only(top: 60),
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      userModel.user.firstName+" "+userModel.user.lastName,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    userModel.user.image.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                width: 96.0,
+                                height: 96.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: AppColors.colorPrimary, width: 1),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 96.0,
+                                  backgroundImage: imageProvider,
+                                ),
+                              );
+                            },
+                            imageUrl: userModel.user.image,
+                            width: 96.0,
+                            height: 96.0,
+                            placeholder: (context, url) {
+                              return AppWidget.circleAvatarWithBorder(
+                                  96.0, 96.0);
+                            },
+                            errorWidget: (context, url, error) {
+                              return AppWidget.circleAvatarWithBorder(
+                                  96.0, 96.0);
+                            },
+                          )
+                        : AppWidget.circleAvatarWithBorder(96.0, 96.0),
                     SizedBox(
-                      height: 12.0,
+                      width: 16.0,
                     ),
-                    MaterialButton(
-                      onPressed: () {
-                        navigateToUserSignUpActivity();
-
-                      },
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.0),
-                          side: BorderSide(width: 1.0, color: AppColors.color1)),
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      child: Text(
-                        'edit_profile'.tr(),
-                        style: TextStyle(fontSize: 14.0, color: AppColors.color1),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 12.0,
-                    ),
-                    Visibility(
-                      visible:cubit.userModel!.user.userType.contains("client")?false:true,
-                      child:
-                    MaterialButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(AppConstant.pageAddPostRoute  ).then((value) => {
-                          cubit.getPosts()
-                        });
-
-                      },
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.0),
-                          side: BorderSide(width: 1.0, color: AppColors.color1)),
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      child: Text(
-                        'addPost'.tr(),
-                        style: TextStyle(fontSize: 14.0, color: AppColors.color1),
-                      ),
-                    ))
+                    Column(
+                      children: [
+                        Text(
+                          userModel.user.firstName +
+                              " " +
+                              userModel.user.lastName,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          height: 12.0,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Row(
+                            children: [
+                              MaterialButton(
+                                onPressed: () {
+                                  navigateToUserSignUpActivity();
+                                },
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24.0),
+                                    side: BorderSide(
+                                        width: 1.0, color: AppColors.color1)),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 24.0, vertical: 8.0),
+                                child: Text(
+                                  'edit_profile'.tr(),
+                                  style: TextStyle(
+                                      fontSize: 14.0, color: AppColors.color1),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 25,
+                              ),
+                              MaterialButton(
+                                onPressed: () {
+                                  cubit.deleteUserAccount();
+                                },
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24.0),
+                                    side: BorderSide(
+                                        width: 1.0, color: AppColors.color1)),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 24.0, vertical: 8.0),
+                                child: Text(
+                                  'delete_profile'.tr(),
+                                  style: TextStyle(
+                                      fontSize: 14.0, color: AppColors.color1),
+                                ),
+                              ),
+                              // Spacer(),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 12.0,
+                        ),
+                        Visibility(
+                            visible: cubit.userModel!.user.userType
+                                    .contains("client")
+                                ? false
+                                : true,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pushNamed(AppConstant.pageAddPostRoute)
+                                    .then((value) => {cubit.getPosts()});
+                              },
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24.0),
+                                  side: BorderSide(
+                                      width: 1.0, color: AppColors.color1)),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 8.0),
+                              child: Text(
+                                'addPost'.tr(),
+                                style: TextStyle(
+                                    fontSize: 14.0, color: AppColors.color1),
+                              ),
+                            ))
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppWidget.svg('calender.svg', AppColors.color1, 20.0, 20.0),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  userModel.user.birthdate,
-                  style: TextStyle(fontSize: 16.0, color: AppColors.black),
                 ),
                 SizedBox(
-                  width: 8,
+                  height: 8,
                 ),
-                AppWidget.svg('pin.svg', AppColors.color1, 20.0, 20.0),
-                Expanded(
-                    child: Text(lang=='ar'?userModel.user.city.cityNameAr:userModel.user.city.cityNameEn,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppWidget.svg('calender.svg', AppColors.color1, 20.0, 20.0),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      userModel.user.birthdate,
+                      style: TextStyle(fontSize: 16.0, color: AppColors.black),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    AppWidget.svg('pin.svg', AppColors.color1, 20.0, 20.0),
+                    Expanded(
+                        child: Text(
+                      lang == 'ar'
+                          ? userModel.user.city.cityNameAr
+                          : userModel.user.city.cityNameEn,
                       style: TextStyle(fontSize: 16.0, color: AppColors.black),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     )),
+                  ],
+                ),
+                SizedBox(height: 7),
               ],
             ),
-        
-
-            SizedBox(height: 7),
-          ],
-        ),
-      );
-    }
-    else{
-      return Container();
-    }
-
-  },
-);
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
   }
 
   body() {
     UserProfileCubit cubit = BlocProvider.of(context);
 
     return BlocListener<UserProfileCubit, UserProfileState>(
-  listener: (context, state) {
-    if(state is OnRemoveFavorite){
-      AppRoutes.mainPageCubit.getData();
-    }
-  },
-  child: BlocBuilder<UserProfileCubit, UserProfileState>(
-      builder: (context, state) {
-        int index = cubit.index;
-        if (state is UpdateIndex) {
-          index = state.index;
+      listener: (context, state) {
+        if (state is OnRemoveFavorite) {
+          AppRoutes.mainPageCubit.getData();
         }
-        return IndexedStack(
-          index: index,
-          children: _screens,
-        );
       },
-    ),
-);
+      child: BlocBuilder<UserProfileCubit, UserProfileState>(
+        builder: (context, state) {
+          int index = cubit.index;
+          if (state is UpdateIndex) {
+            index = state.index;
+          }
+          return IndexedStack(
+            index: index,
+            children: _screens,
+          );
+        },
+      ),
+    );
   }
 
   // buildMyPostList() {
@@ -517,21 +596,18 @@ class _UserProfilePageState extends State<UserProfilePage>
 
     return BlocBuilder<UserProfileCubit, UserProfileState>(
       builder: (context, state) {
-        if(state is UpdateIndex){
+        if (state is UpdateIndex) {
           if (cubit.posts.length > 0) {
             return myFavoriteWidget(cubit.posts);
           } else {
             return Center(
               child: Text(
                 'no_projects'.tr(),
-
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
           }
-
-        }
-        else if (state is IsLoadingData||state is OnUserDataGet) {
+        } else if (state is IsLoadingData || state is OnUserDataGet) {
           return Center(
             child: CircularProgressIndicator(
               color: AppColors.colorPrimary,
@@ -563,12 +639,11 @@ class _UserProfilePageState extends State<UserProfilePage>
           List<ProjectModel> list = cubit.posts;
 
           if (list.length > 0) {
-           return myFavoriteWidget(list);
+            return myFavoriteWidget(list);
           } else {
             return Center(
               child: Text(
                 'no_projects'.tr(),
-
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
@@ -577,7 +652,8 @@ class _UserProfilePageState extends State<UserProfilePage>
       },
     );
   }
-  myFavoriteWidget(List<ProjectModel> list){
+
+  myFavoriteWidget(List<ProjectModel> list) {
     String lang = EasyLocalization.of(context)!.locale.languageCode;
 
     return RefreshIndicator(
@@ -589,7 +665,7 @@ class _UserProfilePageState extends State<UserProfilePage>
           shrinkWrap: true,
           itemBuilder: (context, index) {
             ProjectModel model = list[index];
-           // String approved = "";
+            // String approved = "";
             // if (model.approvedFrom.length > 0) {
             //   approved = model.approvedFrom
             //       .map((e) => lang == 'ar'
@@ -602,8 +678,7 @@ class _UserProfilePageState extends State<UserProfilePage>
               child: Card(
                 color: AppColors.white,
                 shape: const RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(24.0))),
+                    borderRadius: BorderRadius.all(Radius.circular(24.0))),
                 elevation: 5.0,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -639,7 +714,9 @@ class _UserProfilePageState extends State<UserProfilePage>
                               fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          lang.contains("ar")?model.provider.main_category.title_ar:model.provider.main_category.title_en,
+                          lang.contains("ar")
+                              ? model.provider.main_category.title_ar
+                              : model.provider.main_category.title_en,
                           style: TextStyle(
                             color: AppColors.grey1,
                             fontSize: 14.0,
@@ -652,56 +729,51 @@ class _UserProfilePageState extends State<UserProfilePage>
                       AspectRatio(
                         aspectRatio: 1 / .67,
                         child: ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                                Radius.circular(8.0)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8.0)),
                             child: model.img.isNotEmpty
                                 ? CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: model.img,
-                            )
+                                    fit: BoxFit.cover,
+                                    imageUrl: model.img,
+                                  )
                                 : Container(
-                              color: AppColors.grey3,
-                            )),
+                                    color: AppColors.grey3,
+                                  )),
                       ),
                       const SizedBox(
                         height: 8.0,
                       ),
                       Row(
                         mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Row(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Visibility(
-                                  visible:cubit.userModel!.user.userType.contains("client")?true:false,
-                                  child:
-                              InkWell(
-                                onTap: () {
-                                  addRemoveFavorite(index, model);
-                                },
-                                child: SizedBox(
-                                  child: AppWidget.svg(
-
-                                      'love.svg',
-                                      model.action_user.contains("unlove")
-                                          ?
-                                      AppColors.grey1
-
-                                          :
-                                      AppColors.colorPrimary,
-                                      24.0,
-                                      24.0),
-                                ),
-                              )),
+                                  visible: cubit.userModel!.user.userType
+                                          .contains("client")
+                                      ? true
+                                      : false,
+                                  child: InkWell(
+                                    onTap: () {
+                                      addRemoveFavorite(index, model);
+                                    },
+                                    child: SizedBox(
+                                      child: AppWidget.svg(
+                                          'love.svg',
+                                          model.action_user.contains("unlove")
+                                              ? AppColors.grey1
+                                              : AppColors.colorPrimary,
+                                          24.0,
+                                          24.0),
+                                    ),
+                                  )),
                               const SizedBox(
                                 width: 12,
                               ),
-
                             ],
                           ),
                         ],
@@ -724,7 +796,6 @@ class _UserProfilePageState extends State<UserProfilePage>
                               children: []),
                         ),
                       ),
-
                       const SizedBox(
                         height: 8.0,
                       ),
@@ -736,6 +807,7 @@ class _UserProfilePageState extends State<UserProfilePage>
           }),
     );
   }
+
   // buildSavedPostList() {
   //   UserProfileCubit cubit = BlocProvider.of(context);
   //
@@ -1011,14 +1083,12 @@ class _UserProfilePageState extends State<UserProfilePage>
   void addRemoveFavorite(int index, ProjectModel model) {
     UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
     String type;
-    if(model.action_user.contains("unlove")){
-      type=AppConstant.actionLove;
-    }
-    else{
-      type=AppConstant.actionunLove;
+    if (model.action_user.contains("unlove")) {
+      type = AppConstant.actionLove;
+    } else {
+      type = AppConstant.actionunLove;
     }
     cubit.love_report_follow(index, model, type);
-
   }
 
   Widget buildTab(String title, String icon, int index) {
@@ -1064,6 +1134,7 @@ class _UserProfilePageState extends State<UserProfilePage>
       },
     );
   }
+
   void navigateToUserSignUpActivity() async {
     UserModel model = await Preferences.instance.getUserModel();
     LoginModel loginModel = LoginModel();
@@ -1071,19 +1142,18 @@ class _UserProfilePageState extends State<UserProfilePage>
     loginModel.phone = model.user.phone;
 
     var result;
-    if(model.user.userType=="client") {
+    if (model.user.userType == "client") {
       result = await Navigator.of(context).pushNamed(
-          AppConstant.pageUserSignUpRoleRoute, arguments: loginModel);
-    }
-    else{
+          AppConstant.pageUserSignUpRoleRoute,
+          arguments: loginModel);
+    } else {
       result = await Navigator.of(context).pushNamed(
-          AppConstant.pageInvestorSignUpRoleRoute, arguments: loginModel);
+          AppConstant.pageInvestorSignUpRoleRoute,
+          arguments: loginModel);
     }
     if (result != null) {
       UserProfileCubit cubit = BlocProvider.of<UserProfileCubit>(context);
       cubit.getUserData();
-
     }
   }
-
 }
