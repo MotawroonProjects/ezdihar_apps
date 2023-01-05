@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 import '../../../../colors/colors.dart';
 
@@ -11,9 +12,9 @@ final String text;
       padding:
       const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       width: MediaQuery.of(context).size.width,
-      child: Text(
+      child:  HtmlWidget(
         text,
-        style:  TextStyle(fontSize: 12,color: AppColors.grey1),
+        textStyle:  TextStyle(fontSize: 12,color: AppColors.grey1),
       ),
     );
 

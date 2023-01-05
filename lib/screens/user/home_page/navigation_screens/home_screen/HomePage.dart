@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
               child: SizedBox(
                 height: 77,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
                         child: _buildBottomNavigationItem(
