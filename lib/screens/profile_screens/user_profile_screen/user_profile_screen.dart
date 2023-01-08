@@ -170,7 +170,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                           )
                         : AppWidget.circleAvatarWithBorder(96.0, 96.0),
                     SizedBox(
-                      width: 16.0,
+                      width: 10.0,
                     ),
                     Column(
                       children: [
@@ -184,7 +184,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                           overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
-                          height: 12.0,
+                          height: 10.0,
                         ),
                         Align(
                           alignment: Alignment.center,
@@ -208,7 +208,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                                 ),
                               ),
                               SizedBox(
-                                width: 25,
+                                width: 10,
                               ),
                               MaterialButton(
                                 onPressed: () {
