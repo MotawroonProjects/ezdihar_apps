@@ -667,11 +667,12 @@ class ServiceApi {
       BaseOptions options = dio.options;
       options.headers = {'Authorization': user_token};
       dio.options = options;
-      var fields = FormData.fromMap({'amount': amount});
+     // var fields = FormData.fromMap({'amount': amount});
       Response response =
-          await dio.post('api/profile/addToMyWallet', data: fields);
+          await dio.get('api/profile/addToMyWallet',queryParameters: {'amount': amount});
       return RechargeWalletModel.fromJson(response.data);
     } on DioError catch (e) {
+      print("sssss${e}");
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;
     }

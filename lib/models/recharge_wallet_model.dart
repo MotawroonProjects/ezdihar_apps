@@ -33,20 +33,31 @@ class RechargeWalletModel {
 }
 
 class WalletData {
-  WalletData({
-    this.payData,
-  });
+  String payment_url='';
+  // WalletData({
+  //   this.payData,
+  // });
+  //
+  // final PayData? payData;
 
-  final PayData? payData;
+  WalletData.fromJson(Map<String, dynamic> json) {
 
-  factory WalletData.fromJson(Map<String, dynamic> json) => WalletData(
-    payData: PayData.fromJson(json["payData"]),
-  );
+    payment_url =
+    json['payment_url'] != null ? json['payment_url'] as String : '';
 
-  Map<String, dynamic> toJson() => {
-    "payData": payData!.toJson(),
-  };
-}
+    }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['payment_url'] = this.payment_url;
+
+    return data;
+  }
+  }
+
+
+
+
+
 
 class PayData {
   PayData({

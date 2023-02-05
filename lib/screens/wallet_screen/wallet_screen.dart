@@ -45,25 +45,27 @@ class _WalletPageState extends State<WalletPage> {
             return _buildBodySection(state.model.user);
           } else if (state is GetWalletModel) {
             return WebView(
-              initialUrl: state.model.data!.payData!.transaction!.url,
+              initialUrl: state.model.data!.payment_url,
               javascriptMode: JavascriptMode.unrestricted,
               onWebViewCreated: (WebViewController) {
                 Navigator.pop(context);
               },
               onPageStarted: (text) {
+                print('text Url :');
+                print(text);
                 if (text.contains(
-                    "https://ezdhar.motaweron.com/api/order/goThroughUrl/")) {
-                  if (text.substring(52, 55) == "yes" ||
-                      text.substring(52, 55) == "no/") {
+                    "https://ezdhar.motaweron.com/api/callback_paytabs?status")) {
+                  if (text.contains("yes") || text.contains("no")) {
                     Navigator.of(context).pop();
                   }
                 }
               },
               onPageFinished: (text) {
+                print('text Url :');
+                print(text);
                 if (text.contains(
-                    "https://ezdhar.motaweron.com/api/order/goThroughUrl/")) {
-                  if (text.substring(52, 55) == "yes" ||
-                      text.substring(52, 55) == "no/") {
+                    "https://ezdhar.motaweron.com/api/callback_paytabs?status")) {
+                  if (text.contains("yes") || text.contains("no")) {
                     context.read<WalletCubit>().onGetProfileData();
                   }
                 }
@@ -187,7 +189,6 @@ class _WalletPageState extends State<WalletPage> {
                           const SizedBox(
                             height: 24.0,
                           ),
-
                           Container(
                             padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
@@ -230,7 +231,7 @@ class _WalletPageState extends State<WalletPage> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                               //    _showTextInputDialog(context);
+                                        //    _showTextInputDialog(context);
                                         context
                                             .read<WalletCubit>()
                                             .onchargeWallet(user.wallet);
@@ -285,7 +286,7 @@ class _WalletPageState extends State<WalletPage> {
             ),
             ElevatedButton.icon(
                 onPressed: () async {
-                  var resultLabel =  await _showTextInputDialog(context);
+                  var resultLabel = await _showTextInputDialog(context);
                   if (resultLabel != null) {
                     context
                         .read<WalletCubit>()
@@ -312,24 +313,24 @@ class _WalletPageState extends State<WalletPage> {
       ],
     );
   }
+
   final _textFieldController = TextEditingController();
+
   Future<String?> _showTextInputDialog(BuildContext context1) async {
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title:  Text('addBalance'.tr()),
+            title: Text('addBalance'.tr()),
             content: TextField(
               controller: _textFieldController,
-              decoration:  InputDecoration(hintText: 'Balance'.tr()),
+              decoration: InputDecoration(hintText: 'Balance'.tr()),
             ),
             actions: <Widget>[
-
               ElevatedButton(
-                child:  Text('addBalance'.tr()),
+                child: Text('addBalance'.tr()),
                 onPressed: () =>
-          Navigator.pop(context, _textFieldController.text)
-                  ,
+                    Navigator.pop(context, _textFieldController.text),
               ),
             ],
           );
