@@ -229,48 +229,48 @@ class _WalletPageState extends State<WalletPage> {
                                                         color: AppColors.black))
                                               ])),
                                     ),
-                                    InkWell(
-                                      onTap: () {
-                                        //    _showTextInputDialog(context);
-                                        context
-                                            .read<WalletCubit>()
-                                            .onchargeWallet(user.wallet);
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 8),
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            border: Border.all(
-                                                color: AppColors.colorPrimary,
-                                                width: 1.0)),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'request'.tr(),
-                                              style: const TextStyle(
-                                                  color: AppColors.colorPrimary,
-                                                  fontSize: 14.0),
-                                            ),
-                                            const SizedBox(
-                                              width: 8.0,
-                                            ),
-                                            Transform.rotate(
-                                                angle: lang == 'ar' ? 3.14 : 0,
-                                                child: AppWidget.svg(
-                                                    'arrow.svg',
-                                                    AppColors.colorPrimary,
-                                                    24.0,
-                                                    24.0)),
-                                          ],
-                                        ),
-                                      ),
-                                    )
+                                    // InkWell(
+                                    //   onTap: () {
+                                    //     //    _showTextInputDialog(context);
+                                    //     context
+                                    //         .read<WalletCubit>()
+                                    //         .onchargeWallet(user.wallet);
+                                    //   },
+                                    //   child: Container(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 16.0, vertical: 8),
+                                    //     alignment: Alignment.center,
+                                    //     decoration: BoxDecoration(
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(8.0),
+                                    //         border: Border.all(
+                                    //             color: AppColors.colorPrimary,
+                                    //             width: 1.0)),
+                                    //     child: Row(
+                                    //       mainAxisSize: MainAxisSize.min,
+                                    //       crossAxisAlignment:
+                                    //           CrossAxisAlignment.center,
+                                    //       children: [
+                                    //         // Text(
+                                    //         //   'request'.tr(),
+                                    //         //   style: const TextStyle(
+                                    //         //       color: AppColors.colorPrimary,
+                                    //         //       fontSize: 14.0),
+                                    //         // ),
+                                    //         // const SizedBox(
+                                    //         //   width: 8.0,
+                                    //         // ),
+                                    //         // Transform.rotate(
+                                    //         //     angle: lang == 'ar' ? 3.14 : 0,
+                                    //         //     child: AppWidget.svg(
+                                    //         //         'arrow.svg',
+                                    //         //         AppColors.colorPrimary,
+                                    //         //         24.0,
+                                    //         //         24.0)),
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // )
                                   ],
                                 ),
                               ],
