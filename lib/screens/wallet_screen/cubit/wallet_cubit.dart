@@ -15,6 +15,7 @@ class WalletCubit extends Cubit<WalletState> {
   late ServiceApi api;
   late UserModel model;
 
+
   WalletCubit() : super(WalletInitial()) {
     api = ServiceApi();
     onUserDataSuccess();
