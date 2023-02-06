@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 
 import '../../../models/recharge_wallet_model.dart';
@@ -35,13 +37,29 @@ class WalletCubit extends Cubit<WalletState> {
       ),
     );
   }
-  onchargeWallet(int amount) async {
+  onrequestfromWallet(int amount,BuildContext context) async {
     emit(WalletLoading());
-    emit(
-      GetWalletModel(
-        await api.walletcharge(amount, model.access_token),
-      ),
-    );
+
+    var response=    await api.requestfromwallet(amount, model.access_token);
+   if(response.code==200){
+     Fluttertoast.showToast(
+         msg: response.message, // message
+         toastLength: Toast.LENGTH_SHORT, // length
+         gravity: ToastGravity.BOTTOM, // location
+         timeInSecForIosWeb: 1 // duration
+     );
+     Navigator.of(context).pop();
+     Navigator.of(context).pop();
+
+   }
+   else {
+     Fluttertoast.showToast(
+         msg: response.message, // message
+         toastLength: Toast.LENGTH_SHORT, // length
+         gravity: ToastGravity.BOTTOM, // location
+         timeInSecForIosWeb: 1 // duration
+     );
+   }
   }
   onGetProfileData() async {
     onRechargeDone(await api.getProfileByToken(model.access_token));

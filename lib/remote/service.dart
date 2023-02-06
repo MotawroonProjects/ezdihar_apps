@@ -677,7 +677,7 @@ class ServiceApi {
       throw errorMessage;
     }
   }
-  Future<RechargeWalletModel> walletcharge(
+  Future<StatusResponse> requestfromwallet(
       int amount, String user_token) async {
     try {
       BaseOptions options = dio.options;
@@ -686,7 +686,7 @@ class ServiceApi {
       var fields = FormData.fromMap({'amount': amount});
       Response response =
       await dio.post('api/profile/addToMyVisa', data: fields);
-      return RechargeWalletModel.fromJson(response.data);
+      return StatusResponse.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();
       throw errorMessage;
