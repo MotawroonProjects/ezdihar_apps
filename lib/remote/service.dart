@@ -710,10 +710,12 @@ class ServiceApi {
 
   Future<UserDataModel> getProfileByToken(String token) async {
     try {
+      print('77777777777');
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token};
       dio.options = options;
       Response response = await dio.get('api/auth/getProfile');
+      print(response.data);
       return UserDataModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();

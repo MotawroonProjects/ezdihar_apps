@@ -194,9 +194,9 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
     DateTime? date = await showDatePicker(
         context: context,
         locale: EasyLocalization.of(context)!.locale,
-        initialDate: BlocProvider.of<ServiceRequestCubit>(context).initialDate,
-        firstDate: BlocProvider.of<ServiceRequestCubit>(context).startData,
-        lastDate: BlocProvider.of<ServiceRequestCubit>(context).endData,
+        initialDate: DateTime(DateTime.now().year),
+        firstDate: DateTime(DateTime.now().year -25),
+        lastDate: DateTime(DateTime.now().year + 25),
         builder: (context, child) {
           return Theme(
             data: Theme.of(context).copyWith(

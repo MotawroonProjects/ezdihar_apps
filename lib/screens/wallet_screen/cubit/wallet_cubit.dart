@@ -27,6 +27,7 @@ class WalletCubit extends Cubit<WalletState> {
 
   onRechargeDone(UserDataModel userDataModel) async {
     await Preferences.instance.setUser(userDataModel.userModel);
+    onUserDataSuccess();
   }
 
   onRechargeWallet(int amount) async {
@@ -62,6 +63,8 @@ class WalletCubit extends Cubit<WalletState> {
    }
   }
   onGetProfileData() async {
+    print('000000000000');
+    print('000000000000');
     onRechargeDone(await api.getProfileByToken(model.access_token));
   }
 }

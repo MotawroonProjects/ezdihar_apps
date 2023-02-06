@@ -192,7 +192,8 @@ class _MainPageState extends State<MainPage>
                           _controller);
                     }),
               ));
-            } else {
+            }
+            else {
               return Expanded(
                   child: Center(
                 child: Text(

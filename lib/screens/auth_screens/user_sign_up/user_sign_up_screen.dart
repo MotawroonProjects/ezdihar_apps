@@ -490,29 +490,30 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
         if (state is UserDataValidation) {
           isValid = state.valid;
         }
-        return Expanded(
+        return
+          Expanded(
             child: MaterialButton (
-          onPressed: isValid
-              ? () async {
-            UserModel model = await Preferences.instance.getUserModel();
-            if(model.user.isLoggedIn){
-              cubit.updateProfile(context,model.access_token);
-            }else{
-              cubit.signUp(context);
-            }
-
+              onPressed: isValid
+                  ? () async {
+                UserModel model = await Preferences.instance.getUserModel();
+                if(model.user.isLoggedIn){
+                  cubit.updateProfile(context,model.access_token);
+                }else{
+                  cubit.signUp(context);
                 }
-              : null,
-          height: 56.0,
-          color: AppColors.colorPrimary,
-          disabledColor: AppColors.grey4,
-          shape:
+
+              }
+                  : null,
+              height: 56.0,
+              color: AppColors.colorPrimary,
+              disabledColor: AppColors.grey4,
+              shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-          child: Text(
-            'start'.tr(),
-            style: TextStyle(fontSize: 16.0, color: AppColors.white),
-          ),
-        ));
+              child: Text(
+                'start'.tr(),
+                style: TextStyle(fontSize: 16.0, color: AppColors.white),
+              ),
+            ));
       },
     );
   }

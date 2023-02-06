@@ -1,5 +1,4 @@
-
-import 'package:easy_localization/easy_localization.dart'as lan;
+import 'package:easy_localization/easy_localization.dart' as lan;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +21,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String role;
 
-  LoginCubit cubit=LoginCubit();
+  LoginCubit cubit = LoginCubit();
 
   _LoginPageState(this.role);
 
@@ -47,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   buildBodySection() {
-     cubit = BlocProvider.of<LoginCubit>(context);
+    cubit = BlocProvider.of<LoginCubit>(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     double spaceHeight = 0.0;
@@ -59,10 +58,19 @@ class _LoginPageState extends State<LoginPage> {
       } else if (state is OnLoginSuccess) {
         print("sssss");
         if (role == AppConstant.role_investor) {
-          Navigator.of(context)
-              .pushReplacementNamed(AppConstant.providerNavigationBottomRoute);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppConstant.providerNavigationBottomRoute,
+            ModalRoute.withName(
+              AppConstant.pageLoginRoute,
+            ),
+          );
         } else {
-          Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppConstant.pageHomeRoute,
+            ModalRoute.withName(
+              AppConstant.pageLoginRoute,
+            ),
+          );
         }
       }
     }, child: LayoutBuilder(
@@ -90,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                       return MaterialButton(
                         onPressed: isValid
                             ? () {
-                              // cubit.login(context,role);
+                                // cubit.login(context,role);
 
                                 //cubit.sendSmsCode(context);
                                 showConfirmCodeDialog();
@@ -189,10 +197,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _buildDropDownButton() {
-
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
-        cubit.role=role;
+        cubit.role = role;
         Country country = cubit.selectedCountry;
         if (state is OnCountryValueChanged) {
           country = state.country;
@@ -233,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _buildForm() {
-     cubit = BlocProvider.of<LoginCubit>(context);
+    cubit = BlocProvider.of<LoginCubit>(context);
     return Form(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -311,10 +318,9 @@ class _LoginPageState extends State<LoginPage> {
                       height: 8.0,
                     ),
                     Text(
-                      lang.contains("en")?
-                      '${cubit.loginModel.phone_code + " " + cubit.loginModel.phone}':
-                      '${cubit.loginModel.phone + " " + cubit.loginModel.phone_code}',
-
+                      lang.contains("en")
+                          ? '${cubit.loginModel.phone_code + " " + cubit.loginModel.phone}'
+                          : '${cubit.loginModel.phone + " " + cubit.loginModel.phone_code}',
                       textAlign: TextAlign.left,
                       style: TextStyle(color: AppColors.black, fontSize: 14.0),
                     ),
@@ -336,38 +342,31 @@ class _LoginPageState extends State<LoginPage> {
                           smsCode = state.smsCode;
                           controller.text = smsCode;
                         }
-                        return
-                         Directionality(
-
-
-                          textDirection: TextDirection.ltr,
-                          child: PinCodeTextField(
-                          controller: controller,
-                          appContext: context,
-                          length: 6,
-
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-
-
-                          pinTheme: PinTheme(
-                              activeColor: AppColors.colorPrimary,
-                              inactiveColor: AppColors.grey4,
-                              fieldWidth: 28,
-                              fieldHeight: 28,
-
-                              selectedColor: AppColors.colorPrimary),
-                          onCompleted: (data) {
-                            cubit.updateCanVerifySmsCode(data);
-                          },
-                          onChanged: (data) {
-                            if (data.length < 6) {
-                              cubit.updateCanVerifySmsCode('');
-                            }
-                          },
-                          )   );
+                        return Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: PinCodeTextField(
+                              controller: controller,
+                              appContext: context,
+                              length: 6,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              pinTheme: PinTheme(
+                                  activeColor: AppColors.colorPrimary,
+                                  inactiveColor: AppColors.grey4,
+                                  fieldWidth: 28,
+                                  fieldHeight: 28,
+                                  selectedColor: AppColors.colorPrimary),
+                              onCompleted: (data) {
+                                cubit.updateCanVerifySmsCode(data);
+                              },
+                              onChanged: (data) {
+                                if (data.length < 6) {
+                                  cubit.updateCanVerifySmsCode('');
+                                }
+                              },
+                            ));
                       },
                     ),
                     const SizedBox(
@@ -388,7 +387,6 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialButton(
                               onPressed: mySmsCode.isNotEmpty
                                   ? () {
-
                                       cubit.verifySmsCode(
                                           cubit.mySmsCode, context);
                                     }

@@ -122,6 +122,7 @@ class LoginCubit extends Cubit<LoginState> {
     AppWidget.createProgressDialog(context, 'wait'.tr());
     print(smsCode);
     print(verificationId);
+    if(verificationId!=null){
 try{
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId!, smsCode: smsCode);
@@ -137,7 +138,13 @@ try{
     });}
     on Exception {
       Navigator.pop(context);
-      //  Navigator.pop(context);
+      // Navigator.pop(context);
+      stopTimer();
+      login(context, role);
+    }}
+    else{
+      Navigator.pop(context);
+   //   Navigator.pop(context);
       stopTimer();
       login(context, role);
     }
