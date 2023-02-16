@@ -6,6 +6,7 @@ import 'package:ezdihar_apps/screens/user/add_screen/add_screen.dart';
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/consultants_screen/consultants_screen.dart';
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/conversation_screen/conversation_page.dart';
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/home_screen/cubit/home_page_cubit.dart';
+import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/home_screen/widget/no_login_page.dart';
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/investor_screen/investor_screen.dart';
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/main_screen/main_page.dart';
 import 'package:ezdihar_apps/screens/user/home_page/navigation_screens/more_screen/more_screen.dart';
@@ -17,36 +18,52 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../constants/asset_manager.dart';
+import '../../../../../models/user_model.dart';
 import '../user_order_screen/user_order_screen/user_order_screen.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.userModel}) : super(key: key);
+  final UserModel userModel;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Widget> screens = [
-    const MainPage(),
-    UserOrderPage(),
-    const ConsultantsPage(),
-    const ConversationPage(),
-    const MorePage(),
-    const NotificationPage(),
-  ];
+  List<Widget> screens = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.userModel.user.isLoggedIn
+        ? screens = [
+            const MainPage(),
+            UserOrderPage(),
+            const ConsultantsPage(),
+            const ConversationPage(),
+            const MorePage(),
+            const NotificationPage(),
+          ]
+        : screens = [
+            const MainPage(),
+            NotLoginPage(),
+            const ConsultantsPage(),
+            NotLoginPage(),
+            NotLoginPage(),
+            NotLoginPage(),
+          ];
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return BlocBuilder<HomePageCubit, HomePageState>(
       builder: (context, state) {
         int index = 0;
         if (state is MainPageInitial) {
           index = (state).index;
         } else if (state is MainPageIndexUpdated) {
-
           index = state.index;
-
         }
 
         return WillPopScope(
@@ -142,8 +159,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAppBar(BuildContext context, String notificationCount) {
     double width = MediaQuery.of(context).size.width;
-    return
-      Container(
+    return Container(
       width: width,
       height: 56.0,
       decoration: BoxDecoration(color: AppColors.white, boxShadow: [
@@ -228,7 +244,6 @@ class _HomePageState extends State<HomePage> {
       BuildContext context, imageName, Color color, String title, int index) {
     return MaterialButton(
       onPressed: () {
-
         AppRoutes.homePageCubit.updateIndex(index);
       },
       child: Column(
@@ -255,10 +270,5 @@ class _HomePageState extends State<HomePage> {
       return false;
     }
     return true;
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 }

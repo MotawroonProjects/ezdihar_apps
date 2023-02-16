@@ -102,6 +102,8 @@ class AppRoutes {
         );
 
       case AppConstant.pageHomeRoute:
+        UserModel userModel = settings.arguments as UserModel;
+
         return MaterialPageRoute(
           builder: (context) {
             return MultiBlocProvider(
@@ -128,7 +130,7 @@ class AppRoutes {
                 }),
                 BlocProvider<MoreCubit>(create: (context) => MoreCubit())
               ],
-              child: const HomePage(),
+              child:  HomePage(userModel: userModel),
             );
           },
         );

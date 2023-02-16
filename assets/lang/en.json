@@ -198,8 +198,6 @@
   "attachment": "attachment",
   "no_orders": "No Orders",
   "Balance": "Balance",
-  "providerDetails":"providerDetails"
-
-
-
+  "providerDetails":"providerDetails",
+  "should_login_text": " You Should Login First ...."
 }

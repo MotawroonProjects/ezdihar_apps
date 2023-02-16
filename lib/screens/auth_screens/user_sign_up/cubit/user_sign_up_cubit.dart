@@ -99,7 +99,7 @@ class UserSignUpCubit extends Cubit<UserSignUpState> {
       if (response.status.code == 200) {
         Preferences.instance.setUser(response.userModel).then((value) {
           Navigator.pop(context);
-          emit(OnSignUpSuccess());
+          emit(OnSignUpSuccess(response.userModel));
         });
       }
       else{
@@ -121,7 +121,7 @@ print("Dkdkdkdk"+response.status.code.toString());
       if (response.status.code == 200) {
         Preferences.instance.setUser(response.userModel).then((value) {
           Navigator.pop(context);
-          emit(OnSignUpSuccess());
+          emit(OnSignUpSuccess(response.userModel));
         });
       }
     } catch (e) {

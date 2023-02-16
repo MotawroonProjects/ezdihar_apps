@@ -118,15 +118,20 @@ class MainPageCubit extends Cubit<MainPageState> {
   }
 
   void love_report_follow(
-      int post_index, ProjectModel model, String type) async {
+      int post_index, ProjectModel model, String type,BuildContext context) async {
     try {
       getUserData().then((value) async {
-        StatusResponse response =
-            await api.love_follow_report(value!.access_token, model.id, type);
-        if (response.code == 200) {
-          model.action_user=type;
-          updateProject(post_index, model);
-        } else {}
+        if(value!.user.isLoggedIn){
+          StatusResponse response =
+          await api.love_follow_report(value!.access_token, model.id, type);
+          if (response.code == 200) {
+            model.action_user=type;
+            updateProject(post_index, model);
+          } else {}
+        }else{
+          Navigator.of(context).pushNamed(AppConstant.pageUserRoleRoute);
+        }
+
       });
     } catch (e) {
       emit(OnError(e.toString()));

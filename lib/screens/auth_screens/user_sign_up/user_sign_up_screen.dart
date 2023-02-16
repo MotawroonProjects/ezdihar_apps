@@ -58,10 +58,13 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
       listener: (context, state) {
         if (state is OnError) {
           AlertController.show('warning'.tr(), state.error, TypeAlert.warning);
-
         } else if (state is OnSignUpSuccess) {
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(AppConstant.pageHomeRoute,ModalRoute.withName(AppConstant.pageSplashRoute));
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              AppConstant.pageHomeRoute,
+              ModalRoute.withName(AppConstant.pageSplashRoute),
+            arguments: state.userModel,
+
+          );
           //Navigator.pop(context, true);
         }
       },
@@ -108,8 +111,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           String imagePath = cubit.model.imagePath;
           if (state is UserPhotoPicked) {
             imagePath = state.imagePath;
-          }
-          else if(state is OnUserDataGet){
+          } else if (state is OnUserDataGet) {
             imagePath = cubit.imagePath;
           }
           return Row(
@@ -127,11 +129,10 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                     child: BlocProvider.of<UserSignUpCubit>(context)
                             .imageType
                             .isEmpty
-                        ?
-                    imagePath.startsWith('http')
+                        ? imagePath.startsWith('http')
                             ? CachedNetworkImage(
                                 imageUrl: imagePath,
-                                imageBuilder: (context,imageProvider){
+                                imageBuilder: (context, imageProvider) {
                                   return CircleAvatar(
                                     backgroundImage: imageProvider,
                                   );
@@ -149,7 +150,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                                       fit: BoxFit.cover,
                                     ),
                                   );
-                                },errorWidget: (context,url,error){
+                                },
+                                errorWidget: (context, url, error) {
                                   return CircleAvatar(
                                     child: Image.asset(
                                       AppConstant.localImagePath +
@@ -159,7 +161,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                                       fit: BoxFit.cover,
                                     ),
                                   );
-                    },
+                                },
                               )
                             : Image.asset(
                                 AppConstant.localImagePath + image,
@@ -333,7 +335,6 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
     UserSignUpCubit cubit = BlocProvider.of<UserSignUpCubit>(context);
     return BlocBuilder<UserSignUpCubit, UserSignUpState>(
       builder: (context, state) {
-
         return Container(
           height: 54.0,
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -343,7 +344,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
             controller: cubit.controllerFirstName,
             keyboardType: TextInputType.name,
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp('[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]'))
+              FilteringTextInputFormatter.allow(
+                  RegExp('[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]'))
             ],
             style: TextStyle(color: AppColors.black, fontSize: 14.0),
             onChanged: (data) {
@@ -374,17 +376,15 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           child: TextFormField(
             controller: cubit.controllerLastName,
             keyboardType: TextInputType.name,
-
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp('[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]'))],
-
+              FilteringTextInputFormatter.allow(
+                  RegExp('[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF]'))
+            ],
             style: TextStyle(color: AppColors.black, fontSize: 14.0),
             onChanged: (data) {
               cubit.model.lastName = data;
               cubit.checkData();
-
             },
-
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: 'last_name'.tr(),
@@ -490,30 +490,28 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
         if (state is UserDataValidation) {
           isValid = state.valid;
         }
-        return
-          Expanded(
-            child: MaterialButton (
-              onPressed: isValid
-                  ? () async {
-                UserModel model = await Preferences.instance.getUserModel();
-                if(model.user.isLoggedIn){
-                  cubit.updateProfile(context,model.access_token);
-                }else{
-                  cubit.signUp(context);
+        return Expanded(
+            child: MaterialButton(
+          onPressed: isValid
+              ? () async {
+                  UserModel model = await Preferences.instance.getUserModel();
+                  if (model.user.isLoggedIn) {
+                    cubit.updateProfile(context, model.access_token);
+                  } else {
+                    cubit.signUp(context);
+                  }
                 }
-
-              }
-                  : null,
-              height: 56.0,
-              color: AppColors.colorPrimary,
-              disabledColor: AppColors.grey4,
-              shape:
+              : null,
+          height: 56.0,
+          color: AppColors.colorPrimary,
+          disabledColor: AppColors.grey4,
+          shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-              child: Text(
-                'start'.tr(),
-                style: TextStyle(fontSize: 16.0, color: AppColors.white),
-              ),
-            ));
+          child: Text(
+            'start'.tr(),
+            style: TextStyle(fontSize: 16.0, color: AppColors.white),
+          ),
+        ));
       },
     );
   }
@@ -553,7 +551,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
 
     if (date != null) {
       BlocProvider.of<UserSignUpCubit>(context)
-          .updateBirthDate(date: DateFormat('yyyy-MM-dd','en').format(date));
+          .updateBirthDate(date: DateFormat('yyyy-MM-dd', 'en').format(date));
     }
   }
 

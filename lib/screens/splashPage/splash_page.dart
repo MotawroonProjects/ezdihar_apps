@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/constants/app_constant.dart';
+import 'package:ezdihar_apps/models/user_model.dart';
 import 'package:ezdihar_apps/routes/app_routes.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -31,37 +32,51 @@ class _SplashPageState extends State<SplashPage> {
           print(state.userModel.user.userType);
           Future.delayed(const Duration(seconds: 2)).then(
             (value) => {
-              if(AppRoutes.chatmodel != null){
-                Navigator.of(context).pushNamed(AppConstant.pageChatRoute,arguments: AppRoutes.chatmodel).then((value) =>
-                {   if (state.userModel.user.userType == 'freelancer')
-                  {
-                    Navigator.of(context).pushReplacementNamed(
-                        AppConstant.providerNavigationBottomRoute)
-                  }
-                else
-                  {
-                    Navigator.of(context)
-                        .pushReplacementNamed(AppConstant.pageHomeRoute)
-                  }})
-              }
-              else{
-              if (state.userModel.user.userType == 'freelancer')
+              if (AppRoutes.chatmodel != null)
                 {
-                  Navigator.of(context).pushReplacementNamed(
-                      AppConstant.providerNavigationBottomRoute)
+                  Navigator.of(context)
+                      .pushNamed(AppConstant.pageChatRoute,
+                          arguments: AppRoutes.chatmodel)
+                      .then((value) => {
+                            if (state.userModel.user.userType == 'freelancer')
+                              {
+                                Navigator.of(context).pushReplacementNamed(
+                                    AppConstant.providerNavigationBottomRoute)
+                              }
+                            else
+                              {
+                                Navigator.of(context).pushReplacementNamed(
+                                  AppConstant.pageHomeRoute,
+                                  arguments: state.userModel,
+                                )
+                              }
+                          })
                 }
               else
                 {
-                  Navigator.of(context)
-                      .pushReplacementNamed(AppConstant.pageHomeRoute)
+                  if (state.userModel.user.userType == 'freelancer')
+                    {
+                      Navigator.of(context).pushReplacementNamed(
+                        AppConstant.providerNavigationBottomRoute,
+                      )
+                    }
+                  else
+                    {
+                      Navigator.of(context).pushReplacementNamed(
+                        AppConstant.pageHomeRoute,
+                        arguments: state.userModel,
+                      )
+                    }
                 }
-            }},
+            },
           );
         } else if (state is NoUserFound) {
           Future.delayed(const Duration(seconds: 2)).then(
             (value) => {
-              Navigator.of(context)
-                  .pushReplacementNamed(AppConstant.pageUserRoleRoute)
+              Navigator.of(context).pushReplacementNamed(
+                AppConstant.pageHomeRoute,
+                arguments: UserModel(),
+              )
             },
           );
         }
@@ -95,6 +110,5 @@ class _SplashPageState extends State<SplashPage> {
     //     Navigator.of(context).pushReplacementNamed(AppConstant.pageHomeRoute)
     //   },
     // );
-
   }
 }

@@ -284,6 +284,7 @@ return Center();
     ,
     InkWell(
     onTap: () {
+
      cubit.sendOrder(context,userModel);
     //   Navigator.pushNamed(context, AppConstant.pageRequestConsultationRoute,arguments: cubit.userModel);
     },

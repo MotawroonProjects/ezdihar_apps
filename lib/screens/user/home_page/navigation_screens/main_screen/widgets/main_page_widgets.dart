@@ -122,10 +122,10 @@ class MainPageWidgets {
                           cubit.getUserData().then((value) {
                             if (value!.user.isLoggedIn) {
                               if(model.action_user.contains("unlove")){
-                              cubit.love_report_follow(index, model, "love");}
+                              cubit.love_report_follow(index, model, "love",context);}
 
                               else{
-                                cubit.love_report_follow(index, model, "unlove");}
+                                cubit.love_report_follow(index, model, "unlove",context);}
                             }
 
                             else {
@@ -707,7 +707,7 @@ class MainPageWidgets {
     else{
       type=AppConstant.actionunLove;
     }
-    cubit.love_report_follow(index, model, type);
+    cubit.love_report_follow(index, model, type,context);
 
   }
 

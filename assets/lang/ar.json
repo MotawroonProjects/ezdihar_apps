@@ -198,5 +198,6 @@
   "attachment": "مرفق",
   "no_orders": "لا يوجد طلبات",
   "Balance": "الرصيد",
-  "providerDetails":"تفاصيل مقدم الخدمه"
+  "providerDetails":"تفاصيل مقدم الخدمه",
+  "should_login_text": " يجب عليك تسجيل الدخول أولا ...."
 }

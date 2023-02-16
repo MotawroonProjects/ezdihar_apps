@@ -41,7 +41,9 @@ class OnCitySelected extends UserSignUpState {
 class IsLoading extends UserSignUpState {}
 
 class OnSignUpSuccess extends UserSignUpState {
+final UserModel userModel;
 
+  OnSignUpSuccess(this.userModel);
 }
 
 class OnUserDataGet extends UserSignUpState {

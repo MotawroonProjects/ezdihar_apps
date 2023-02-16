@@ -224,7 +224,7 @@ class _MainPageState extends State<MainPage>
     else{
       type=AppConstant.actionunLove;
     }
-    cubit.love_report_follow(index, model, type);  }
+    cubit.love_report_follow(index, model, type,context);  }
 
   void navigateToProjectDetails(ProjectModel model, int index) {}
 
@@ -393,7 +393,7 @@ class _MainPageState extends State<MainPage>
   //  print("dat=>${model.isFollowed}");
     MainPageCubit cubit = BlocProvider.of<MainPageCubit>(context);
     cubit.updateProject(index, model);
-    cubit.love_report_follow(index, model, 'follow');
+    cubit.love_report_follow(index, model, 'follow',context);
     Navigator.of(context).pop();
   }
   void _onBottomsupportSheetTaped(

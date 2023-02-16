@@ -70,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
             ModalRoute.withName(
               AppConstant.pageLoginRoute,
             ),
+            arguments: state.userModel,
           );
         }
       }
