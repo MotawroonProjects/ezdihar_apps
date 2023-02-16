@@ -43,10 +43,10 @@ class ProviderDetailsCubit extends Cubit<ProviderDetailsState> {
   }
 
   void sendOrder(BuildContext context, User userModel) async {
-    AppWidget.createProgressDialog(context, 'wait'.tr());
     UserModel model = await Preferences.instance.getUserModel();
     String user_token = '';
     if (model.user.isLoggedIn) {
+      AppWidget.createProgressDialog(context, 'wait'.tr());
       user_token = model.access_token;
       try {
         PaymentDataModel response = await api.sendOrder(userModel, user_token);
