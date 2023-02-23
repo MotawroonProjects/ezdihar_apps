@@ -33,11 +33,6 @@ android {
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
         // TODO: Specify your own unique MyApplication.java ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.apps.ezdihar_apps"
@@ -48,6 +43,13 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '11'
     }
     signingConfigs {
 
@@ -67,13 +69,10 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    configurations{all*.exclude group:'com.google.guava',module:'listenablefuture' }
 }
 dependencies {
-    implementation "androidx.multidex:multidex:2.0.1"
-    implementation 'com.google.firebase:firebase-auth:21.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.1.0'
-    implementation 'androidx.browser:browser:1.2.0'
-
+    implementation 'com.google.guava:guava:27.0.1-android'
 }
 apply plugin: 'com.google.gms.google-services'
 flutter {

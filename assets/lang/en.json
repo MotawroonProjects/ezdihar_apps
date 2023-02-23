@@ -7,6 +7,7 @@
   "post_photo": "Post Photo",
   "consultants": "Consultants",
   "investors": "Investors",
+
   "more": "More",
   "brief": "Brief",
   "servicenum": "Service Count",
@@ -197,6 +198,8 @@
   "price":"Price",
   "attachment": "attachment",
   "no_orders": "No Orders",
+  "no_room": "No Rooms For Ezdihar",
+  "no_posts": "No Posts",
   "Balance": "Balance",
   "providerDetails":"providerDetails",
   "should_login_text": " You Should Login First ...."

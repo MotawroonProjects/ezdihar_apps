@@ -24,7 +24,7 @@ class _NavigationBottomState extends State<NavigationBottom> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: SizedBox(
-          height: 60,
+          height: 70,
           child: NavigatorBottomWidget(),
         ),
         body: BlocBuilder<NavigatorBottomCubit, NavigatorBottomState>(

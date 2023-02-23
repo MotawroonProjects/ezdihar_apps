@@ -10,6 +10,7 @@ import 'package:ezdihar_apps/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
@@ -30,7 +31,7 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   SettingModel? settingModel;
    PackageInfo? packageInfo ;
-
+  final InAppReview inAppReview = InAppReview.instance;
   bool should=false;
 
   @override
@@ -48,9 +49,11 @@ class _SettingPageState extends State<SettingPage> {
               fontSize: 16.0,
               fontWeight: FontWeight.bold),
         ),
-        leading: context.read<NavigatorBottomCubit>().page == 2
-            ? AppWidget.buildBackArrow(context: context)
-            : SizedBox(),
+        leading:
+        //context.read<NavigatorBottomCubit>().page == 2
+           AppWidget.buildBackArrow(context: context)
+        //    : SizedBox()
+        ,
       ),
       body: BlocListener<SettingCubit, SettingState>(
         listener: (context, state) {
@@ -210,38 +213,78 @@ rateApp();
    await FlutterShare.share(title: "Ezdihar", linkUrl: url);
   }
 
+  // Future<void> rateApp() async {
+  //
+  //   RateMyApp rateMyApp = RateMyApp(
+  //     preferencesPrefix: 'rateMyApp_',
+  //     minDays: 0,
+  //     minLaunches: 10,
+  //     remindDays: 0,
+  //     remindLaunches: 10,
+  //
+  //   );
+  //
+  //  await rateMyApp.init().then((value) async =>
+  //      {if(rateMyApp.shouldOpenDialog) {
+  //     rateMyApp.showRateDialog(
+  //
+  //       context,
+  //       title: 'Rate this app',
+  //       message: 'If you like this app, please take a little bit of your time to review it !\nIt really helps us and it shouldn\'t take you more than one minute.',
+  //       rateButton: 'RATE',
+  //       noButton: 'NO THANKS',
+  //       laterButton: 'MAYBE LATER',
+  //     )
+  //   }
+  //   else{
+  //         should=  (await rateMyApp.isNativeReviewDialogSupported)!,
+  //     if(should){
+  //     await rateMyApp.launchNativeReviewDialog()}
+  //     else{
+  //       rateMyApp.launchStore()
+  //     }
+  //  // print("ddkdkkdkdkjfj")
+  //   }});
+  //
+  //
+  // }
   Future<void> rateApp() async {
 
-    RateMyApp rateMyApp = RateMyApp(
-      preferencesPrefix: 'rateMyApp_',
-      minDays: 0,
-      minLaunches: 10,
-      remindDays: 0,
-      remindLaunches: 10,
-
-    );
-
-   await rateMyApp.init().then((value) async =>
-       {if(rateMyApp.shouldOpenDialog) {
-      rateMyApp.showRateDialog(
-
-        context,
-        title: 'Rate this app',
-        message: 'If you like this app, please take a little bit of your time to review it !\nIt really helps us and it shouldn\'t take you more than one minute.',
-        rateButton: 'RATE',
-        noButton: 'NO THANKS',
-        laterButton: 'MAYBE LATER',
-      )
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
     }
-    else{
-          should=  (await rateMyApp.isNativeReviewDialogSupported)!,
-      if(should){
-      await rateMyApp.launchNativeReviewDialog()}
-      else{
-        rateMyApp.launchStore()
-      }
-   // print("ddkdkkdkdkjfj")
-    }});
+
+    //
+    // RateMyApp rateMyApp = RateMyApp(
+    //  preferencesPrefix: 'rateMyApp_',
+    //  minDays: 0,
+    //  minLaunches: 1,
+    //  remindDays: 0,
+    //  remindLaunches: 1,
+    //
+    // );
+    //
+    // await rateMyApp.init().then((value) async =>
+    // {if(rateMyApp.shouldOpenDialog) {
+    //  rateMyApp.showRateDialog(
+    //
+    //   context,
+    //   title: 'Rate this app',
+    //   message: 'If you like this app, please take a little bit of your time to review it !\nIt really helps us and it shouldn\'t take you more than one minute.',
+    //   rateButton: 'RATE',
+    //   noButton: 'NO THANKS',
+    //   laterButton: 'MAYBE LATER',
+    //  )
+    // }
+    // else{
+    //   should=  (await rateMyApp.isNativeReviewDialogSupported)!,
+    //   if(should){
+    //    await rateMyApp.launchNativeReviewDialog()}
+    //   else{
+    //    rateMyApp.launchStore()
+    //   }
+    //   // print("ddkdkkdkdkjfj")
+    //  }});
 
 
   }

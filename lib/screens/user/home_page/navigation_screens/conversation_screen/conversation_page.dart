@@ -142,7 +142,7 @@ class _ConversationPageState extends State<ConversationPage> {
                   onRefresh: refreshCurrent,
                child: Center(
                   child: Text(
-                    'no_consultants'.tr(),
+                    'no_room'.tr(),
                     style: TextStyle(color: AppColors.black, fontSize: 15.0),
                   )));
             }
