@@ -41,6 +41,10 @@ class SettingData {
     this.termsEn,
     this.privacyAr,
     this.privacyEn,
+    this.facebook,
+    this.instgram,
+    this.twitter,
+    this.snapchat
   });
 
   final int? id;
@@ -50,6 +54,10 @@ class SettingData {
   final String? termsEn;
   final String? privacyAr;
   final String? privacyEn;
+  final String? facebook;
+  final String? instgram;
+  final String? twitter;
+  final String? snapchat;
 
   factory SettingData.fromJson(Map<String, dynamic> json) => SettingData(
     id: json["id"],

@@ -22,7 +22,7 @@ class _MorePageState extends State<MorePage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
+    MoreCubit cubit = BlocProvider.of(context);
     return BlocProvider(
       create: (context) => MoreCubit(),
       child: ListView(
@@ -96,7 +96,7 @@ class _MorePageState extends State<MorePage> {
             ),
           ),
           MoreWidgets()
-              .buildSocialSection(context: context, onTaped: _openSocialUrl),
+              .buildSocialSection(context: context, onTaped: _openSocialUrl,cubit: cubit),
           SizedBox(
             height: 56,
           )

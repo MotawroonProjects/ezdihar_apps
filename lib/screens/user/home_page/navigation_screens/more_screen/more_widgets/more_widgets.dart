@@ -169,9 +169,13 @@ class MoreWidgets {
     );
   }
 
+
+
   Widget buildSocialSection(
-      {required BuildContext context, required Function onTaped}) {
-    return Center(
+      {required BuildContext context, required Function onTaped,required MoreCubit cubit}) {
+
+
+  return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -191,7 +195,8 @@ class MoreWidgets {
             children: [
               InkWell(
                   onTap: () => onTaped(url:
-                  'https://www.facebook.com'),
+    cubit.setting!.data!.facebook
+                  ),
                   child: Image.asset(
                     '${AppConstant.localImagePath}facebook.png',
                     width: 40.0,
@@ -201,7 +206,7 @@ class MoreWidgets {
                 width: 16.0,
               ),
               InkWell(
-                  onTap: () => onTaped(url: 'https://www.instagram.com'),
+                  onTap: () => onTaped(url: cubit.setting!.data!.instgram),
                   child: Image.asset(
                     '${AppConstant.localImagePath}instagram.png',
                     width: 40.0,
@@ -211,7 +216,7 @@ class MoreWidgets {
                 width: 16.0,
               ),
               InkWell(
-                  onTap: () => onTaped(url: 'https://www.twitter.com'),
+                  onTap: () => onTaped(url: cubit.setting!.data!.twitter),
                   child: Image.asset(
                     '${AppConstant.localImagePath}twitter.png',
                     width: 40.0,
@@ -221,7 +226,7 @@ class MoreWidgets {
                 width: 16.0,
               ),
               InkWell(
-                  onTap: () => onTaped(url: 'https://www.snapchat.com'),
+                  onTap: () => onTaped(url: cubit.setting!.data!.snapchat),
                   child: Image.asset(
                     '${AppConstant.localImagePath}snapchat.png',
                     width: 40.0,
