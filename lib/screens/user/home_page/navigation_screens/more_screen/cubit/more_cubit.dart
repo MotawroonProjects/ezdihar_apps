@@ -13,11 +13,12 @@ class MoreCubit extends Cubit<MoreState> {
 
   late UserModel userModel;
 
-  SettingModel? setting;
+ late SettingModel setting;
   MoreCubit() : super(MoreInitial()){
     api = ServiceApi();
 
     getUserModel();
+    getSetting();
   }
 
   void getUserModel() async{

@@ -106,7 +106,7 @@ class MoreWidgets {
     );
   }
 
-  Widget buildNameSection(Function onTapped,BuildContext context) {
+  Widget buildNameSection(Function onTapped, BuildContext context) {
     MoreCubit cubit = BlocProvider.of(context);
 
     return Container(
@@ -126,7 +126,7 @@ class MoreWidgets {
                   InkWell(
                     onTap: !userModel.user.isLoggedIn
                         ? () {
-                            onTapped(action:'login');
+                            onTapped(action: 'login');
                           }
                         : null,
                     child: Text(
@@ -150,9 +150,9 @@ class MoreWidgets {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           child: InkWell(
-                            onTap:(){
-                              onTapped(action:'edit');
-                            } ,
+                            onTap: () {
+                              onTapped(action: 'edit');
+                            },
                             child: AppWidget.svg(
                                 'edit.svg', AppColors.white, 20.0, 20.0),
                           ),
@@ -169,13 +169,11 @@ class MoreWidgets {
     );
   }
 
-
-
   Widget buildSocialSection(
-      {required BuildContext context, required Function onTaped,required MoreCubit cubit}) {
-
-
-  return Center(
+      {required BuildContext context,
+      required Function onTaped,
+      required MoreCubit cubit}) {
+    return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -194,9 +192,7 @@ class MoreWidgets {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               InkWell(
-                  onTap: () => onTaped(url:
-    cubit.setting!.data!.facebook
-                  ),
+                  onTap: () => onTaped(url: cubit.setting!.data!.facebook),
                   child: Image.asset(
                     '${AppConstant.localImagePath}facebook.png',
                     width: 40.0,
