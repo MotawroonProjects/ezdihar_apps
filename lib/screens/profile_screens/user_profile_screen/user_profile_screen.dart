@@ -339,7 +339,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   //         } else {
   //           return Center(
   //             child: Text(
-  //               'no_projects'.tr(),
+  //               'no_posts'.tr(),
   //
   //               style: TextStyle(color: AppColors.black, fontSize: 15.0),
   //             ),
@@ -384,7 +384,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   //         } else {
   //           return Center(
   //             child: Text(
-  //               'no_projects'.tr(),
+  //               'no_posts'.tr(),
   //
   //               style: TextStyle(color: AppColors.black, fontSize: 15.0),
   //             ),
@@ -643,7 +643,7 @@ class _UserProfilePageState extends State<UserProfilePage>
           } else {
             return Center(
               child: Text(
-                'no_projects'.tr(),
+                'no_posts'.tr(),
                 style: TextStyle(color: AppColors.black, fontSize: 15.0),
               ),
             );
@@ -819,7 +819,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   //         } else {
   //           return Center(
   //             child: Text(
-  //               'no_projects'.tr(),
+  //               'no_posts'.tr(),
   //
   //               style: TextStyle(color: AppColors.black, fontSize: 15.0),
   //             ),
@@ -863,7 +863,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   //         } else {
   //           return Center(
   //             child: Text(
-  //               'no_projects'.tr(),
+  //               'no_posts'.tr(),
   //
   //               style: TextStyle(color: AppColors.black, fontSize: 15.0),
   //             ),
