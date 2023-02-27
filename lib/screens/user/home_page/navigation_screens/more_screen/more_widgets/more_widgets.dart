@@ -192,7 +192,7 @@ class MoreWidgets {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               InkWell(
-                  onTap: () => onTaped(url: cubit.setting!.data!.facebook),
+                  onTap: () => onTaped(url: cubit.setting.data!.facebook),
                   child: Image.asset(
                     '${AppConstant.localImagePath}facebook.png',
                     width: 40.0,
@@ -202,7 +202,7 @@ class MoreWidgets {
                 width: 16.0,
               ),
               InkWell(
-                  onTap: () => onTaped(url: cubit.setting!.data!.instgram),
+                  onTap: () => onTaped(url: cubit.setting!.data!.instagram),
                   child: Image.asset(
                     '${AppConstant.localImagePath}instagram.png',
                     width: 40.0,

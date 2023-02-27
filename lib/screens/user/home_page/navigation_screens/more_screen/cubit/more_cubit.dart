@@ -33,7 +33,9 @@ class MoreCubit extends Cubit<MoreState> {
   }
   getSetting() async {
     setting=await api.getSetting();
-    emit(OnSettingModelGet(setting!));
+    print(";lllll");
+    print(setting.data!.facebook);
+    emit(OnSettingModelGet(setting));
 
   }
 

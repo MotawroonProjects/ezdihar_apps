@@ -42,7 +42,7 @@ class SettingData {
     this.privacyAr,
     this.privacyEn,
     this.facebook,
-    this.instgram,
+    this.instagram,
     this.twitter,
     this.snapchat
   });
@@ -55,7 +55,7 @@ class SettingData {
   final String? privacyAr;
   final String? privacyEn;
   final String? facebook;
-  final String? instgram;
+  final String? instagram;
   final String? twitter;
   final String? snapchat;
 
@@ -67,6 +67,10 @@ class SettingData {
     termsEn: json["terms_en"],
     privacyAr: json["privacy_ar"],
     privacyEn: json["privacy_en"],
+    facebook: json["facebook"],
+    twitter: json["twitter"],
+    instagram: json["instagram"],
+    snapchat: json["snapchat"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,5 +81,9 @@ class SettingData {
     "terms_en": termsEn,
     "privacy_ar": privacyAr,
     "privacy_en": privacyEn,
+    "facebook": facebook,
+    "instagram": instagram,
+    "twitter": twitter,
+    "snapchat": snapchat,
   };
 }
