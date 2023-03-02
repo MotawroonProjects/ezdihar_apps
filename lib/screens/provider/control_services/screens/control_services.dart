@@ -23,6 +23,7 @@ class ControlServices extends StatelessWidget {
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: AppColors.black),
       ),
       body: BlocBuilder<ControlServicesCubit, ControlServicesState>(
         builder: (context, state) {

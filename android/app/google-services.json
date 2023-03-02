@@ -61,6 +61,13 @@
             {
               "client_id": "628624317094-a15sd1ml7168k1taoh4t0d0k7ipogg6r.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "628624317094-9pb598ae5eo6ab72e60lve38lhu272fj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.apps.ezdiharApps"
+              }
             }
           ]
         }

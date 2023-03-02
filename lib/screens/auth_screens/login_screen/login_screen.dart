@@ -306,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.only(top: 16.0),
                 height: height * .95,
                 color: AppColors.white,
-                child: Column(
+                child: SingleChildScrollView(child: Column(
                   children: [
                     Text(
                       'we_sent_code'.tr(),
@@ -388,9 +388,9 @@ class _LoginPageState extends State<LoginPage> {
                             MaterialButton(
                               onPressed: mySmsCode.isNotEmpty
                                   ? () {
-                                      cubit.verifySmsCode(
-                                          cubit.mySmsCode, context);
-                                    }
+                                cubit.verifySmsCode(
+                                    cubit.mySmsCode, context);
+                              }
                                   : null,
                               disabledColor: AppColors.grey4,
                               height: 56,
@@ -407,8 +407,8 @@ class _LoginPageState extends State<LoginPage> {
                             InkWell(
                               onTap: time.isEmpty
                                   ? () {
-                                      cubit.sendSmsCode(context);
-                                    }
+                                cubit.sendSmsCode(context);
+                              }
                                   : null,
                               child: Text(
                                 time.isNotEmpty ? time : 'resend'.tr(),
@@ -424,7 +424,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     )
                   ],
-                ),
+                ),),
               ),
             ),
           );

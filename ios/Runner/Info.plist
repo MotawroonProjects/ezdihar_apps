@@ -15,10 +15,6 @@
     </array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>NSCameraUsageDescription</key>
-    <string>access your camera to able to take photo</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string> access your photos to able to send photos</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -60,12 +56,16 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The Camera will be used if you would like to update profile picture and share photos.</string>
 	<key>NSCameraUsageDescription </key>
 	<string>To take user profile photo</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To capture audio for pick image plugin</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To take user profile photo</string>
+	<string>The Photo Gallery will be used if you would like to update profile picture and share photos.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

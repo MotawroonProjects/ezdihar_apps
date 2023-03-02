@@ -243,6 +243,7 @@ class _SettingPageState extends State<SettingPage> {
   //
   // }
   rateApp() {
+    print(packageInfo!.packageName);
     StoreRedirect.redirect(
         androidAppId: packageInfo!.packageName,
         iOSAppId: packageInfo!.packageName);

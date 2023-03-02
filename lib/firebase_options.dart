@@ -59,12 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyA4GmxE3rJdw7-6eIyqP0FKbgB7vwg_gmo',
-    appId: '1:628624317094:ios:f369e755ea203e7a83b267',
+    appId: '1:628624317094:ios:7584097af985998483b267',
     messagingSenderId: '628624317094',
     projectId: 'ezdehar-app',
     storageBucket: 'ezdehar-app.appspot.com',
     androidClientId: '628624317094-1buo3fuj18fb4eu9rpj5bakfmn99s30b.apps.googleusercontent.com',
-    iosClientId: '628624317094-9pb598ae5eo6ab72e60lve38lhu272fj.apps.googleusercontent.com',
-    iosBundleId: 'com.apps.ezdiharApps',
+    iosClientId: '628624317094-dg7lk86hcv3ihse7ritnak0ilq7t48fg.apps.googleusercontent.com',
+    iosBundleId: 'com.topbusiness.ezdiharApps',
   );
 }
