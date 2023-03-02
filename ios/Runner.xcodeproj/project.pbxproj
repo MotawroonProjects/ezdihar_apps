@@ -363,7 +363,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = ZYXWKAWWZ4;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0.1;
 				FLUTTER_BUILD_NUMBER = 1.0;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
@@ -495,7 +495,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = ZYXWKAWWZ4;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0.1;
 				FLUTTER_BUILD_NUMBER = 1.0;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
@@ -521,7 +521,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = ZYXWKAWWZ4;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0.1;
 				FLUTTER_BUILD_NUMBER = 1.0;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";

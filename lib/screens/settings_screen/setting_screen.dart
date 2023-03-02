@@ -19,6 +19,7 @@ import 'package:flutter_share/flutter_share.dart';
 // import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/login_model.dart';
 import '../../models/setting_model.dart';
@@ -242,11 +243,20 @@ class _SettingPageState extends State<SettingPage> {
   //
   //
   // }
-  rateApp() {
-    print(packageInfo!.packageName);
+  rateApp() async {
+    //print(packageInfo!.packageName);
+    if(Platform.isIOS){
+      Uri uri = Uri.parse("https://apps.apple.com/us/app/${packageInfo!.packageName}");
+
+      if (await canLaunchUrl(uri)) {
+    await launchUrl(uri,
+        mode: LaunchMode.externalApplication);
+
+    }}
+    else{
     StoreRedirect.redirect(
         androidAppId: packageInfo!.packageName,
-        iOSAppId: packageInfo!.packageName);
+        iOSAppId: "1671488623");}
     // showDialog(
     //   context: context,
     //   builder: (context) => _dialog!,
