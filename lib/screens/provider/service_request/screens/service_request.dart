@@ -48,95 +48,93 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
       body: BlocBuilder<ServiceRequestCubit, ServiceRequestState>(
         builder: (context, state) {
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 16.0,
-                  ),
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                const SizedBox(
+                  height: 16.0,
+                ),
 
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppConstant.localImagePath + 'wallet2.svg',
-                        color: AppColors.colorPrimary,
-                        width: 24,
-                        height: 24,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        "servicePrice".tr(),
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Flexible(
-                      child: buildTextFormField(
-                          hint: 'price'.tr(),
-                          inputType: TextInputType.number,
-                          action: 'price')),
-                  const SizedBox(
-                    height: 24.0,
-                  ),
-                  buildRow(icon: 'calender.svg', title: 'delivery_date'.tr()),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  buildTextDate(context),
-                  const SizedBox(
-                    height: 24.0,
-                  ),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        AppConstant.localImagePath + 'subject.svg',
-                        color: AppColors.colorPrimary,
-                        width: 24,
-                        height: 24,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        "details".tr(),
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Flexible(
-                      child: buildTextFormField(
-                          hint: 'details'.tr(),
-                          inputType: TextInputType.text,
-                          action: 'detials')),
-                  const SizedBox(
-                    height: 52.0,
-                  ),
-                  buildButtonStart(),
-                  // ElevatedButton(
-                  //     style: ButtonStyle(
-                  //       fixedSize: MaterialStateProperty.all(Size(width, 56.0)),
-                  //       elevation: MaterialStateProperty.all(2.0),
-                  //       shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(8.0))),
-                  //       backgroundColor:
-                  //       MaterialStateProperty.all(AppColors.colorPrimary),
-                  //     ),
-                  //     onPressed: () {
-                  //       if (cubit.isDataValid) {
-                  //         // context.read<ContactUsCubit>().send();
-                  //       }
-                  //     },
-                  //     child: Text(
-                  //       'send'.tr(),
-                  //       style: const TextStyle(
-                  //           fontSize: 16.0, color: AppColors.white),
-                  //     )),
-                  const SizedBox(
-                    height: 16.0,
-                  ),
-                ],
-              ),
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      AppConstant.localImagePath + 'wallet2.svg',
+                      color: AppColors.colorPrimary,
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      "servicePrice".tr(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                    child: buildTextFormField(
+                        hint: 'price'.tr(),
+                        inputType: TextInputType.number,
+                        action: 'price')),
+                const SizedBox(
+                  height: 24.0,
+                ),
+                buildRow(icon: 'calender.svg', title: 'delivery_date'.tr()),
+                SizedBox(
+                  height: 8.0,
+                ),
+                buildTextDate(context),
+                const SizedBox(
+                  height: 24.0,
+                ),
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      AppConstant.localImagePath + 'subject.svg',
+                      color: AppColors.colorPrimary,
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      "details".tr(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                buildTextFormField(
+                    hint: 'details'.tr(),
+                    inputType: TextInputType.text,
+                    action: 'detials'),
+                const SizedBox(
+                  height: 52.0,
+                ),
+                buildButtonStart(),
+                // ElevatedButton(
+                //     style: ButtonStyle(
+                //       fixedSize: MaterialStateProperty.all(Size(width, 56.0)),
+                //       elevation: MaterialStateProperty.all(2.0),
+                //       shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(8.0))),
+                //       backgroundColor:
+                //       MaterialStateProperty.all(AppColors.colorPrimary),
+                //     ),
+                //     onPressed: () {
+                //       if (cubit.isDataValid) {
+                //         // context.read<ContactUsCubit>().send();
+                //       }
+                //     },
+                //     child: Text(
+                //       'send'.tr(),
+                //       style: const TextStyle(
+                //           fontSize: 16.0, color: AppColors.white),
+                //     )),
+                const SizedBox(
+                  height: 16.0,
+                ),
+              ],
             ),
           );
         },
@@ -273,7 +271,7 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
 
     return Container(
       width: width,
-      height: hint.contains("price") ? 54.0 : 200,
+      height: action == 'price' ? 54.0 : 200,
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       decoration: BoxDecoration(
           color: AppColors.white, borderRadius: BorderRadius.circular(8)),
