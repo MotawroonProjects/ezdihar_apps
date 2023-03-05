@@ -101,7 +101,7 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
                       "details".tr(),
                       style: const TextStyle(fontSize: 16),
                     ),
-                  ],
+                  ]
                 ),
                 const SizedBox(height: 6),
                 buildTextFormField(
@@ -109,7 +109,7 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
                     inputType: TextInputType.text,
                     action: 'detials'),
                 const SizedBox(
-                  height: 52.0,
+                  height: 2.0,
                 ),
                 buildButtonStart(),
                 // ElevatedButton(
@@ -241,23 +241,22 @@ class _ServiceRequestState extends State<ServiceRequestScreen> {
           isValid = state.valid;
         }
 
-        return Expanded(
-            child: MaterialButton(
+        return MaterialButton(
           onPressed: isValid
-              ? () async {
-                  cubit.sendOrder(context, chatModel);
-                }
-              : null,
+          ? () async {
+              cubit.sendOrder(context, chatModel);
+            }
+          : null,
           height: 56.0,
           color: AppColors.colorPrimary,
           disabledColor: AppColors.grey4,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           child: Text(
-            'send'.tr(),
-            style: TextStyle(fontSize: 16.0, color: AppColors.white),
+        'send'.tr(),
+        style: TextStyle(fontSize: 16.0, color: AppColors.white),
           ),
-        ));
+        );
       },
     ));
   }
