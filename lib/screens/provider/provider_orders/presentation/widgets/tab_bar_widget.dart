@@ -24,7 +24,9 @@ final int index;
           child: Center(
             child: Text(
               text,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18,color: context.read<OrdersCubit>().page== index
+                  ? AppColors.white
+                  : AppColors.black,),
             ),
           ),
         ),

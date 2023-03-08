@@ -22,7 +22,6 @@ class _OrderScreenState extends State<OrderScreen>
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: 2, initialIndex: 0);
-
   }
 
   @override
@@ -32,64 +31,59 @@ class _OrderScreenState extends State<OrderScreen>
         child: Scaffold(
           backgroundColor: const Color(0XFFF5F5F5),
           appBar: AppBar(
+            toolbarHeight: 120,
+            titleSpacing: 0,
             centerTitle: true,
             elevation: 0,
-            title:  Text(
-              'orders'.tr(),
-              style: TextStyle(color: Colors.black),
+            title: Column(
+              children: [
+                Text(
+                  'orders'.tr(),
+                  style: TextStyle(color: Colors.black),
+                ),
+                SizedBox(height: 8),
+                BlocBuilder<OrdersCubit, OrdersState>(
+                  builder: (context, state) {
+                    if (state is OrdersTabChanged) {
+                      // _tabController!.animateTo(state.index);
+                      return Row(
+                        children: [
+                          TabBarWidget(
+                            text: "current_order".tr(),
+                            index: 0,
+                          ),
+                          TabBarWidget(
+                            text: "completed_order".tr(),
+                            index: 1,
+                          )
+                        ],
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          TabBarWidget(
+                            text: "current_order".tr(),
+                            index: 0,
+                          ),
+                          TabBarWidget(
+                            text: "completed_order".tr(),
+                            index: 1,
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
             backgroundColor: Colors.white,
           ),
-          body: Column(
-            children: [
-              BlocBuilder<OrdersCubit, OrdersState>(
-                builder: (context, state) {
-                  if (state is OrdersTabChanged) {
-                    _tabController!.animateTo(state.index);
-                    return Row(
-                      children: [
-                        TabBarWidget(
-                          text: "current_order".tr(),
-                          index: 0,
-                        ),
-                        TabBarWidget(
-                          text: "completed_order".tr(),
-                          index: 1,
-                        )
-                      ],
-                    );
-                  } else {
-                    return Row(
-                      children: [
-
-                        TabBarWidget(
-                          text: "current_order".tr(),
-                          index: 0,
-                        ),
-                        TabBarWidget(
-                          text: "completed_order".tr(),
-                          index: 1,
-                        ),
-
-                      ],
-                    );
-                  }
-                },
-              ),
-              Expanded(
-                child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
-
-                  controller: _tabController,
-                  children: [
-                    //NewOrderScreen(),
-                    CurrentOrdersWidget(),
-                    CompletedOrdersWidget(),
-                    //RefusedOrdersWidget()
-                  ],
-                ),
-              ),
-            ],
+          body: BlocBuilder<OrdersCubit, OrdersState>(
+            builder: (context, state) {
+              return context.read<OrdersCubit>().page == 0
+                  ? CurrentOrdersWidget()
+                  : CompletedOrdersWidget();
+            },
           ),
         ));
   }
