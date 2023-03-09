@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ezdihar_apps/screens/wallet_screen/cubit/wallet_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -69,10 +70,11 @@ class OrdersCubit extends Cubit<OrdersState> {
       print(e);
     }
   }
-  updateUserData(context) async {
+  updateUserData(BuildContext context) async {
+            Navigator.pop(context);
+            Navigator.pop(context);
 
-            Navigator.pop(context);
-            Navigator.pop(context);
+
 
 
   }

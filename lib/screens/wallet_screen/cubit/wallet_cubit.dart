@@ -18,7 +18,7 @@ class WalletCubit extends Cubit<WalletState> {
 
   WalletCubit() : super(WalletInitial()) {
     api = ServiceApi();
-    onUserDataSuccess();
+    onGetProfileData();
   }
 
   onUserDataSuccess() async {
@@ -66,6 +66,8 @@ class WalletCubit extends Cubit<WalletState> {
   onGetProfileData() async {
     print('000000000000');
     print('000000000000');
+    model = await Preferences.instance.getUserModel();
+
     onRechargeDone(await api.getProfileByToken(model.access_token));
   }
 }

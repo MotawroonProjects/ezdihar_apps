@@ -17,6 +17,7 @@ class User {
   late CityModel city;
   late int cityId;
   late int wallet;
+  late int wallet_before;
   late bool isLoggedIn = false;
   late String lan;
   List<SubCategoryModel>? subCategories;
@@ -36,6 +37,7 @@ class User {
     userType = json['user_type'] ?? '' as String;
     cityId = json['city_id'] != null ? json['city_id']as int: 0 ;
     wallet = json['wallet'] != null ? json['wallet'] as int : 0;
+    wallet_before = json['wallet_before'] != null ? json['wallet_before'] as int : 0;
     adviser_data = json['adviser_data'] != null
         ? AdvisorModel.fromJson(json['adviser_data'])
         : null;
@@ -66,6 +68,7 @@ class User {
       'user_type': user.userType,
       "city_id": user.cityId,
       "wallet": user.wallet,
+      "wallet_before": user.wallet_before,
       'adviser_data': user.adviser_data != null
           ? AdvisorModel.toJson(user.adviser_data)
           : null,

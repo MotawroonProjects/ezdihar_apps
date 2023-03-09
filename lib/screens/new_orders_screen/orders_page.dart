@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../constants/app_constant.dart';
 import '../../models/chat_model.dart';
 import '../../models/provider_order.dart';
+import '../wallet_screen/cubit/wallet_cubit.dart';
 
 
 class OrdersPage extends StatefulWidget {
@@ -111,14 +112,17 @@ print("ssss66677s${chatModel.id.toString()}");
           itemCount: list.length,
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemBuilder: (context, index) {
+          itemBuilder: (context1, index) {
             ProviderOrder model = list[index];
             return InkWell(
               onTap: (){
                 Navigator.pushNamed(
 
                     context,AppConstant.OrdersDetialsScreenRoute,
-                    arguments: model).then((value) => {refreshCurrent()});                },
+                    arguments: model).then((value) => {refreshCurrent(),
+                context.read<WalletCubit>().onGetProfileData()
+
+                });                },
               child: ItemsOrders().buildListItem(
                   context: context, model: model, index: index),
 

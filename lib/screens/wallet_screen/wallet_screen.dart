@@ -177,8 +177,8 @@ class _WalletPageState extends State<WalletPage> {
                                         overflow: TextOverflow.ellipsis,
                                         text: TextSpan(
                                             text: lang == 'ar'
-                                                ? "${replaceToArabicNumber("${user.wallet}")} "
-                                                : " ${user.wallet}",
+                                                ? "${replaceToArabicNumber("${user.wallet_before}")} "
+                                                : " ${user.wallet_before}",
                                             style: const TextStyle(
                                                 fontSize: 40.0,
                                                 fontWeight: FontWeight.bold,
@@ -293,30 +293,33 @@ class _WalletPageState extends State<WalletPage> {
                       )),
                 ),
               ),
-              ElevatedButton.icon(
-                  onPressed: () async {
-                    var resultLabel =  await _showTextInputDialog(context);
-                    if (resultLabel != null) {
-                      context
-                          .read<WalletCubit>()
-                          .onRechargeWallet(int.parse(resultLabel));
-                    }
-                    // context.read<WalletCubit>().onGetProfileData();
-                  },
-                  style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(5.0),
-                      minimumSize: MaterialStateProperty.all(const Size(160, 50)),
-                      backgroundColor:
-                          MaterialStateProperty.all(AppColors.colorPrimary),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0)))),
-                  icon: AppWidget.svg(
-                      'circle_add.svg', AppColors.white, 24.0, 24.0),
-                  label: Text(
-                    'addBalance'.tr(),
-                    style:
-                        const TextStyle(color: AppColors.white, fontSize: 14.0),
-                  )),
+              Visibility(
+                visible: context.read<WalletCubit>().model.user.userType=='client'?true:false,
+                child: ElevatedButton.icon(
+                    onPressed: () async {
+                      var resultLabel =  await _showTextInputDialog(context);
+                      if (resultLabel != null) {
+                        context
+                            .read<WalletCubit>()
+                            .onRechargeWallet(int.parse(resultLabel));
+                      }
+                      // context.read<WalletCubit>().onGetProfileData();
+                    },
+                    style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(5.0),
+                        minimumSize: MaterialStateProperty.all(const Size(160, 50)),
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColors.colorPrimary),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)))),
+                    icon: AppWidget.svg(
+                        'circle_add.svg', AppColors.white, 24.0, 24.0),
+                    label: Text(
+                      'addBalance'.tr(),
+                      style:
+                          const TextStyle(color: AppColors.white, fontSize: 14.0),
+                    )),
+              ),
             ],
           ),
         ],
