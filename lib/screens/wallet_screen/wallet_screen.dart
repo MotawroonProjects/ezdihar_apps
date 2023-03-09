@@ -151,47 +151,59 @@ class _WalletPageState extends State<WalletPage> {
                             const SizedBox(
                               height: 48.0,
                             ),
-                            Text(
-                              'currentBalance'.tr(),
-                              style: const TextStyle(
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.grey1),
+                            Visibility(
+                              visible: context.read<WalletCubit>().model.user.userType=='client'?false:true,
+
+                              child: Text(
+                                'currentBalance'.tr(),
+                                style: const TextStyle(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.grey1),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 8.0,
+                            Visibility(
+                              visible: context.read<WalletCubit>().model.user.userType=='client'?false:true,
+
+                              child: const SizedBox(
+                                height: 8.0,
+                              ),
                             ),
-                            SizedBox(
-                              width: 230,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AppWidget.svg('wallet2.svg',
-                                      AppColors.colorPrimary, 36.0, 36.0),
-                                  const SizedBox(
-                                    width: 12,
-                                  ),
-                                  Expanded(
-                                    child: RichText(
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(
-                                            text: lang == 'ar'
-                                                ? "${replaceToArabicNumber("${user.wallet_before}")} "
-                                                : " ${user.wallet_before}",
-                                            style: const TextStyle(
-                                                fontSize: 40.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.black),
-                                            children: [
-                                              TextSpan(
-                                                  text: 'sar'.tr(),
-                                                  style: const TextStyle(
-                                                      fontSize: 24.0,
-                                                      color: AppColors.black))
-                                            ])),
-                                  ),
-                                ],
+                            Visibility(
+                              visible: context.read<WalletCubit>().model.user.userType=='client'?false:true,
+
+                              child: SizedBox(
+                                width: 230,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    AppWidget.svg('wallet2.svg',
+                                        AppColors.colorPrimary, 36.0, 36.0),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Expanded(
+                                      child: RichText(
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(
+                                              text: lang == 'ar'
+                                                  ? "${replaceToArabicNumber("${user.wallet_before}")} "
+                                                  : " ${user.wallet_before}",
+                                              style: const TextStyle(
+                                                  fontSize: 40.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColors.black),
+                                              children: [
+                                                TextSpan(
+                                                    text: 'sar'.tr(),
+                                                    style: const TextStyle(
+                                                        fontSize: 24.0,
+                                                        color: AppColors.black))
+                                              ])),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(
