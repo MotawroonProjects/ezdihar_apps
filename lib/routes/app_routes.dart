@@ -128,7 +128,8 @@ class AppRoutes {
                   servicesCubit = ServicesCubit();
                   return servicesCubit;
                 }),
-                BlocProvider<MoreCubit>(create: (context) => MoreCubit())
+                BlocProvider<MoreCubit>(create: (context) => MoreCubit()),
+                BlocProvider<OrdersCubit>(create: (context) => OrdersCubit())
               ],
               child:  HomePage(userModel: userModel),
             );

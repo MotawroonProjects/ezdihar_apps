@@ -14,7 +14,6 @@ final int index;
       child: InkWell(
         onTap: (){
           context.read<OrdersCubit>().changePage(index);
-          // context.read<OrdersCubit>().getProviderNewOrder(context);
         },
         child: Container(
           height: 55,

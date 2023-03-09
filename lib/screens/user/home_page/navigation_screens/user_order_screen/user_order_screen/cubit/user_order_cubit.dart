@@ -57,9 +57,7 @@ class UserOrderCubit extends Cubit<UserOrderState> {
 
   Future<void> getUserCompletedOrder() async {
     emit(IsLoadingData());
-
-    var model =
-        await api.getUserCompletedOrder(userModel!.access_token, lan);
+    var model = await api.getUserCompletedOrder(userModel!.access_token, lan);
     mainCompletedOrders = model;
     emit(OnPreviousDataSuccess(model));
   }

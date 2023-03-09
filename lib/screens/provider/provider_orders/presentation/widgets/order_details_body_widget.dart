@@ -12,11 +12,11 @@ import '../../../../../constants/asset_manager.dart';
 import '../../../../../models/provider_order.dart';
 import '../../../../../preferences/preferences.dart';
 import '../../../../../widgets/app_widgets.dart';
+import '../../../../wallet_screen/cubit/wallet_cubit.dart';
 import '../cubit/orders_cubit.dart';
 import 'Buttom.dart';
 
 class orderDetailsBodyWidget extends StatefulWidget {
-
   orderDetailsBodyWidget({Key? key, required this.mainOrdersModel})
       : super(key: key);
   final ProviderOrder mainOrdersModel;
@@ -26,7 +26,7 @@ class orderDetailsBodyWidget extends StatefulWidget {
 }
 
 class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
-  late int user_id=0;
+  late int user_id = 0;
 
   final BehaviorSubject<int> behaviorSubject = BehaviorSubject();
 
@@ -143,85 +143,82 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
                   children: [
                     Expanded(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'servicePrice'.tr(),
+                          style: const TextStyle(
+                              fontSize: 12.0, color: AppColors.grey6),
+                        ),
+                        const SizedBox(
+                          height: 8.0,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'servicePrice'.tr(),
-                              style: const TextStyle(
-                                  fontSize: 12.0, color: AppColors.grey6),
-                            ),
+                            AppWidget.svg('offers.svg', AppColors.colorPrimary,
+                                24.0, 24.0),
                             const SizedBox(
-                              height: 8.0,
+                              width: 8,
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                AppWidget.svg(
-                                    'offers.svg', AppColors.colorPrimary, 24.0,
-                                    24.0),
-                                const SizedBox(width: 8,),
-                                RichText(
-                                  text: TextSpan(
-                                      text: '${widget.mainOrdersModel.price}',
-                                      style: const TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.black),
-                                      children: [
-                                        TextSpan(
-                                            text: 'sar'.tr(),
-                                            style: const TextStyle(
-                                                fontSize: 12.0,
-                                                color: AppColors.black))
-                                      ]
-                                  ),
-                                )
-                              ],
+                            RichText(
+                              text: TextSpan(
+                                  text: '${widget.mainOrdersModel.price}',
+                                  style: const TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.black),
+                                  children: [
+                                    TextSpan(
+                                        text: 'sar'.tr(),
+                                        style: const TextStyle(
+                                            fontSize: 12.0,
+                                            color: AppColors.black))
+                                  ]),
                             )
                           ],
-                        )),
+                        )
+                      ],
+                    )),
                     Expanded(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'delivery_date'.tr(),
+                          style: const TextStyle(
+                              fontSize: 12.0, color: AppColors.grey6),
+                        ),
+                        const SizedBox(
+                          height: 8.0,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'delivery_date'.tr(),
-                              style: const TextStyle(
-                                  fontSize: 12.0, color: AppColors.grey6),
-                            ),
+                            AppWidget.svg('calender.svg',
+                                AppColors.colorPrimary, 24.0, 24.0),
                             const SizedBox(
-                              height: 8.0,
+                              width: 8,
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                AppWidget.svg(
-                                    'calender.svg', AppColors.colorPrimary, 24.0,
-                                    24.0),
-                                const SizedBox(width: 8,),
-                                RichText(
-                                  text: TextSpan(
-                                      text: widget.mainOrdersModel.delivery_date,
-                                      style: const TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.black),
-                                      children: [
-
-                                      ]
-                                  ),
-                                )
-                              ],
+                            RichText(
+                              text: TextSpan(
+                                  text: widget.mainOrdersModel.delivery_date,
+                                  style: const TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.black),
+                                  children: []),
                             )
                           ],
-                        )),
-
+                        )
+                      ],
+                    )),
                   ],
                 ),
                 const SizedBox(
@@ -239,41 +236,67 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
           ),
           const Spacer(),
           Visibility(
-              visible:  true,
+              visible: true,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-              Visibility(
-              visible: true,
-                 child: Bottoms(
-                    color: const Color(0XFF143360),
-                    namedBottom: widget.mainOrdersModel.status.contains("new")&&user_id == widget.mainOrdersModel.user.user.id ? 'refused_btn'.tr():'report'.tr(),
-                    callBack: () {
-                      if(widget.mainOrdersModel.status.contains("new")&&user_id != widget.mainOrdersModel.user.user.id ){
-                        context.read<OrdersCubit>().changeProviderOrderStatus(context,
-                            widget.mainOrdersModel.id.toString(), 'refused');
-                      }else {
-                        Navigator.pushNamed(context, AppConstant.AddReportScreenRoute,
-                            arguments:  widget.mainOrdersModel);
-                      }},
-                  )),
-                  SizedBox(width: 20,),
-              Visibility(
-                visible: user_id != widget.mainOrdersModel.user.user.id ? false : true,
-                  child:Bottoms(
-                    color: const Color(0XFFF18F15),
-                    namedBottom: widget.mainOrdersModel.status.contains("new") ?'accept_btn'.tr():widget.mainOrdersModel.status.contains("accepted")?'compelete_btn'.tr():"rate".tr(),
-                    callBack: () {
-                      if(widget.mainOrdersModel.status.contains("completed")){
-                        showMyEmptyDialog(context,widget.mainOrdersModel);
-
-                      }
-                      else{
-                      context.read<OrdersCubit>().changeProviderOrderStatus(
-                        context,
-                          widget.mainOrdersModel.id.toString(), widget.mainOrdersModel.status.contains("new") ?'accepted':'completed');
-                    }},
-                  ))
+                  Visibility(
+                      visible: true,
+                      child: Bottoms(
+                        color: const Color(0XFF143360),
+                        namedBottom: widget.mainOrdersModel.status
+                                    .contains("new") &&
+                                user_id == widget.mainOrdersModel.user.user.id
+                            ? 'refused_btn'.tr()
+                            : 'report'.tr(),
+                        callBack: () {
+                          if (widget.mainOrdersModel.status.contains("new") &&
+                              user_id != widget.mainOrdersModel.user.user.id) {
+                            context
+                                .read<OrdersCubit>()
+                                .changeProviderOrderStatus(
+                                    context,
+                                    widget.mainOrdersModel.id.toString(),
+                                    'refused');
+                          } else {
+                            Navigator.pushNamed(
+                                context, AppConstant.AddReportScreenRoute,
+                                arguments: widget.mainOrdersModel);
+                          }
+                        },
+                      )),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Visibility(
+                      visible: user_id != widget.mainOrdersModel.user.user.id
+                          ? false
+                          : true,
+                      child: Bottoms(
+                        color: const Color(0XFFF18F15),
+                        namedBottom: widget.mainOrdersModel.status
+                                .contains("new")
+                            ? 'accept_btn'.tr()
+                            : widget.mainOrdersModel.status.contains("accepted")
+                                ? 'compelete_btn'.tr()
+                                : "rate".tr(),
+                        callBack: () {
+                          if (widget.mainOrdersModel.status
+                              .contains("completed")) {
+                            showMyEmptyDialog(context, widget.mainOrdersModel);
+                          } else {
+                            context
+                                .read<OrdersCubit>()
+                                .changeProviderOrderStatus(
+                                  context,
+                                  widget.mainOrdersModel.id.toString(),
+                                  widget.mainOrdersModel.status.contains("new")
+                                      ? 'accepted'
+                                      : 'completed',
+                                );
+                          }
+                        },
+                      ))
                 ],
               ))
         ],
@@ -287,10 +310,8 @@ class _orderDetailsBodyWidgetState extends State<orderDetailsBodyWidget> {
     behaviorSubject.add(user_id);
   }
 
-  void listenToUserStream() =>
-      behaviorSubject.listen((value) {
-
-        user_id=value;
-print("dddd${user_id}");
+  void listenToUserStream() => behaviorSubject.listen((value) {
+        user_id = value;
+        print("dddd${user_id}");
       });
 }

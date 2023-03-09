@@ -31,9 +31,9 @@ Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   UserModel userModel = await Preferences.instance.getUserModel();
 
-await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
   if (userModel.user.isLoggedIn) {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await FirebaseMessaging.instance
@@ -45,20 +45,18 @@ await Firebase.initializeApp(
     await pushNotificationService!.initialise();
   }
   await EasyLocalization.ensureInitialized();
-
-  //await  pushNotificationService!.callbackground();
-  //
-  //NavigationService().setupLocator();
-
   await setupLocator();
 
-  runApp(EasyLocalization(
+  runApp(
+    EasyLocalization(
       supportedLocales: const [Locale('ar', ''), Locale('en', '')],
       path: 'assets/lang',
       saveLocale: false,
       startLocale: const Locale('ar', ''),
       fallbackLocale: const Locale('ar', ''),
-      child: MyApp()));
+      child: MyApp(),
+    ),
+  );
 }
 
 Future setupLocator() async {
@@ -137,69 +135,27 @@ class _MyAppState extends State<MyApp> {
           gravity: ToastGravity.BOTTOM, // location
           timeInSecForIosWeb: 1 // duration
           );
-
-//  showNotification(message);
-      //   checkData(message);
     });
-    // If the message also contains a data property with a "type" of "chat",
-    // navigate to a chat screen
-
     listenToNotificationStream();
-
-//     pushNotificationService!.streamController.stream.listen((event) async {
-// print("fkkfkfk");
-//       ChatModel chatModel=pushNotificationService!.behaviorchat.value;
-// locator<NavigationService>().navigateToReplacement(chatModel);
-//
-//      // await   Navigator.of(context).push(
-//      //        MaterialPageRoute(
-//      //            builder: (context) => BlocProvider(
-//      //              create: (context) => ChatCubit(),
-//      //              child: ChatPage(
-//      //                chatModel: chatModel,
-//      //              ),
-//      //            )));
-//
-//     });
   }
 
   void listenToNotificationStream() =>
       pushNotificationService!.behaviorSubject.listen((payload) {
         print("D;dldlldl");
         print(payload);
-        //  ChatModel chatModel = pushNotificationService!.behaviorchat.value;
         if (payload.contains("chat")) {
           if (pushNotificationService!.behaviorchat.hasValue) {
             chatModel = pushNotificationService!.behaviorchat.value;
             locator<NavigationService>().navigateToReplacement(chatModel);
           }
-          // Navigator.of(context).push(
-          //     MaterialPageRoute(
-          //         builder: (context) => BlocProvider(
-          //           create: (context) => ChatCubit(),
-          //           child: ChatPage(
-          //             chatModel: chatModel,
-          //           ),
-          //         )));
         }
       });
 }
 
-// Future<void> _firebaseMessagingBackgroundHandler (
-//     RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   if(message.data.isNotEmpty) {
-//     print("Handling a background message: ${message.data}");
-//     checkData(message);
-//   }
-//   // showNotification(message);
-// }
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
-await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
   print("Handling a background message:");
 
   AndroidInitializationSettings initializationSettingsAndroid =
@@ -226,14 +182,13 @@ await Firebase.initializeApp(
 }
 
 void showNotification(RemoteMessage message) async {
-  String paylod="";
-  if(message.data["note_type"]=="chat") {
-   chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
+  String paylod = "";
+  if (message.data["note_type"] == "chat") {
+    chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
 
-   behaviorchat.add(chatModel);
-  paylod = message.data['room'] + message.data['note_type'];
- }
-  else{
+    behaviorchat.add(chatModel);
+    paylod = message.data['room'] + message.data['note_type'];
+  } else {
     message.data['note_type'];
   }
   channel = const AndroidNotificationChannel(
@@ -255,79 +210,42 @@ void showNotification(RemoteMessage message) async {
                 importance: Importance.max,
                 icon: '@mipmap/ic_launcher')));
   }
-  // final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-//  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 }
 
 void checkData(RemoteMessage message) {
   if (message.data['note_type'].toString().contains("chat")) {
-    //  if(navigatorKey.currentState!.widget.initialRoute!=AppConstant.pageChatRoute){
-
     chatModel = ChatModel.fromJson(jsonDecode(message.data['room']));
-
     behaviorchat.add(chatModel);
-    // behaviorSubject.add("chat");
-    //  behaviormessage.add(messageDataModel);
-    // print("sslsllslsl${navigatorKey.currentState}");
     showNotification(message);
-    // NotificationsBloc.instance.newNotification(notification);
-    //  print("dldkkdk${messageDataModel.type}");
-    // if (ModalRoute.of(context)!
-    //     .settings
-    //     .name!
-    //     .contains(AppConstant.pageChatRoute)) {
-    //   //Navigator.of(context).pop();
-    //   // context..addmessage(message.data['data']);
-    // } else {
-
-    //}
-  }
-  else {
+  } else {
     showNotification(message);
   }
 }
 
-// showNotification(message);
 Future ondidnotification(
     int id, String? title, String? body, String? payload) async {
   print("object");
   if (payload!.contains("chat")) {
-    // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
     chatModel = ChatModel.fromJson(
-        jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
-
+        jsonDecode(payload.replaceAll("chat", "").replaceAll("room", "")));
     locator<NavigationService>().navigateToReplacement(chatModel);
-    // streamController.add("chat");
-
-  }
-  else if(payload=="service_request"){
-
-  }
-
-  //   streamController.add("chat");
+  } else if (payload == "service_request") {}
 }
 
 Future notificationTapBackground(NotificationResponse details) async {
   print('notification payload: ${details.payload}');
-
   if (details.payload!.contains("chat")) {
-    // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
     chatModel = ChatModel.fromJson(jsonDecode(
         details.payload!.replaceAll("chat", "").replaceAll("room", "")));
-
     locator<NavigationService>().navigateToReplacement(chatModel);
-    // streamController.add("chat");
-
   }
 }
 
 Future onNotification(String payload) async {
   print(payload);
-  if (payload!.contains("chat")) {
-    // chatModel = ChatModel.fromJson(jsonDecode(details['room']));
+  if (payload.contains("chat")) {
     chatModel = ChatModel.fromJson(
-        jsonDecode(payload!.replaceAll("chat", "").replaceAll("room", "")));
-
+        jsonDecode(payload.replaceAll("chat", "").replaceAll("room", "")));
     locator<NavigationService>().navigateToReplacement(chatModel);
   }
 }
@@ -336,17 +254,6 @@ void _runWhileAppIsTerminated() async {
   await flutterLocalNotificationsPlugin
       .getNotificationAppLaunchDetails()
       .then((value) => {
-            // Fluttertoast.showToast(
-            //   msg: value!.notificationResponse!.payload.toString(),
-            //   // message
-            //   toastLength: Toast.LENGTH_SHORT,
-            //   // length
-            //   gravity: ToastGravity.BOTTOM,
-            //   fontSize: 7,
-            //   // location
-            //   timeInSecForIosWeb: 60,
-            //   // duration
-            // ),
             if (value != null &&
                 value.notificationResponse != null &&
                 value.notificationResponse!.payload!.isNotEmpty)
@@ -356,21 +263,7 @@ void _runWhileAppIsTerminated() async {
                     .toString()
                     .replaceAll("chat", "")
                     .replaceAll("room", ""))),
-                // Fluttertoast.showToast(
-                //   msg: chatModel.id.toString(), // message
-                //   toastLength: Toast.LENGTH_SHORT, // length
-                //   gravity: ToastGravity.BOTTOM, // location
-                //   timeInSecForIosWeb: 60,
-                //   // duration
-                // ),
                 AppRoutes.chatmodel = chatModel
               }
           });
-  // Fluttertoast.showToast(
-  //     msg: details!.notificationResponse!.payload! + "kkfkfjj", // message
-  //     toastLength: Toast.LENGTH_SHORT, // length
-  //     gravity: ToastGravity.CENTER, // location
-  //     timeInSecForIosWeb: 60,
-  //   // duration
-  // );
 }

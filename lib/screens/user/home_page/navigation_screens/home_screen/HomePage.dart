@@ -19,6 +19,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../constants/asset_manager.dart';
 import '../../../../../models/user_model.dart';
+import '../../../../provider/provider_orders/presentation/cubit/orders_cubit.dart';
+import '../../../../provider/provider_orders/presentation/widgets/tab_bar_widget.dart';
 import '../user_order_screen/user_order_screen/user_order_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -73,7 +75,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  _buildAppBar(context, "0"),
+                  _buildAppBar(context, index),
                   Expanded(
                     child: IndexedStack(
                       index: index,
@@ -157,84 +159,121 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, String notificationCount) {
+  Widget _buildAppBar(BuildContext context, int index) {
     double width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
-      height: 56.0,
+      height: index == 1 ? 120 : 56.0,
       decoration: BoxDecoration(color: AppColors.white, boxShadow: [
         BoxShadow(
             color: AppColors.black.withOpacity(.2),
             offset: const Offset(0.0, 1.0),
             blurRadius: 8)
       ]),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Container(
-            width: 99.0,
-            height: 36.0,
-            margin: const EdgeInsets.symmetric(horizontal: 16.0),
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image:
-                        AssetImage('${AppConstant.localImagePath}logo.png'))),
-          ),
-          // InkWell(
-          //   onTap: () {
-          //     Navigator.of(context).pushNamed(AppConstant.pageUserOrderRoute);            },
-          //   child: Container(
-          //
-          //     child: Center(
-          //       child: Stack(
-          //         children: [
-          //           Positioned(
-          //               child: AppWidget.svg(
-          //                   "order_icon.svg", AppColors.color1, 32, 32)),
-          //
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          InkWell(
-            onTap: () => AppRoutes.homePageCubit.updateIndex(4),
-            child: Container(
-              width: 48.0,
-              height: 48.0,
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(
-                child: Stack(
-                  children: [
-                    Positioned(
-                        child: AppWidget.svg(
-                            "notifications.svg", AppColors.color1, 32, 32)),
-                    Positioned(
-                        child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "0",
-                          style: TextStyle(
-                              color: AppColors.white,
-                              decoration: TextDecoration.none,
-                              fontSize: 12.0),
-                          maxLines: 1,
-                        ),
-                      ),
-                    )),
-                  ],
-                ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 99.0,
+                height: 36.0,
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(
+                            '${AppConstant.localImagePath}logo.png'))),
               ),
-            ),
-          )
+              // InkWell(
+              //   onTap: () {
+              //     Navigator.of(context).pushNamed(AppConstant.pageUserOrderRoute);            },
+              //   child: Container(
+              //
+              //     child: Center(
+              //       child: Stack(
+              //         children: [
+              //           Positioned(
+              //               child: AppWidget.svg(
+              //                   "order_icon.svg", AppColors.color1, 32, 32)),
+              //
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              InkWell(
+                onTap: () => AppRoutes.homePageCubit.updateIndex(4),
+                child: Container(
+                  width: 48.0,
+                  height: 48.0,
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Center(
+                    child: Stack(
+                      children: [
+                        Positioned(
+                            child: AppWidget.svg(
+                                "notifications.svg", AppColors.color1, 32, 32)),
+                        Positioned(
+                            child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "0",
+                              style: TextStyle(
+                                  color: AppColors.white,
+                                  decoration: TextDecoration.none,
+                                  fontSize: 12.0),
+                              maxLines: 1,
+                            ),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+          index == 1 ?SizedBox(height: 8,):SizedBox(),
+          index == 1 ? BlocBuilder<OrdersCubit, OrdersState>(
+            builder: (context, state) {
+              if (state is OrdersTabChanged) {
+                // _tabController!.animateTo(state.index);
+                return Row(
+                  children: [
+                    TabBarWidget(
+                      text: "current_order".tr(),
+                      index: 0,
+                    ),
+                    TabBarWidget(
+                      text: "completed_order".tr(),
+                      index: 1,
+                    )
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    TabBarWidget(
+                      text: "current_order".tr(),
+                      index: 0,
+                    ),
+                    TabBarWidget(
+                      text: "completed_order".tr(),
+                      index: 1,
+                    ),
+                  ],
+                );
+              }
+            },
+          ):SizedBox(),
         ],
       ),
     );

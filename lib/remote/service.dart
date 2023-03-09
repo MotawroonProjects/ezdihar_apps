@@ -789,11 +789,16 @@ class ServiceApi {
   }
 
   Future<MainOrdersModel> getUserAcceptOrder(String token, String lan) async {
+    print('45454545454545454');
     try {
+
       BaseOptions options = dio.options;
       options.headers = {'Authorization': token, "Accept-Language": lan};
       dio.options = options;
       Response response = await dio.get('api/service-request/user-accepted');
+      print('*****************************************');
+      print(response.data);
+      print('*****************************************');
       return MainOrdersModel.fromJson(response.data);
     } on DioError catch (e) {
       final errorMessage = DioExceptions.fromDioError(e).toString();

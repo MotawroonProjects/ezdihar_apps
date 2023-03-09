@@ -37,33 +37,35 @@ class _CompletedOrdersWidgetState extends State<CompletedOrdersWidget> {
                           .length >
                       0
               ? RefreshIndicator(
+
                   onRefresh: () async {
                     context.read<OrdersCubit>().getProviderCompletedOrder();
                   },
                   child: ListView.builder(
-                    itemCount: context
+                    itemCount:   context
                         .read<OrdersCubit>()
                         .mainCompletedOrders!
                         .orders
                         .length,
                     itemBuilder: (context, index) {
-                      ProviderOrder model = context
-                          .read<OrdersCubit>()
-                          .mainCompletedOrders!
-                          .orders[index];
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppConstant.OrdersDetialsScreenRoute,
-                            arguments: model,
-                          );
-                        },
-                        child: ItemsOrders().buildListItem(
-                            context: context, model: model, index: index),
-                      );
+
+                    ProviderOrder model = context
+                        .read<OrdersCubit>()
+                        .mainCompletedOrders!
+                        .orders[index];
+                    return InkWell(
+                    onTap: () {
+                    Navigator.pushNamed(
+                    context,
+                    AppConstant.OrdersDetialsScreenRoute,
+                    arguments: model,
+                    );
                     },
-                  ))
+                    child: ItemsOrders().buildListItem(
+                    context: context, model: model, index: index),
+                    );
+                  },)
+                )
               : Center(
                   child: InkWell(
                     onTap: () {
@@ -75,18 +77,14 @@ class _CompletedOrdersWidgetState extends State<CompletedOrdersWidget> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           AppWidget.svg(
-                            'reload.svg',
-                            AppColors.colorPrimary,
-                            24.0,
-                            24.0,
+                              'reload.svg', AppColors.colorPrimary, 24.0, 24.0,),
+                          SizedBox(
+                            height: 8.0
                           ),
-                          SizedBox(height: 8.0),
                           Text(
                             'no_orders'.tr(),
                             style: TextStyle(
-                              color: AppColors.colorPrimary,
-                              fontSize: 15.0,
-                            ),
+                                color: AppColors.colorPrimary, fontSize: 15.0,),
                           )
                         ],
                       ),
