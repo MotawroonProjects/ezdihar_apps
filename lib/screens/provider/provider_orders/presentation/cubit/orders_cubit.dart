@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:ezdihar_apps/screens/wallet_screen/cubit/wallet_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../../../../colors/colors.dart';
 import '../../../../../models/provider_order.dart';
 import '../../../../../models/status_resspons.dart';
 import '../../../../../models/user_model.dart';
@@ -51,7 +53,12 @@ class OrdersCubit extends Cubit<OrdersState> {
     if (response.code == 200||response.code == 201) {
       updateUserData(context);
     } else {
-      print("noooooooot dooooone");
+      Fluttertoast.showToast(msg:response.message,fontSize: 15.0,backgroundColor: AppColors.black,gravity: ToastGravity.SNACKBAR,textColor: AppColors.white);
+
+      Navigator.pop(context);
+      Navigator.pop(context);
+
+      //print("noooooooot dooooone");
     }
   }
 
